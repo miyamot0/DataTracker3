@@ -24,8 +24,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-        startwindow.cpp
+        startwindow.cpp \
+    sessionwindow.cpp
 
-HEADERS  += startwindow.h
+HEADERS  += startwindow.h \
+    sessionwindow.h
 
-FORMS    += startwindow.ui
+FORMS    += startwindow.ui \
+    sessionwindow.ui
