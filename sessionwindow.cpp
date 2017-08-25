@@ -456,8 +456,6 @@ void SessionWindow::WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAc
     }
     else if (action == ParseTypes::Evaluation)
     {
-        //
-
         SetEvaluations(finalResult.Evaluations, finalResult.KeySets, finalResult.Therapists, finalResult.Collectors);
     }
     else if (action == ParseTypes::Condition)

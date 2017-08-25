@@ -63,6 +63,27 @@ static void WriteKeySet(QString path, KeySet keySet)
     saveFile.write(jsonDoc.toJson());
 }
 
+static void ReadTherapists(QString path, QStringList * therapists)
+{
+    QFile mTherapists(path);
+
+    if (mTherapists.exists())
+    {
+        if (mTherapists.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QString therapistData = mTherapists.readAll();
+            mTherapists.close();
+
+            QJsonDocument loadTherapists = QJsonDocument::fromJson(therapistData.toUtf8());
+            QJsonObject  therapistObject = loadTherapists.object();
+            QJsonArray therapistArray = therapistObject["Therapists"].toArray();
+
+            foreach (const QJsonValue therapist, therapistArray) {
+                *therapists << therapist.toString();
+            }
+        }
+    }
+}
+
 static void WriteTherapists(QString path, QStringList therapists)
 {
     QJsonObject json;
@@ -86,6 +107,27 @@ static void WriteTherapists(QString path, QStringList therapists)
     }
 
     saveFile.write(jsonDoc.toJson());
+}
+
+static void ReadCollectors(QString path, QStringList * collectors)
+{
+    QFile mCollectors(path);
+
+    if (mCollectors.exists())
+    {
+        if (mCollectors.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QString collectorData = mCollectors.readAll();
+            mCollectors.close();
+
+            QJsonDocument loadCollectors = QJsonDocument::fromJson(collectorData.toUtf8());
+            QJsonObject  collectorObject = loadCollectors.object();
+            QJsonArray collectorArray = collectorObject["Collectors"].toArray();
+
+            foreach (const QJsonValue collector, collectorArray) {
+                *collectors << collector.toString();
+            }
+        }
+    }
 }
 
 static void WriteCollectors(QString path, QStringList collectors)

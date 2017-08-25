@@ -115,48 +115,12 @@ void DirectorySearcher::working()
         }
 
         // Therapist Parsing
-
         QString mTherapistJson = FileTools::pathAppend(FileTools::pathAppend(mFile, currentDirectory.CurrentIndividual), "Therapists.json");
-
-        QFile mTherapists(mTherapistJson);
-
-        if (mTherapists.exists())
-        {
-            if (mTherapists.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                QString therapistData = mTherapists.readAll();
-                mTherapists.close();
-
-                QJsonDocument loadTherapists = QJsonDocument::fromJson(therapistData.toUtf8());
-                QJsonObject  therapistObject = loadTherapists.object();
-                QJsonArray therapistArray = therapistObject["Therapists"].toArray();
-
-                foreach (const QJsonValue therapist, therapistArray) {
-                    mReturn.Therapists << therapist.toString();
-                }
-            }
-        }
+        FileTools::ReadTherapists(mTherapistJson, &mReturn.Therapists);
 
         // Collector Parsing
-
         QString mCollectorJson = FileTools::pathAppend(FileTools::pathAppend(mFile, currentDirectory.CurrentIndividual), "Collectors.json");
-
-        QFile mCollectors(mCollectorJson);
-
-        if (mCollectors.exists())
-        {
-            if (mCollectors.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                QString collectorData = mCollectors.readAll();
-                mCollectors.close();
-
-                QJsonDocument loadCollectors = QJsonDocument::fromJson(collectorData.toUtf8());
-                QJsonObject  collectorObject = loadCollectors.object();
-                QJsonArray collectorArray = collectorObject["Collectors"].toArray();
-
-                foreach (const QJsonValue collector, collectorArray) {
-                    mReturn.Collectors << collector.toString();
-                }
-            }
-        }
+        FileTools::ReadCollectors(mCollectorJson, &mReturn.Collectors);
 
         emit workFinished(mReturn, ParseTypes::ParseAction::Evaluation);
 
