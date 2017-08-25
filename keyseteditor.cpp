@@ -276,6 +276,10 @@ void KeySetEditor::loadExistingKeys(QString path, QString group, QString individ
     }
 }
 
+/**
+ * @brief KeySetEditor::on_buttonBox_clicked
+ * @param button
+ */
 void KeySetEditor::on_buttonBox_clicked(QAbstractButton *button)
 {
     if((QPushButton *)button == ui->buttonBox->button(QDialogButtonBox::Ok))

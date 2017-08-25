@@ -401,6 +401,33 @@ void SessionWindow::on_buttonKeySet_clicked()
 
                 FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(ui->comboKeySet->currentText())), mKeySetEntry.keySet);
 
+                ui->tableFrequency->setRowCount(0);
+                ui->tableDuration->setRowCount(0);
+
+                CurrentKeySet.KeySetName = "";
+                CurrentKeySet.DurationKeys.clear();
+                CurrentKeySet.FrequencyKeys.clear();
+
+                FileTools::ReadKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(ui->comboKeySet->currentText())), &CurrentKeySet);
+
+                ui->tableFrequency->setRowCount(0);
+
+                for (KeySetEntry mKey : CurrentKeySet.FrequencyKeys)
+                {
+                    ui->tableFrequency->insertRow(ui->tableFrequency->rowCount());
+                    ui->tableFrequency->setItem(ui->tableFrequency->rowCount() - 1, 0, new QTableWidgetItem(mKey.KeyName));
+                    ui->tableFrequency->setItem(ui->tableFrequency->rowCount() - 1, 1, new QTableWidgetItem(mKey.KeyDescription));
+                }
+
+                ui->tableDuration->setRowCount(0);
+
+                for (KeySetEntry mKey : CurrentKeySet.DurationKeys)
+                {
+                    ui->tableDuration->insertRow(ui->tableDuration->rowCount());
+                    ui->tableDuration->setItem(ui->tableDuration->rowCount() - 1, 0, new QTableWidgetItem(mKey.KeyName));
+                    ui->tableDuration->setItem(ui->tableDuration->rowCount() - 1, 1, new QTableWidgetItem(mKey.KeyDescription));
+                }
+
             }
         }
     }
@@ -413,13 +440,19 @@ void SessionWindow::on_buttonKeySet_clicked()
  */
 void SessionWindow::on_comboKeySet_currentIndexChanged(int index)
 {
-    if (ui->comboGroup->currentIndex() == 0
-            || ui->comboIndividual->currentIndex() == 0
-            || ui->comboKeySet->currentIndex() == 0)
+    ui->tableFrequency->setRowCount(0);
+    ui->tableDuration->setRowCount(0);
+
+    CurrentKeySet.KeySetName = "";
+    CurrentKeySet.DurationKeys.clear();
+    CurrentKeySet.FrequencyKeys.clear();
+
+    if (ui->comboGroup->currentIndex() == 0 ||
+        ui->comboIndividual->currentIndex() == 0 ||
+        ui->comboKeySet->currentIndex() == 0)
     {
         return;
     }
-
 
     QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, ui->comboGroup->currentText());
     mKeyPath = FileTools::pathAppend(mKeyPath, ui->comboIndividual->currentText());
