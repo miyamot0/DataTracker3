@@ -105,12 +105,15 @@ void DirectorySearcher::working()
 
         mEntries = jsonLocation.entryInfoList();
 
+        QStringList mSplit;
+
         for (QFileInfo mInf : mEntries)
         {
             if (mInf.fileName() != "Therapists.json" &&
                 mInf.fileName() != "Collectors.json")
             {
-                mReturn.KeySets << mInf.fileName();
+                mSplit = mInf.fileName().split(".");
+                mReturn.KeySets << mSplit[0];
             }
         }
 

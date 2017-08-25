@@ -1,5 +1,6 @@
 #include "keyseteditor.h"
 #include "ui_keyseteditor.h"
+#include "filetools.h"
 
 #include <QMessageBox>
 #include <QMenu>
@@ -240,6 +241,38 @@ void KeySetEditor::customDurationMenuRequested(QPoint pos)
         ui->tableWidgetDuration->setItem(currIndex + 2, 1, new QTableWidgetItem(movingStringDesc));
 
         ui->tableWidgetDuration->removeRow(currIndex);
+    }
+}
+
+/**
+ * @brief KeySetEditor::loadExistingKeys
+ * @param path
+ * @param group
+ * @param individual
+ */
+void KeySetEditor::loadExistingKeys(QString path, QString group, QString individual)
+{
+    QString mKeyPath = FileTools::pathAppend(path, group);
+    mKeyPath = FileTools::pathAppend(mKeyPath, individual);
+
+    FileTools::ReadKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(KeySetName)), &keySet);
+
+    ui->tableWidgetFrequency->setRowCount(0);
+
+    for (KeySetEntry mKey : keySet.FrequencyKeys)
+    {
+        ui->tableWidgetFrequency->insertRow(ui->tableWidgetFrequency->rowCount());
+        ui->tableWidgetFrequency->setItem(ui->tableWidgetFrequency->rowCount() - 1, 0, new QTableWidgetItem(mKey.KeyName));
+        ui->tableWidgetFrequency->setItem(ui->tableWidgetFrequency->rowCount() - 1, 1, new QTableWidgetItem(mKey.KeyDescription));
+    }
+
+    ui->tableWidgetDuration->setRowCount(0);
+
+    for (KeySetEntry mKey : keySet.DurationKeys)
+    {
+        ui->tableWidgetDuration->insertRow(ui->tableWidgetDuration->rowCount());
+        ui->tableWidgetDuration->setItem(ui->tableWidgetDuration->rowCount() - 1, 0, new QTableWidgetItem(mKey.KeyName));
+        ui->tableWidgetDuration->setItem(ui->tableWidgetDuration->rowCount() - 1, 1, new QTableWidgetItem(mKey.KeyDescription));
     }
 }
 

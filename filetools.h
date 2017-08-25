@@ -14,13 +14,57 @@
 #include "keyset.h"
 #include "keysetentry.h"
 
-
-#include <QDebug>
-
-
 class FileTools
 {
 public:
+
+static void ReadKeySet(QString path, KeySet * keySet)
+{
+    QFile mKeySet(path);
+
+    if (mKeySet.exists())
+    {
+        if (mKeySet.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QString keySetData = mKeySet.readAll();
+            mKeySet.close();
+
+            QJsonDocument loadKeySets = QJsonDocument::fromJson(keySetData.toUtf8());
+            QJsonObject  keySetObject = loadKeySets.object();
+
+            keySet->KeySetName = keySetObject["Title"].toString();
+
+            QJsonArray frequencyArray = keySetObject["FrequencyKeys"].toArray();
+
+            for (int i=0; i<frequencyArray.size(); i++)
+            {
+                QJsonObject keyObject = frequencyArray[i].toObject();
+
+                KeySetEntry newKeys;
+                newKeys.KeyCode = keyObject["Code"].toInt();
+                newKeys.KeyName = keyObject["Name"].toString();
+                newKeys.KeyDescription = keyObject["Description"].toString();
+
+                keySet->FrequencyKeys.append(newKeys);
+
+            }
+
+            QJsonArray durationArray = keySetObject["DurationKeys"].toArray();
+
+            for (int i=0; i<durationArray.size(); i++)
+            {
+                QJsonObject keyObject = durationArray[i].toObject();
+
+                KeySetEntry newKeys;
+                newKeys.KeyCode = keyObject["Code"].toInt();
+                newKeys.KeyName = keyObject["Name"].toString();
+                newKeys.KeyDescription = keyObject["Description"].toString();
+
+                keySet->DurationKeys.append(newKeys);
+
+            }
+        }
+    }
+}
 
 static void WriteKeySet(QString path, KeySet keySet)
 {

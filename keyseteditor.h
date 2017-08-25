@@ -22,6 +22,8 @@ public:
     KeySet keySet;
     QString KeySetName;
 
+    void loadExistingKeys(QString path, QString group, QString individual);
+
 private slots:
     void on_pushButtonFrequency_clicked();
     void customFrequencyMenuRequested(QPoint pos);

@@ -13,6 +13,8 @@ public:
     QList<KeySetEntry> FrequencyKeys;
     QList<KeySetEntry> DurationKeys;
 
+    int TotalSeconds;
+
 };
 
 #endif // KEYSET_H

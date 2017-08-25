@@ -4,8 +4,11 @@
 #include "filetools.h"
 #include "parsetypes.h"
 #include "keyseteditor.h"
+#include "keysetentry.h"
 
 #include <QtWidgets>
+
+#include <QDebug>
 
 SessionWindow::SessionWindow(QString mCurrentWorkingDirectory, QWidget *parent) :
     QDialog(parent),
@@ -267,6 +270,9 @@ void SessionWindow::on_comboEvaluation_currentIndexChanged(int index)
     worker->startWork();
 }
 
+/** Add a new condition
+ * @brief SessionWindow::on_buttonCondition_clicked
+ */
 void SessionWindow::on_buttonCondition_clicked()
 {
     if (ui->comboGroup->currentIndex() == 0
@@ -318,6 +324,9 @@ void SessionWindow::on_buttonCondition_clicked()
     }
 }
 
+/** Add/edit a key set
+ * @brief SessionWindow::on_buttonKeySet_clicked
+ */
 void SessionWindow::on_buttonKeySet_clicked()
 {
     if (ui->comboGroup->currentIndex() == 0
@@ -326,44 +335,119 @@ void SessionWindow::on_buttonKeySet_clicked()
         return;
     }
 
+    bool ok;
     QStringList listOptions;
     listOptions << tr("Add KeySet") << tr("Edit KeySet");
 
-    bool ok;
-    QString selectedOption = QInputDialog::getItem(this, tr("QInputDialog::getItem()"),
-                                                   tr("Pick option:"), listOptions, 0, false, &ok);
-    if (ok && !selectedOption.isEmpty())
+    if (ui->comboKeySet->currentIndex() == 0)
     {
-        int mSelection = listOptions.indexOf(selectedOption);
-
-        if (mSelection == 0)
+        QString keySetName = QInputDialog::getText(this, tr("Name the new KeySet"),
+                                                   tr("Key Set Name:"),
+                                                   QLineEdit::Normal,
+                                                   "", &ok);
+        if (ok && !keySetName.isEmpty())
         {
-            QString keySetName = QInputDialog::getText(this, tr("Name the new KeySet"),
-                                                       tr("Key Set Name:"),
-                                                       QLineEdit::Normal,
-                                                       "", &ok);
-            if (ok && !keySetName.isEmpty())
+            KeySetEditor mKeySetEntry;
+            mKeySetEntry.KeySetName = keySetName;
+
+            mKeySetEntry.exec();
+
+            QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, ui->comboGroup->currentText());
+            mKeyPath = FileTools::pathAppend(mKeyPath, ui->comboIndividual->currentText());
+
+            FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(keySetName)), mKeySetEntry.keySet);
+
+        }
+    }
+    else
+    {
+        QString selectedOption = QInputDialog::getItem(this, tr("Add or Edit Key Set?"),
+                                                       tr("Pick option:"), listOptions, 0, false, &ok);
+        if (ok && !selectedOption.isEmpty())
+        {
+            int mSelection = listOptions.indexOf(selectedOption);
+
+            if (mSelection == 0)
+            {
+                QString keySetName = QInputDialog::getText(this, tr("Name the new KeySet"),
+                                                           tr("Key Set Name:"),
+                                                           QLineEdit::Normal,
+                                                           "", &ok);
+                if (ok && !keySetName.isEmpty())
+                {
+                    KeySetEditor mKeySetEntry;
+                    mKeySetEntry.KeySetName = keySetName;
+
+                    mKeySetEntry.exec();
+
+                    QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, ui->comboGroup->currentText());
+                    mKeyPath = FileTools::pathAppend(mKeyPath, ui->comboIndividual->currentText());
+
+                    FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(keySetName)), mKeySetEntry.keySet);
+
+                }
+            }
+            else if (mSelection == 1)
             {
                 KeySetEditor mKeySetEntry;
-                mKeySetEntry.KeySetName = keySetName;
+                mKeySetEntry.KeySetName = ui->comboKeySet->currentText();
+
+                mKeySetEntry.loadExistingKeys(mWorkingDirectory, ui->comboGroup->currentText(), ui->comboIndividual->currentText());
 
                 mKeySetEntry.exec();
 
                 QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, ui->comboGroup->currentText());
                 mKeyPath = FileTools::pathAppend(mKeyPath, ui->comboIndividual->currentText());
 
-                FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(keySetName)), mKeySetEntry.keySet);
+                FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(ui->comboKeySet->currentText())), mKeySetEntry.keySet);
 
             }
         }
-        else if (mSelection == 1)
-        {
-            // TODO modify keys
+    }
 
-        }
+}
+
+/**
+ * @brief SessionWindow::on_comboKeySet_currentIndexChanged
+ * @param index
+ */
+void SessionWindow::on_comboKeySet_currentIndexChanged(int index)
+{
+    if (ui->comboGroup->currentIndex() == 0
+            || ui->comboIndividual->currentIndex() == 0
+            || ui->comboKeySet->currentIndex() == 0)
+    {
+        return;
+    }
+
+
+    QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, ui->comboGroup->currentText());
+    mKeyPath = FileTools::pathAppend(mKeyPath, ui->comboIndividual->currentText());
+
+    FileTools::ReadKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(ui->comboKeySet->itemText(index))), &CurrentKeySet);
+
+    ui->tableFrequency->setRowCount(0);
+
+    for (KeySetEntry mKey : CurrentKeySet.FrequencyKeys)
+    {
+        ui->tableFrequency->insertRow(ui->tableFrequency->rowCount());
+        ui->tableFrequency->setItem(ui->tableFrequency->rowCount() - 1, 0, new QTableWidgetItem(mKey.KeyName));
+        ui->tableFrequency->setItem(ui->tableFrequency->rowCount() - 1, 1, new QTableWidgetItem(mKey.KeyDescription));
+    }
+
+    ui->tableDuration->setRowCount(0);
+
+    for (KeySetEntry mKey : CurrentKeySet.DurationKeys)
+    {
+        ui->tableDuration->insertRow(ui->tableDuration->rowCount());
+        ui->tableDuration->setItem(ui->tableDuration->rowCount() - 1, 0, new QTableWidgetItem(mKey.KeyName));
+        ui->tableDuration->setItem(ui->tableDuration->rowCount() - 1, 1, new QTableWidgetItem(mKey.KeyDescription));
     }
 }
 
+/** Add a new therapist
+ * @brief SessionWindow::on_buttonTherapist_clicked
+ */
 void SessionWindow::on_buttonTherapist_clicked()
 {
     if (ui->comboGroup->currentIndex() == 0
@@ -397,6 +481,9 @@ void SessionWindow::on_buttonTherapist_clicked()
     }
 }
 
+/** Add a new collector
+ * @brief SessionWindow::on_buttonCollector_clicked
+ */
 void SessionWindow::on_buttonCollector_clicked()
 {
     if (ui->comboGroup->currentIndex() == 0
@@ -430,11 +517,6 @@ void SessionWindow::on_buttonCollector_clicked()
     }
 }
 
-void SessionWindow::UserChangedSelection(const QString&)
-{
-
-}
-
 /**
  * @brief SessionWindow::WorkUpdate
  * @param update
@@ -444,6 +526,11 @@ void SessionWindow::WorkUpdate(QString update)
     qDebug() << "WORK_UPDATE: " << update;
 }
 
+/**
+ * @brief SessionWindow::WorkFinished
+ * @param finalResult
+ * @param action
+ */
 void SessionWindow::WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAction action)
 {
     if (action == ParseTypes::Group)
@@ -568,13 +655,10 @@ SessionWindow::~SessionWindow()
     delete ui;
 }
 
-
-
-
-
-
-
-
-
-
-
+void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
+{
+    if((QPushButton *)button == ui->buttonBox->button(QDialogButtonBox::Ok))
+    {
+        // TODO session window
+    }
+}
