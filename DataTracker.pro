@@ -26,14 +26,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         startwindow.cpp \
     sessionwindow.cpp \
-    directorysearcher.cpp
+    directorysearcher.cpp \
+    keyseteditor.cpp \
+    keysetcapture.cpp
 
 HEADERS  += startwindow.h \
     sessionwindow.h \
     filetools.h \
     directoryparse.h \
     directorysearcher.h \
-    parsetypes.h
+    parsetypes.h \
+    keyseteditor.h \
+    keysetcapture.h
 
 FORMS    += startwindow.ui \
-    sessionwindow.ui
+    sessionwindow.ui \
+    keyseteditor.ui \
+    keysetcapture.ui

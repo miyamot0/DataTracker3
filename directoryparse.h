@@ -10,13 +10,17 @@ public:
 
     QString CurrentGroup;
     QString CurrentIndividual;
+    QString CurrentEvaluation;
+    QString CurrentCondition;
 
     QStringList Groups;
     QStringList Individuals;
+    QStringList Evaluations;
+    QStringList Conditions;
 
-    QString Individual;
-    QString Evaluation;
-    QString Condition;
+    //QString Individual;
+    //QString Evaluation;
+    //QString Condition;
 
     //KeySet
 

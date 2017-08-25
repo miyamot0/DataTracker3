@@ -51,7 +51,7 @@ SessionWindow::SessionWindow(QString mCurrentWorkingDirectory, QWidget *parent) 
 void SessionWindow::on_buttonGroup_clicked()
 {
     bool ok = false;
-    QString text = QInputDialog::getText(this, tr("Enter New Group"), tr("Group Name:"), QLineEdit::Normal, QDir::home().dirName(), &ok);
+    QString text = QInputDialog::getText(this, tr("Enter New Group"), tr("Group Name:"), QLineEdit::Normal, "", &ok);
 
     if (ok)
     {
@@ -60,6 +60,8 @@ void SessionWindow::on_buttonGroup_clicked()
             QString mPath = FileTools::pathAppend(mWorkingDirectory, text);
             QDir mPresentDirectory(mPath);
 
+            qDebug() << mPresentDirectory;
+
             if (!mPresentDirectory.exists()){
                 mPresentDirectory.mkdir(".");
             }
@@ -67,6 +69,10 @@ void SessionWindow::on_buttonGroup_clicked()
             workerThread = new QThread();
 
             mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
+            mCurrentDirectory.CurrentGroup = "";
+            mCurrentDirectory.CurrentIndividual = "";
+            mCurrentDirectory.CurrentEvaluation = "";
+            mCurrentDirectory.CurrentCondition = "";
 
             worker = new DirectorySearcher(mCurrentDirectory);
 
@@ -90,18 +96,12 @@ void SessionWindow::on_buttonGroup_clicked()
  */
 void SessionWindow::on_comboGroup_currentIndexChanged(int index)
 {
-    QString mPath = FileTools::pathAppend(mWorkingDirectory, ui->comboGroup->currentText());
-
-    QDir mPresentDirectory(mPath);
-
-    if (!mPresentDirectory.exists()){
-        mPresentDirectory.mkdir(".");
-    }
-
     workerThread = new QThread();
 
     mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
-    mCurrentDirectory.CurrentGroup = ui->comboGroup->currentText();
+    mCurrentDirectory.CurrentGroup = ui->comboGroup->itemText(index);
+    mCurrentDirectory.CurrentIndividual = "";
+    mCurrentDirectory.CurrentEvaluation = "";
 
     worker = new DirectorySearcher(mCurrentDirectory);
 
@@ -128,7 +128,7 @@ void SessionWindow::on_buttonIndividual_clicked()
     }
 
     bool ok = false;
-    QString text = QInputDialog::getText(this, tr("Enter New Individual"), tr("Individual Name:"), QLineEdit::Normal, QDir::home().dirName(), &ok);
+    QString text = QInputDialog::getText(this, tr("Enter New Individual"), tr("Individual Name:"), QLineEdit::Normal, "", &ok);
 
     if (ok)
     {
@@ -147,6 +147,9 @@ void SessionWindow::on_buttonIndividual_clicked()
 
             mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
             mCurrentDirectory.CurrentGroup = ui->comboGroup->currentText();
+            mCurrentDirectory.CurrentIndividual = "";
+            mCurrentDirectory.CurrentEvaluation = "";
+            mCurrentDirectory.CurrentCondition = "";
 
             worker = new DirectorySearcher(mCurrentDirectory);
 
@@ -164,13 +167,162 @@ void SessionWindow::on_buttonIndividual_clicked()
     }
 }
 
+/** An individual is selected
+ * @brief SessionWindow::on_comboIndividual_currentIndexChanged
+ * @param index
+ */
 void SessionWindow::on_comboIndividual_currentIndexChanged(int index)
 {
+    workerThread = new QThread();
 
+    mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
+    mCurrentDirectory.CurrentGroup = ui->comboGroup->currentText();
+    mCurrentDirectory.CurrentIndividual = ui->comboIndividual->itemText(index);
+    mCurrentDirectory.CurrentEvaluation = "";
+
+    worker = new DirectorySearcher(mCurrentDirectory);
+
+    worker->moveToThread(workerThread);
+
+    connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
+    connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
+    connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
+    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
+    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
+
+    workerThread->wait();
+    worker->startWork();
 }
 
-//thread
-//get x, return x.y
+/** Add a new evaluation
+ * @brief SessionWindow::on_buttonEvaluation_clicked
+ */
+void SessionWindow::on_buttonEvaluation_clicked()
+{
+    if (ui->comboGroup->currentIndex() == 0 || ui->comboIndividual->currentIndex() == 0 )
+    {
+        return;
+    }
+
+    bool ok = false;
+    QString text = QInputDialog::getText(this, tr("Enter New Evaluation"), tr("New Evaluation:"), QLineEdit::Normal, "", &ok);
+
+    if (ok)
+    {
+        if (ui->comboEvaluation->findText(text) == -1)
+        {
+            QString mPath = FileTools::pathAppend(mWorkingDirectory, ui->comboGroup->currentText());
+            mPath = FileTools::pathAppend(mPath, ui->comboIndividual->currentText());
+            mPath = FileTools::pathAppend(mPath, text);
+
+            QDir mPresentDirectory(mPath);
+
+            if (!mPresentDirectory.exists()){
+                mPresentDirectory.mkdir(".");
+            }
+
+            workerThread = new QThread();
+
+            mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
+            mCurrentDirectory.CurrentGroup = ui->comboGroup->currentText();
+            mCurrentDirectory.CurrentIndividual = ui->comboIndividual->currentText();
+            mCurrentDirectory.CurrentEvaluation = "";
+            mCurrentDirectory.CurrentCondition = "";
+
+            worker = new DirectorySearcher(mCurrentDirectory);
+
+            worker->moveToThread(workerThread);
+
+            connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
+            connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
+            connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
+            connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
+            connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
+
+            workerThread->wait();
+            worker->startWork();
+        }
+    }
+}
+
+/** An evaluation is selected
+ * @brief SessionWindow::on_comboEvaluation_currentIndexChanged
+ * @param index
+ */
+void SessionWindow::on_comboEvaluation_currentIndexChanged(int index)
+{
+    workerThread = new QThread();
+
+    mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
+    mCurrentDirectory.CurrentGroup = ui->comboGroup->currentText();
+    mCurrentDirectory.CurrentIndividual = ui->comboIndividual->currentText();
+    mCurrentDirectory.CurrentEvaluation = ui->comboEvaluation->itemText(index);
+    mCurrentDirectory.CurrentCondition = "";
+
+    worker = new DirectorySearcher(mCurrentDirectory);
+
+    worker->moveToThread(workerThread);
+
+    connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
+    connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
+    connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
+    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
+    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
+
+    workerThread->wait();
+    worker->startWork();
+}
+
+void SessionWindow::on_buttonCondition_clicked()
+{
+    if (ui->comboGroup->currentIndex() == 0
+            || ui->comboIndividual->currentIndex() == 0
+            || ui->comboEvaluation->currentIndex() == 0 )
+    {
+        return;
+    }
+
+    bool ok = false;
+    QString text = QInputDialog::getText(this, tr("Enter New Condition"), tr("New Condition:"), QLineEdit::Normal, "", &ok);
+
+    if (ok)
+    {
+        if (ui->comboCondition->findText(text) == -1)
+        {
+            QString mPath = FileTools::pathAppend(mWorkingDirectory, ui->comboGroup->currentText());
+            mPath = FileTools::pathAppend(mPath, ui->comboIndividual->currentText());
+            mPath = FileTools::pathAppend(mPath, ui->comboEvaluation->currentText());
+            mPath = FileTools::pathAppend(mPath, text);
+
+            QDir mPresentDirectory(mPath);
+
+            if (!mPresentDirectory.exists()){
+                mPresentDirectory.mkdir(".");
+            }
+
+            workerThread = new QThread();
+
+            mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
+            mCurrentDirectory.CurrentGroup = ui->comboGroup->currentText();
+            mCurrentDirectory.CurrentIndividual = ui->comboIndividual->currentText();
+            mCurrentDirectory.CurrentEvaluation = ui->comboEvaluation->currentText();
+            mCurrentDirectory.CurrentCondition = "";
+
+            worker = new DirectorySearcher(mCurrentDirectory);
+
+            worker->moveToThread(workerThread);
+
+            connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
+            connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
+            connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
+            connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
+            connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
+
+            workerThread->wait();
+            worker->startWork();
+        }
+    }
+}
 
 void SessionWindow::UserChangedSelection(const QString&)
 {
@@ -186,21 +338,86 @@ void SessionWindow::WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAc
 {
     if (action == ParseTypes::Group)
     {
-        for (int g = ui->comboGroup->count() - 1; g > 0; g--)
+        while (ui->comboGroup->count() > 1)
         {
-            ui->comboGroup->removeItem(g);
+            ui->comboGroup->removeItem(1);
         }
 
         ui->comboGroup->addItems(finalResult.Groups);
+
+        while (ui->comboIndividual->count() > 1)
+        {
+            ui->comboIndividual->removeItem(1);
+        }
+
+        ui->comboIndividual->setCurrentIndex(0);
+
+        while (ui->comboEvaluation->count() > 1)
+        {
+            ui->comboEvaluation->removeItem(1);
+        }
+
+        ui->comboEvaluation->setCurrentIndex(0);
+
+        while (ui->comboCondition->count() > 1)
+        {
+            ui->comboCondition->removeItem(1);
+        }
+
+        ui->comboCondition->setCurrentIndex(0);
     }
     else if (action == ParseTypes::Individual)
     {
-        for (int g = ui->comboIndividual->count() - 1; g > 0; g--)
+        while (ui->comboIndividual->count() > 1)
         {
-            ui->comboIndividual->removeItem(g);
+            ui->comboIndividual->removeItem(1);
         }
 
         ui->comboIndividual->addItems(finalResult.Individuals);
+
+        while (ui->comboEvaluation->count() > 1)
+        {
+            ui->comboEvaluation->removeItem(1);
+        }
+
+        ui->comboEvaluation->setCurrentIndex(0);
+
+        while (ui->comboCondition->count() > 1)
+        {
+            ui->comboCondition->removeItem(1);
+        }
+
+        ui->comboCondition->setCurrentIndex(0);
+    }
+    else if (action == ParseTypes::Evaluation)
+    {
+        while (ui->comboEvaluation->count() > 1)
+        {
+            ui->comboEvaluation->removeItem(1);
+        }
+
+        ui->comboEvaluation->addItems(finalResult.Evaluations);
+
+        while (ui->comboCondition->count() > 1)
+        {
+            ui->comboCondition->removeItem(1);
+        }
+
+        ui->comboCondition->setCurrentIndex(0);
+    }
+    else if (action == ParseTypes::Condition)
+    {
+
+        qDebug() << "Condition:";
+
+        qDebug() << finalResult.Conditions;
+
+        while (ui->comboCondition->count() > 1)
+        {
+            ui->comboCondition->removeItem(1);
+        }
+
+        ui->comboCondition->addItems(finalResult.Conditions);
     }
 }
 
@@ -208,3 +425,9 @@ SessionWindow::~SessionWindow()
 {
     delete ui;
 }
+
+
+
+
+
+

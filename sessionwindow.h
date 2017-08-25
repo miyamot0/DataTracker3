@@ -31,6 +31,12 @@ private slots:
 
     void on_comboIndividual_currentIndexChanged(int index);
 
+    void on_buttonEvaluation_clicked();
+
+    void on_buttonCondition_clicked();
+
+    void on_comboEvaluation_currentIndexChanged(int index);
+
 private:
     Ui::SessionWindow *ui;
 

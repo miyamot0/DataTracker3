@@ -21,11 +21,6 @@ static QStringList ParseDirectory(DirectoryParse mDirectory, ParseTypes mAction)
 {
     QStringList mParsedDirectories;
 
-
-
-
-
-
     return mParsedDirectories;
 }
 

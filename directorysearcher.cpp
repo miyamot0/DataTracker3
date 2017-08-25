@@ -19,8 +19,6 @@ void DirectorySearcher::working()
 {
     emit workingResult("Working...");
 
-    emit workingResult(currentDirectory.WorkingDirectory);
-
     DirectoryParse mReturn;
 
     if (currentDirectory.CurrentGroup.length() == 0)
@@ -71,6 +69,56 @@ void DirectorySearcher::working()
         return;
     }
 
+    if (currentDirectory.CurrentEvaluation.length() == 0)
+    {
+        QString mFile = FileTools::pathAppend(currentDirectory.WorkingDirectory, currentDirectory.CurrentGroup);
+        QDir workingDir(FileTools::pathAppend(mFile, currentDirectory.CurrentIndividual));
+
+        QFileInfoList mEntries = workingDir.entryInfoList(QDir::NoDotAndDotDot |
+                                                          QDir::System |
+                                                          QDir::Hidden  |
+                                                          QDir::AllDirs |
+                                                          QDir::Files,
+                                                          QDir::DirsFirst);
+
+        for (QFileInfo mInf : mEntries)
+        {
+            if (mInf.isDir())
+            {
+                mReturn.Evaluations << mInf.fileName();
+            }
+        }
+
+        emit workFinished(mReturn, ParseTypes::ParseAction::Evaluation);
+
+        return;
+    }
+
+    if (currentDirectory.CurrentCondition.length() == 0)
+    {
+        QString mFile = FileTools::pathAppend(currentDirectory.WorkingDirectory, currentDirectory.CurrentGroup);
+        mFile = FileTools::pathAppend(mFile, currentDirectory.CurrentIndividual);
+        QDir workingDir(FileTools::pathAppend(mFile, currentDirectory.CurrentEvaluation));
+
+        QFileInfoList mEntries = workingDir.entryInfoList(QDir::NoDotAndDotDot |
+                                                          QDir::System |
+                                                          QDir::Hidden  |
+                                                          QDir::AllDirs |
+                                                          QDir::Files,
+                                                          QDir::DirsFirst);
+
+        for (QFileInfo mInf : mEntries)
+        {
+            if (mInf.isDir())
+            {
+                mReturn.Conditions << mInf.fileName();
+            }
+        }
+
+        emit workFinished(mReturn, ParseTypes::ParseAction::Condition);
+
+        return;
+    }
 
     emit workFinished(currentDirectory, ParseTypes::ParseAction::None);
 }
