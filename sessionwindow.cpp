@@ -8,8 +8,6 @@
 
 #include <QtWidgets>
 
-#include <QDebug>
-
 SessionWindow::SessionWindow(QString mCurrentWorkingDirectory, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SessionWindow)

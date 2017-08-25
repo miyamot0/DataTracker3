@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     sessionwindow.cpp \
     directorysearcher.cpp \
     keyseteditor.cpp \
-    keysetcapture.cpp
+    keysetcapture.cpp \
+    recordingwindow.cpp
 
 HEADERS  += startwindow.h \
     sessionwindow.h \
@@ -39,9 +40,11 @@ HEADERS  += startwindow.h \
     keyseteditor.h \
     keysetcapture.h \
     keyset.h \
-    keysetentry.h
+    keysetentry.h \
+    recordingwindow.h
 
 FORMS    += startwindow.ui \
     sessionwindow.ui \
     keyseteditor.ui \
-    keysetcapture.ui
+    keysetcapture.ui \
+    recordingwindow.ui
