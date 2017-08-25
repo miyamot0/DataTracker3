@@ -25,10 +25,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         startwindow.cpp \
-    sessionwindow.cpp
+    sessionwindow.cpp \
+    directorysearcher.cpp
 
 HEADERS  += startwindow.h \
-    sessionwindow.h
+    sessionwindow.h \
+    filetools.h \
+    directoryparse.h \
+    directorysearcher.h \
+    parsetypes.h
 
 FORMS    += startwindow.ui \
     sessionwindow.ui

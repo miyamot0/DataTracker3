@@ -2,14 +2,25 @@
 #include "ui_startwindow.h"
 
 #include "sessionwindow.h"
+#include "filetools.h"
 
 #include <QDebug>
+#include <QStandardPaths>
+#include <QDir>
 
 StartWindow::StartWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::StartWindow)
 {
     ui->setupUi(this);
+
+    folderTitle = "DataTracker3";
+    setWindowTitle(tr("Data Tracker"));
+
+    if (FileTools::CheckAndPrepDirectory(folderTitle))
+    {
+        workingDirectory = FileTools::pathAppend(QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)[0], folderTitle);
+    }
 }
 
 StartWindow::~StartWindow()
@@ -62,9 +73,9 @@ void StartWindow::on_actionAbout_triggered()
  */
 void StartWindow::on_buttonStart_clicked()
 {
-    qDebug() << "on_buttonStart_clicked";
-
-    SessionWindow *sessionWindow = new SessionWindow(this);
-    sessionWindow->show();
-
+    if (FileTools::CheckAndPrepDirectory(folderTitle))
+    {
+        sessionWindow = new SessionWindow(workingDirectory, this);
+        sessionWindow->show();
+    }
 }

@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include "sessionwindow.h"
+
 namespace Ui {
 class StartWindow;
 }
@@ -30,6 +32,15 @@ private slots:
 
 private:
     Ui::StartWindow *ui;
+
+    SessionWindow *sessionWindow;
+
+    QString folderTitle;
+    bool foundFolder = false;
+
+    QString workingDirectory;
+
+
 };
 
 #endif // STARTWINDOW_H
