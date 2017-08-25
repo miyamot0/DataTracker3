@@ -402,6 +402,10 @@ void SessionWindow::UserChangedSelection(const QString&)
 
 }
 
+/**
+ * @brief SessionWindow::WorkUpdate
+ * @param update
+ */
 void SessionWindow::WorkUpdate(QString update)
 {
     qDebug() << "WORK_UPDATE: " << update;
@@ -411,129 +415,104 @@ void SessionWindow::WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAc
 {
     if (action == ParseTypes::Group)
     {
-        DefaultComboBox(ui->comboGroup);
-        //while (ui->comboGroup->count() > 1)
-        //{
-        //    ui->comboGroup->removeItem(1);
-        //}
-
-        ui->comboGroup->addItems(finalResult.Groups);
-
-        DefaultComboBox(ui->comboIndividual);
-        //while (ui->comboIndividual->count() > 1)
-        //{
-        //    ui->comboIndividual->removeItem(1);
-        //}
-
-        ui->comboIndividual->setCurrentIndex(0);
-
-        while (ui->comboEvaluation->count() > 1)
-        {
-            ui->comboEvaluation->removeItem(1);
-        }
-
-        ui->comboEvaluation->setCurrentIndex(0);
-
-        while (ui->comboCondition->count() > 1)
-        {
-            ui->comboCondition->removeItem(1);
-        }
-
-        ui->comboCondition->setCurrentIndex(0);
-
-        while (ui->comboKeySet->count() > 1)
-        {
-            ui->comboKeySet->removeItem(1);
-        }
-
-        ui->comboKeySet->setCurrentIndex(0);
-
-        while (ui->comboTherapist->count() > 1)
-        {
-            ui->comboTherapist->removeItem(1);
-        }
-
-        ui->comboTherapist->setCurrentIndex(0);
+        SetGroups(finalResult.Groups);
     }
     else if (action == ParseTypes::Individual)
     {
-        while (ui->comboIndividual->count() > 1)
-        {
-            ui->comboIndividual->removeItem(1);
-        }
-
-        ui->comboIndividual->addItems(finalResult.Individuals);
-
-        while (ui->comboEvaluation->count() > 1)
-        {
-            ui->comboEvaluation->removeItem(1);
-        }
-
-        ui->comboEvaluation->setCurrentIndex(0);
-
-        while (ui->comboCondition->count() > 1)
-        {
-            ui->comboCondition->removeItem(1);
-        }
-
-        ui->comboCondition->setCurrentIndex(0);
-
-        while (ui->comboKeySet->count() > 1)
-        {
-            ui->comboKeySet->removeItem(1);
-        }
-
-        ui->comboKeySet->setCurrentIndex(0);
-
-        while (ui->comboTherapist->count() > 1)
-        {
-            ui->comboTherapist->removeItem(1);
-        }
-
-        ui->comboTherapist->setCurrentIndex(0);
+        SetIndividuals(finalResult.Individuals);
     }
     else if (action == ParseTypes::Evaluation)
     {
-        while (ui->comboEvaluation->count() > 1)
-        {
-            ui->comboEvaluation->removeItem(1);
-        }
-
-        ui->comboEvaluation->addItems(finalResult.Evaluations);
-
-        while (ui->comboKeySet->count() > 1)
-        {
-            ui->comboKeySet->removeItem(1);
-        }
-
-        ui->comboKeySet->addItems(finalResult.KeySets);
-
-        // TODO therapists here
-
-        while (ui->comboCondition->count() > 1)
-        {
-            ui->comboCondition->removeItem(1);
-        }
-
-        ui->comboCondition->setCurrentIndex(0);
+        SetEvaluations(finalResult.Evaluations, finalResult.KeySets, finalResult.Therapists);
     }
     else if (action == ParseTypes::Condition)
     {
-        while (ui->comboCondition->count() > 1)
-        {
-            ui->comboCondition->removeItem(1);
-        }
-
-        ui->comboCondition->addItems(finalResult.Conditions);
+        SetConditions(finalResult.Conditions);
     }
 }
 
+/**
+ * @brief SessionWindow::DefaultComboBox
+ * @param mSelectedBox
+ */
 void SessionWindow::DefaultComboBox(QComboBox *mSelectedBox)
 {
     while (mSelectedBox->count() > 1)
     {
         mSelectedBox->removeItem(1);
     }
+}
+
+/**
+ * @brief SessionWindow::SetGroups
+ * @param Groups
+ */
+void SessionWindow::SetGroups(QStringList Groups)
+{
+    DefaultComboBox(ui->comboGroup);
+        ui->comboGroup->addItems(Groups);
+
+    DefaultComboBox(ui->comboIndividual);
+        ui->comboIndividual->setCurrentIndex(0);
+
+    DefaultComboBox(ui->comboEvaluation);
+        ui->comboEvaluation->setCurrentIndex(0);
+
+    DefaultComboBox(ui->comboCondition);
+        ui->comboCondition->setCurrentIndex(0);
+
+    DefaultComboBox(ui->comboKeySet);
+        ui->comboKeySet->setCurrentIndex(0);
+
+    DefaultComboBox(ui->comboTherapist);
+        ui->comboTherapist->setCurrentIndex(0);
+}
+
+/**
+ * @brief SessionWindow::SetIndividuals
+ * @param Individuals
+ */
+void SessionWindow::SetIndividuals(QStringList Individuals)
+{
+    DefaultComboBox(ui->comboIndividual);
+        ui->comboIndividual->addItems(Individuals);
+
+    DefaultComboBox(ui->comboEvaluation);
+        ui->comboEvaluation->setCurrentIndex(0);
+
+    DefaultComboBox(ui->comboCondition);
+        ui->comboCondition->setCurrentIndex(0);
+
+    DefaultComboBox(ui->comboKeySet);
+        ui->comboKeySet->setCurrentIndex(0);
+
+    DefaultComboBox(ui->comboTherapist);
+        ui->comboTherapist->setCurrentIndex(0);
+}
+
+void SessionWindow::SetEvaluations(QStringList Evaluations, QStringList KeySets, QStringList Therapists)
+{
+    DefaultComboBox(ui->comboEvaluation);
+        ui->comboEvaluation->addItems(Evaluations);
+
+    DefaultComboBox(ui->comboKeySet);
+        ui->comboKeySet->addItems(KeySets);
+
+    DefaultComboBox(ui->comboTherapist);
+        ui->comboTherapist->addItems(Therapists);
+
+    DefaultComboBox(ui->comboCondition);
+        ui->comboCondition->setCurrentIndex(0);
+}
+
+/**
+ * @brief SessionWindow::SetConditions
+ * @param Conditions
+ */
+void SessionWindow::SetConditions(QStringList Conditions)
+{
+    DefaultComboBox(ui->comboCondition);
+        ui->comboCondition->addItems(Conditions);
 }
 
 SessionWindow::~SessionWindow()

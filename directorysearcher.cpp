@@ -113,8 +113,6 @@ void DirectorySearcher::working()
             }
         }
 
-        // Load therapists
-
         QString mTherapistJson = FileTools::pathAppend(FileTools::pathAppend(mFile, currentDirectory.CurrentIndividual), "Therapists.json");
 
         QFile mTherapists(mTherapistJson);
@@ -126,11 +124,12 @@ void DirectorySearcher::working()
                 mTherapists.close();
 
                 QJsonDocument loadTherapists = QJsonDocument::fromJson(therapistData.toUtf8());
+                QJsonObject  therapistObject = loadTherapists.object();
+                QJsonArray therapistArray = therapistObject["Therapists"].toArray();
 
-                qDebug() << loadTherapists;
-
-                //QJsonDocument loadTherapists(therapistData);
-
+                foreach (const QJsonValue therapist, therapistArray) {
+                    mReturn.Therapists << therapist.toString();
+                }
             }
         }
 

@@ -38,6 +38,11 @@ private slots:
 
     void on_buttonTherapist_clicked();
 
+    void SetGroups(QStringList Groups);
+    void SetIndividuals(QStringList Individuals);
+    void SetEvaluations(QStringList Evaluations, QStringList KeySets, QStringList Therapists);
+    void SetConditions(QStringList Conditions);
+
     void DefaultComboBox(QComboBox *mSelectedBox);
 
 private:
