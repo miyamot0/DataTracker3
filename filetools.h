@@ -77,14 +77,36 @@ static void WriteTherapists(QString path, QStringList therapists)
 
     QJsonDocument jsonDoc(json);
 
-    qDebug() << therapists;
+    QFile saveFile(path);
 
-    qDebug() << jsonDoc;
+    if (!saveFile.open(QIODevice::WriteOnly)) {
+        // TODO error handling
+
+        return;
+    }
+
+    saveFile.write(jsonDoc.toJson());
+}
+
+static void WriteCollectors(QString path, QStringList collectors)
+{
+    QJsonObject json;
+
+    QJsonArray collectorObj;
+
+    foreach(QString entry, collectors)
+    {
+        collectorObj.append(entry);
+    }
+    json["Collectors"] = collectorObj;
+
+    QJsonDocument jsonDoc(json);
 
     QFile saveFile(path);
 
     if (!saveFile.open(QIODevice::WriteOnly)) {
         // TODO error handling
+
         return;
     }
 

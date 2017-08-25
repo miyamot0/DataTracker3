@@ -14,6 +14,7 @@ public:
     QString CurrentCondition;
     QString CurrentKeySet;
     QString CurrentTherapist;
+    QString CurrentCollector;
 
     QStringList Groups;
     QStringList Individuals;
@@ -21,9 +22,7 @@ public:
     QStringList Conditions;
     QStringList KeySets;
     QStringList Therapists;
-
-
-    //KeySet
+    QStringList Collectors;
 
     bool Primary;
     int Duration;

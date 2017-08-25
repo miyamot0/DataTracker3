@@ -397,6 +397,39 @@ void SessionWindow::on_buttonTherapist_clicked()
     }
 }
 
+void SessionWindow::on_buttonCollector_clicked()
+{
+    if (ui->comboGroup->currentIndex() == 0
+            || ui->comboIndividual->currentIndex() == 0)
+    {
+        return;
+    }
+
+    bool ok;
+    QString collectorName = QInputDialog::getText(this, tr("Name the new collector"),
+                                                  tr("Collector Name:"),
+                                                  QLineEdit::Normal,
+                                                  "", &ok);
+
+    if (ok && !collectorName.isEmpty())
+    {
+        ui->comboCollector->addItem(collectorName);
+
+        QStringList collectorList;
+
+        for (int i=1; i<ui->comboCollector->count(); i++)
+        {
+            collectorList << ui->comboCollector->itemText(i);
+        }
+
+        QString mCollectorPath = FileTools::pathAppend(mWorkingDirectory, ui->comboGroup->currentText());
+        mCollectorPath = FileTools::pathAppend(mCollectorPath, ui->comboIndividual->currentText());
+        mCollectorPath = FileTools::pathAppend(mCollectorPath, "Collectors.json");
+
+        FileTools::WriteCollectors(mCollectorPath, collectorList);
+    }
+}
+
 void SessionWindow::UserChangedSelection(const QString&)
 {
 
@@ -423,7 +456,9 @@ void SessionWindow::WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAc
     }
     else if (action == ParseTypes::Evaluation)
     {
-        SetEvaluations(finalResult.Evaluations, finalResult.KeySets, finalResult.Therapists);
+        //
+
+        SetEvaluations(finalResult.Evaluations, finalResult.KeySets, finalResult.Therapists, finalResult.Collectors);
     }
     else if (action == ParseTypes::Condition)
     {
@@ -466,6 +501,9 @@ void SessionWindow::SetGroups(QStringList Groups)
 
     DefaultComboBox(ui->comboTherapist);
         ui->comboTherapist->setCurrentIndex(0);
+
+    DefaultComboBox(ui->comboCollector);
+        ui->comboCollector->setCurrentIndex(0);
 }
 
 /**
@@ -488,9 +526,18 @@ void SessionWindow::SetIndividuals(QStringList Individuals)
 
     DefaultComboBox(ui->comboTherapist);
         ui->comboTherapist->setCurrentIndex(0);
+
+    DefaultComboBox(ui->comboCollector);
+        ui->comboCollector->setCurrentIndex(0);
 }
 
-void SessionWindow::SetEvaluations(QStringList Evaluations, QStringList KeySets, QStringList Therapists)
+/**
+ * @brief SessionWindow::SetEvaluations
+ * @param Evaluations
+ * @param KeySets
+ * @param Therapists
+ */
+void SessionWindow::SetEvaluations(QStringList Evaluations, QStringList KeySets, QStringList Therapists, QStringList Collectors)
 {
     DefaultComboBox(ui->comboEvaluation);
         ui->comboEvaluation->addItems(Evaluations);
@@ -500,6 +547,9 @@ void SessionWindow::SetEvaluations(QStringList Evaluations, QStringList KeySets,
 
     DefaultComboBox(ui->comboTherapist);
         ui->comboTherapist->addItems(Therapists);
+
+    DefaultComboBox(ui->comboCollector);
+        ui->comboCollector->addItems(Collectors);
 
     DefaultComboBox(ui->comboCondition);
         ui->comboCondition->setCurrentIndex(0);
@@ -519,6 +569,8 @@ SessionWindow::~SessionWindow()
 {
     delete ui;
 }
+
+
 
 
 

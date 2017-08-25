@@ -40,10 +40,12 @@ private slots:
 
     void SetGroups(QStringList Groups);
     void SetIndividuals(QStringList Individuals);
-    void SetEvaluations(QStringList Evaluations, QStringList KeySets, QStringList Therapists);
+    void SetEvaluations(QStringList Evaluations, QStringList KeySets, QStringList Therapists, QStringList Collectors);
     void SetConditions(QStringList Conditions);
 
     void DefaultComboBox(QComboBox *mSelectedBox);
+
+    void on_buttonCollector_clicked();
 
 private:
     Ui::SessionWindow *ui;

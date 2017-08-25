@@ -107,11 +107,14 @@ void DirectorySearcher::working()
 
         for (QFileInfo mInf : mEntries)
         {
-            if (mInf.fileName() != "Therapists.json")
+            if (mInf.fileName() != "Therapists.json" &&
+                mInf.fileName() != "Collectors.json")
             {
                 mReturn.KeySets << mInf.fileName();
             }
         }
+
+        // Therapist Parsing
 
         QString mTherapistJson = FileTools::pathAppend(FileTools::pathAppend(mFile, currentDirectory.CurrentIndividual), "Therapists.json");
 
@@ -129,6 +132,28 @@ void DirectorySearcher::working()
 
                 foreach (const QJsonValue therapist, therapistArray) {
                     mReturn.Therapists << therapist.toString();
+                }
+            }
+        }
+
+        // Collector Parsing
+
+        QString mCollectorJson = FileTools::pathAppend(FileTools::pathAppend(mFile, currentDirectory.CurrentIndividual), "Collectors.json");
+
+        QFile mCollectors(mCollectorJson);
+
+        if (mCollectors.exists())
+        {
+            if (mCollectors.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                QString collectorData = mCollectors.readAll();
+                mCollectors.close();
+
+                QJsonDocument loadCollectors = QJsonDocument::fromJson(collectorData.toUtf8());
+                QJsonObject  collectorObject = loadCollectors.object();
+                QJsonArray collectorArray = collectorObject["Collectors"].toArray();
+
+                foreach (const QJsonValue collector, collectorArray) {
+                    mReturn.Collectors << collector.toString();
                 }
             }
         }
