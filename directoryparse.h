@@ -12,19 +12,19 @@ public:
     QString CurrentIndividual;
     QString CurrentEvaluation;
     QString CurrentCondition;
+    QString CurrentKeySet;
+    QString CurrentTherapist;
 
     QStringList Groups;
     QStringList Individuals;
     QStringList Evaluations;
     QStringList Conditions;
+    QStringList KeySets;
+    QStringList Therapists;
 
-    //QString Individual;
-    //QString Evaluation;
-    //QString Condition;
 
     //KeySet
 
-    QString Therapist;
     bool Primary;
     int Duration;
     int Session;

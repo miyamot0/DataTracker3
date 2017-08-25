@@ -37,7 +37,9 @@ HEADERS  += startwindow.h \
     directorysearcher.h \
     parsetypes.h \
     keyseteditor.h \
-    keysetcapture.h
+    keysetcapture.h \
+    keyset.h \
+    keysetentry.h
 
 FORMS    += startwindow.ui \
     sessionwindow.ui \

@@ -1,7 +1,6 @@
 #include "keyseteditor.h"
 #include "ui_keyseteditor.h"
 
-#include <QDebug>
 #include <QMessageBox>
 #include <QMenu>
 
@@ -18,11 +17,17 @@ KeySetEditor::KeySetEditor(QWidget *parent) :
     connect(ui->tableWidgetDuration, SIGNAL(customContextMenuRequested(QPoint)), SLOT(customDurationMenuRequested(QPoint)));
 }
 
+/**
+ * @brief KeySetEditor::~KeySetEditor
+ */
 KeySetEditor::~KeySetEditor()
 {
     delete ui;
 }
 
+/**
+ * @brief KeySetEditor::on_pushButtonFrequency_clicked
+ */
 void KeySetEditor::on_pushButtonFrequency_clicked()
 {
     keyCapture = new KeySetCapture(this);
@@ -46,23 +51,56 @@ void KeySetEditor::on_pushButtonFrequency_clicked()
     }
 }
 
+/**
+ * @brief KeySetEditor::customFrequencyMenuRequested
+ * @param pos
+ */
 void KeySetEditor::customFrequencyMenuRequested(QPoint pos)
 {
     QMenu menu(this);
 
-    QAction *removeRow = menu.addAction(tr("Remove"));
-
+    QAction *editRow = menu.addAction(tr("Edit Key"));
     menu.addSeparator();
-
     QAction *moveRowUp = menu.addAction(tr("Move Key Up"));
-
     QAction *moveRowDown = menu.addAction(tr("Move Key Down"));
+    menu.addSeparator();
+    QAction *removeRow = menu.addAction(tr("Remove Key"));
 
     QAction *selectedEntry = menu.exec(ui->tableWidgetFrequency->viewport()->mapToGlobal(pos));
 
     QModelIndex index = ui->tableWidgetFrequency->indexAt(pos);
 
-    if (selectedEntry == removeRow)
+    if (selectedEntry == editRow)
+    {
+        keyCapture = new KeySetCapture(this);
+
+        QString editingStringKey(ui->tableWidgetFrequency->item(index.row(), 0)->data(Qt::DisplayRole).toString());
+        QString editingStringDesc(ui->tableWidgetFrequency->item(index.row(), 1)->data(Qt::DisplayRole).toString());
+
+        QKeySequence seq = QKeySequence(editingStringDesc);
+
+        keyCapture->SetKeyCode(seq[0]);
+        keyCapture->SetKeyText(editingStringKey);
+        keyCapture->SetKeyDescription(editingStringDesc);
+
+        keyCapture->exec();
+
+        if (keyCapture->enteredKey)
+        {
+            if (keyCapture->KeyCode == -1 || keyCapture->KeyDescription.length() == 0)
+            {
+                QMessageBox::critical(this,
+                  tr("Error on Key Capture"),
+                  tr("Key information provided was either incomplete or missing.") );
+            }
+            else
+            {
+                ui->tableWidgetFrequency->setItem(index.row(), 0, new QTableWidgetItem(keyCapture->KeyText));
+                ui->tableWidgetFrequency->setItem(index.row(), 1, new QTableWidgetItem(keyCapture->KeyDescription));
+            }
+        }
+    }
+    else if (selectedEntry == removeRow)
     {
         ui->tableWidgetFrequency->removeRow(index.row());
     }
@@ -96,6 +134,9 @@ void KeySetEditor::customFrequencyMenuRequested(QPoint pos)
     }
 }
 
+/**
+ * @brief KeySetEditor::on_pushButtonDuration_clicked
+ */
 void KeySetEditor::on_pushButtonDuration_clicked()
 {
     keyCapture = new KeySetCapture(this);
@@ -119,23 +160,56 @@ void KeySetEditor::on_pushButtonDuration_clicked()
     }
 }
 
+/**
+ * @brief KeySetEditor::customDurationMenuRequested
+ * @param pos
+ */
 void KeySetEditor::customDurationMenuRequested(QPoint pos)
 {
     QMenu menu(this);
 
-    QAction *removeRow = menu.addAction(tr("Remove"));
-
+    QAction *editRow = menu.addAction(tr("Edit Key"));
     menu.addSeparator();
-
     QAction *moveRowUp = menu.addAction(tr("Move Key Up"));
-
     QAction *moveRowDown = menu.addAction(tr("Move Key Down"));
+    menu.addSeparator();
+    QAction *removeRow = menu.addAction(tr("Remove Key"));
 
     QAction *selectedEntry = menu.exec(ui->tableWidgetDuration->viewport()->mapToGlobal(pos));
 
     QModelIndex index = ui->tableWidgetDuration->indexAt(pos);
 
-    if (selectedEntry == removeRow)
+    if (selectedEntry == editRow)
+    {
+        keyCapture = new KeySetCapture(this);
+
+        QString editingStringKey(ui->tableWidgetDuration->item(index.row(), 0)->data(Qt::DisplayRole).toString());
+        QString editingStringDesc(ui->tableWidgetDuration->item(index.row(), 1)->data(Qt::DisplayRole).toString());
+
+        QKeySequence seq = QKeySequence(editingStringDesc);
+
+        keyCapture->SetKeyCode(seq[0]);
+        keyCapture->SetKeyText(editingStringKey);
+        keyCapture->SetKeyDescription(editingStringDesc);
+
+        keyCapture->exec();
+
+        if (keyCapture->enteredKey)
+        {
+            if (keyCapture->KeyCode == -1 || keyCapture->KeyDescription.length() == 0)
+            {
+                QMessageBox::critical(this,
+                  tr("Error on Key Capture"),
+                  tr("Key information provided was either incomplete or missing.") );
+            }
+            else
+            {
+                ui->tableWidgetDuration->setItem(index.row(), 0, new QTableWidgetItem(keyCapture->KeyText));
+                ui->tableWidgetDuration->setItem(index.row(), 1, new QTableWidgetItem(keyCapture->KeyDescription));
+            }
+        }
+    }
+    else if (selectedEntry == removeRow)
     {
         ui->tableWidgetDuration->removeRow(index.row());
     }
@@ -166,5 +240,48 @@ void KeySetEditor::customDurationMenuRequested(QPoint pos)
         ui->tableWidgetDuration->setItem(currIndex + 2, 1, new QTableWidgetItem(movingStringDesc));
 
         ui->tableWidgetDuration->removeRow(currIndex);
+    }
+}
+
+void KeySetEditor::on_buttonBox_clicked(QAbstractButton *button)
+{
+    if((QPushButton *)button == ui->buttonBox->button(QDialogButtonBox::Ok))
+    {
+        // TODO keySet.KeySetName
+
+        keySet.FrequencyKeys.clear();
+
+        QKeySequence seq;
+        QString nameKey, descKey;
+
+        for (int i=0; i<ui->tableWidgetFrequency->rowCount(); i++)
+        {
+            keySet.FrequencyKeys.append(KeySetEntry());
+
+            nameKey = ui->tableWidgetFrequency->item(i, 0)->data(Qt::DisplayRole).toString();
+            keySet.FrequencyKeys[i].KeyName = nameKey;
+
+            seq = QKeySequence(nameKey);
+            keySet.FrequencyKeys[i].KeyCode = seq[0];
+
+            descKey = ui->tableWidgetFrequency->item(i, 1)->data(Qt::DisplayRole).toString();
+            keySet.FrequencyKeys[i].KeyDescription = descKey;
+        }
+
+        keySet.DurationKeys.clear();
+
+        for (int i=0; i<ui->tableWidgetDuration->rowCount(); i++)
+        {
+            keySet.DurationKeys.append(KeySetEntry());
+
+            nameKey = ui->tableWidgetDuration->item(i, 0)->data(Qt::DisplayRole).toString();
+            keySet.DurationKeys[i].KeyName = nameKey;
+
+            seq = QKeySequence(nameKey);
+            keySet.DurationKeys[i].KeyCode = seq[0];
+
+            descKey = ui->tableWidgetDuration->item(i, 1)->data(Qt::DisplayRole).toString();
+            keySet.DurationKeys[i].KeyDescription = descKey;
+        }
     }
 }

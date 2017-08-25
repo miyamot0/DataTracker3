@@ -1,8 +1,6 @@
 #include "keysetcapture.h"
 #include "ui_keysetcapture.h"
 
-#include <QDebug>
-
 KeySetCapture::KeySetCapture(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::KeySetCapture)
@@ -17,6 +15,37 @@ KeySetCapture::KeySetCapture(QWidget *parent) :
 KeySetCapture::~KeySetCapture()
 {
     delete ui;
+}
+
+/**
+ * @brief KeySetCapture::SetKeyCode
+ * @param value
+ */
+void KeySetCapture::SetKeyCode(int value)
+{
+    KeyCode = value;
+}
+
+/**
+ * @brief KeySetCapture::SetKeyDescription
+ * @param value
+ */
+void KeySetCapture::SetKeyDescription(QString value)
+{
+    KeyDescription = value;
+
+    ui->editDescription->setText(value);
+}
+
+/**
+ * @brief KeySetCapture::SetKeyText
+ * @param value
+ */
+void KeySetCapture::SetKeyText(QString value)
+{
+    KeyText = value;
+
+    ui->editKey->setText(QString("Key Set: %1").arg(value.toUpper()));
 }
 
 /**

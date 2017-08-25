@@ -5,19 +5,98 @@
 #include <QObject>
 #include <QDir>
 
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
+
 #include "directoryparse.h"
 #include "parsetypes.h"
+#include "keyset.h"
+#include "keysetentry.h"
+
+
+#include <QDebug>
+
 
 class FileTools
 {
 public:
+
+static void WriteKeySet(QString path, KeySet keySet)
+{
+    QJsonObject json;
+    json["Title"] = keySet.KeySetName;
+
+    QJsonArray frequencyKeys;
+    foreach(KeySetEntry entry, keySet.FrequencyKeys)
+    {
+        QJsonObject mEntry;
+        mEntry["Code"] = entry.KeyCode;
+        mEntry["Name"] = entry.KeyName;
+        mEntry["Description"] = entry.KeyDescription;
+
+        frequencyKeys.append(mEntry);
+    }
+    json["FrequencyKeys"] = frequencyKeys;
+
+    QJsonArray durationKeys;
+    foreach(KeySetEntry entry, keySet.DurationKeys)
+    {
+        QJsonObject mEntry;
+        mEntry["Code"] = entry.KeyCode;
+        mEntry["Name"] = entry.KeyName;
+        mEntry["Description"] = entry.KeyDescription;
+
+        durationKeys.append(mEntry);
+    }
+    json["DurationKeys"] = durationKeys;
+
+    QJsonDocument jsonDoc(json);
+
+    QFile saveFile(path);
+
+    if (!saveFile.open(QIODevice::WriteOnly)) {
+        // TODO error handling
+        return;
+    }
+
+    saveFile.write(jsonDoc.toJson());
+}
+
+static void WriteTherapists(QString path, QStringList therapists)
+{
+    QJsonObject json;
+
+    QJsonArray therapistObj;
+
+    foreach(QString entry, therapists)
+    {
+        therapistObj.append(entry);
+    }
+    json["Therapists"] = therapistObj;
+
+    QJsonDocument jsonDoc(json);
+
+    qDebug() << therapists;
+
+    qDebug() << jsonDoc;
+
+    QFile saveFile(path);
+
+    if (!saveFile.open(QIODevice::WriteOnly)) {
+        // TODO error handling
+        return;
+    }
+
+    saveFile.write(jsonDoc.toJson());
+}
 
 static QString pathAppend(const QString& path, const QString& file)
 {
     return QDir::cleanPath(path + QDir::separator() + file);
 }
 
-static QStringList ParseDirectory(DirectoryParse mDirectory, ParseTypes mAction)
+static QStringList ParseDirectory(DirectoryParse mDirectory, ParseTypes)
 {
     QStringList mParsedDirectories;
 

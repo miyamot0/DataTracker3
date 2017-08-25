@@ -3,6 +3,7 @@
 
 #include "filetools.h"
 #include "parsetypes.h"
+#include "keyseteditor.h"
 
 #include <QtWidgets>
 
@@ -15,16 +16,6 @@ SessionWindow::SessionWindow(QString mCurrentWorkingDirectory, QWidget *parent) 
     mWorkingDirectory = mCurrentWorkingDirectory;
 
     setWindowTitle(tr("Session Designer"));
-
-    /*
-    connect(ui->comboGroup, SIGNAL(currentTextChanged(const QString&)), this, SLOT(UserChangedSelection(const QString&)));
-    connect(ui->comboGroup, SIGNAL(currentTextChanged(const QString&)), this, SLOT(UserChangedSelection(const QString&)));
-    connect(ui->comboGroup, SIGNAL(currentTextChanged(const QString&)), this, SLOT(UserChangedSelection(const QString&)));
-    connect(ui->comboGroup, SIGNAL(currentTextChanged(const QString&)), this, SLOT(UserChangedSelection(const QString&)));
-    connect(ui->comboGroup, SIGNAL(currentTextChanged(const QString&)), this, SLOT(UserChangedSelection(const QString&)));
-    connect(ui->comboGroup, SIGNAL(currentTextChanged(const QString&)), this, SLOT(UserChangedSelection(const QString&)));
-    connect(ui->comboGroup, SIGNAL(currentTextChanged(const QString&)), this, SLOT(UserChangedSelection(const QString&)));
-    */
 
     workerThread = new QThread();
 
@@ -42,7 +33,6 @@ SessionWindow::SessionWindow(QString mCurrentWorkingDirectory, QWidget *parent) 
 
     workerThread->wait();
     worker->startWork();
-
 }
 
 /** Add a new group
@@ -73,6 +63,7 @@ void SessionWindow::on_buttonGroup_clicked()
             mCurrentDirectory.CurrentIndividual = "";
             mCurrentDirectory.CurrentEvaluation = "";
             mCurrentDirectory.CurrentCondition = "";
+            mCurrentDirectory.CurrentKeySet = "";
 
             worker = new DirectorySearcher(mCurrentDirectory);
 
@@ -102,6 +93,7 @@ void SessionWindow::on_comboGroup_currentIndexChanged(int index)
     mCurrentDirectory.CurrentGroup = ui->comboGroup->itemText(index);
     mCurrentDirectory.CurrentIndividual = "";
     mCurrentDirectory.CurrentEvaluation = "";
+    mCurrentDirectory.CurrentKeySet = "";
 
     worker = new DirectorySearcher(mCurrentDirectory);
 
@@ -150,6 +142,7 @@ void SessionWindow::on_buttonIndividual_clicked()
             mCurrentDirectory.CurrentIndividual = "";
             mCurrentDirectory.CurrentEvaluation = "";
             mCurrentDirectory.CurrentCondition = "";
+            mCurrentDirectory.CurrentKeySet = "";
 
             worker = new DirectorySearcher(mCurrentDirectory);
 
@@ -179,6 +172,7 @@ void SessionWindow::on_comboIndividual_currentIndexChanged(int index)
     mCurrentDirectory.CurrentGroup = ui->comboGroup->currentText();
     mCurrentDirectory.CurrentIndividual = ui->comboIndividual->itemText(index);
     mCurrentDirectory.CurrentEvaluation = "";
+    mCurrentDirectory.CurrentKeySet = "";
 
     worker = new DirectorySearcher(mCurrentDirectory);
 
@@ -324,6 +318,85 @@ void SessionWindow::on_buttonCondition_clicked()
     }
 }
 
+void SessionWindow::on_buttonKeySet_clicked()
+{
+    if (ui->comboGroup->currentIndex() == 0
+            || ui->comboIndividual->currentIndex() == 0)
+    {
+        return;
+    }
+
+    QStringList listOptions;
+    listOptions << tr("Add KeySet") << tr("Edit KeySet");
+
+    bool ok;
+    QString selectedOption = QInputDialog::getItem(this, tr("QInputDialog::getItem()"),
+                                                   tr("Pick option:"), listOptions, 0, false, &ok);
+    if (ok && !selectedOption.isEmpty())
+    {
+        int mSelection = listOptions.indexOf(selectedOption);
+
+        if (mSelection == 0)
+        {
+            QString keySetName = QInputDialog::getText(this, tr("Name the new KeySet"),
+                                                       tr("Key Set Name:"),
+                                                       QLineEdit::Normal,
+                                                       "", &ok);
+            if (ok && !keySetName.isEmpty())
+            {
+                KeySetEditor mKeySetEntry;
+                mKeySetEntry.KeySetName = keySetName;
+
+                mKeySetEntry.exec();
+
+                QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, ui->comboGroup->currentText());
+                mKeyPath = FileTools::pathAppend(mKeyPath, ui->comboIndividual->currentText());
+
+                FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(keySetName)), mKeySetEntry.keySet);
+
+            }
+        }
+        else if (mSelection == 1)
+        {
+            // TODO modify keys
+
+        }
+    }
+}
+
+void SessionWindow::on_buttonTherapist_clicked()
+{
+    if (ui->comboGroup->currentIndex() == 0
+            || ui->comboIndividual->currentIndex() == 0)
+    {
+        return;
+    }
+
+    bool ok;
+    QString therapistName = QInputDialog::getText(this, tr("Name the new therapist"),
+                                               tr("Therapist Name:"),
+                                               QLineEdit::Normal,
+                                               "", &ok);
+
+    if (ok && !therapistName.isEmpty())
+    {
+        ui->comboTherapist->addItem(therapistName);
+
+        QStringList therapistList;
+
+        for (int i=1; i<ui->comboTherapist->count(); i++)
+        {
+            therapistList << ui->comboTherapist->itemText(i);
+        }
+
+        QString mTherapistPath = FileTools::pathAppend(mWorkingDirectory, ui->comboGroup->currentText());
+        mTherapistPath = FileTools::pathAppend(mTherapistPath, ui->comboIndividual->currentText());
+        mTherapistPath = FileTools::pathAppend(mTherapistPath, "Therapists.json");
+
+        FileTools::WriteTherapists(mTherapistPath, therapistList);
+    }
+}
+
 void SessionWindow::UserChangedSelection(const QString&)
 {
 
@@ -338,17 +411,19 @@ void SessionWindow::WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAc
 {
     if (action == ParseTypes::Group)
     {
-        while (ui->comboGroup->count() > 1)
-        {
-            ui->comboGroup->removeItem(1);
-        }
+        DefaultComboBox(ui->comboGroup);
+        //while (ui->comboGroup->count() > 1)
+        //{
+        //    ui->comboGroup->removeItem(1);
+        //}
 
         ui->comboGroup->addItems(finalResult.Groups);
 
-        while (ui->comboIndividual->count() > 1)
-        {
-            ui->comboIndividual->removeItem(1);
-        }
+        DefaultComboBox(ui->comboIndividual);
+        //while (ui->comboIndividual->count() > 1)
+        //{
+        //    ui->comboIndividual->removeItem(1);
+        //}
 
         ui->comboIndividual->setCurrentIndex(0);
 
@@ -365,6 +440,20 @@ void SessionWindow::WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAc
         }
 
         ui->comboCondition->setCurrentIndex(0);
+
+        while (ui->comboKeySet->count() > 1)
+        {
+            ui->comboKeySet->removeItem(1);
+        }
+
+        ui->comboKeySet->setCurrentIndex(0);
+
+        while (ui->comboTherapist->count() > 1)
+        {
+            ui->comboTherapist->removeItem(1);
+        }
+
+        ui->comboTherapist->setCurrentIndex(0);
     }
     else if (action == ParseTypes::Individual)
     {
@@ -388,6 +477,20 @@ void SessionWindow::WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAc
         }
 
         ui->comboCondition->setCurrentIndex(0);
+
+        while (ui->comboKeySet->count() > 1)
+        {
+            ui->comboKeySet->removeItem(1);
+        }
+
+        ui->comboKeySet->setCurrentIndex(0);
+
+        while (ui->comboTherapist->count() > 1)
+        {
+            ui->comboTherapist->removeItem(1);
+        }
+
+        ui->comboTherapist->setCurrentIndex(0);
     }
     else if (action == ParseTypes::Evaluation)
     {
@@ -398,6 +501,15 @@ void SessionWindow::WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAc
 
         ui->comboEvaluation->addItems(finalResult.Evaluations);
 
+        while (ui->comboKeySet->count() > 1)
+        {
+            ui->comboKeySet->removeItem(1);
+        }
+
+        ui->comboKeySet->addItems(finalResult.KeySets);
+
+        // TODO therapists here
+
         while (ui->comboCondition->count() > 1)
         {
             ui->comboCondition->removeItem(1);
@@ -407,11 +519,6 @@ void SessionWindow::WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAc
     }
     else if (action == ParseTypes::Condition)
     {
-
-        qDebug() << "Condition:";
-
-        qDebug() << finalResult.Conditions;
-
         while (ui->comboCondition->count() > 1)
         {
             ui->comboCondition->removeItem(1);
@@ -421,10 +528,21 @@ void SessionWindow::WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAc
     }
 }
 
+void SessionWindow::DefaultComboBox(QComboBox *mSelectedBox)
+{
+    while (mSelectedBox->count() > 1)
+    {
+        mSelectedBox->removeItem(1);
+    }
+}
+
 SessionWindow::~SessionWindow()
 {
     delete ui;
 }
+
+
+
 
 
 

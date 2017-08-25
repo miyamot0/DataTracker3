@@ -4,6 +4,9 @@
 #include "filetools.h"
 
 #include <QDir>
+#include <QJsonDocument>
+
+#include <QDebug>
 
 DirectorySearcher::DirectorySearcher(DirectoryParse mPresent)
 {
@@ -71,6 +74,8 @@ void DirectorySearcher::working()
 
     if (currentDirectory.CurrentEvaluation.length() == 0)
     {
+        // Load evaluations
+
         QString mFile = FileTools::pathAppend(currentDirectory.WorkingDirectory, currentDirectory.CurrentGroup);
         QDir workingDir(FileTools::pathAppend(mFile, currentDirectory.CurrentIndividual));
 
@@ -86,6 +91,46 @@ void DirectorySearcher::working()
             if (mInf.isDir())
             {
                 mReturn.Evaluations << mInf.fileName();
+            }
+        }
+
+        // Load key sets
+
+        QStringList filters;
+        filters << "*.json";
+
+        QDir jsonLocation = QDir(workingDir);
+        jsonLocation.setNameFilters(filters);
+        jsonLocation.setFilter(QDir::Files);
+
+        mEntries = jsonLocation.entryInfoList();
+
+        for (QFileInfo mInf : mEntries)
+        {
+            if (mInf.fileName() != "Therapists.json")
+            {
+                mReturn.KeySets << mInf.fileName();
+            }
+        }
+
+        // Load therapists
+
+        QString mTherapistJson = FileTools::pathAppend(FileTools::pathAppend(mFile, currentDirectory.CurrentIndividual), "Therapists.json");
+
+        QFile mTherapists(mTherapistJson);
+
+        if (mTherapists.exists())
+        {
+            if (mTherapists.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                QString therapistData = mTherapists.readAll();
+                mTherapists.close();
+
+                QJsonDocument loadTherapists = QJsonDocument::fromJson(therapistData.toUtf8());
+
+                qDebug() << loadTherapists;
+
+                //QJsonDocument loadTherapists(therapistData);
+
             }
         }
 

@@ -24,6 +24,10 @@ public:
     QString KeyText;
     int KeyCode;
 
+    void SetKeyCode(int value);
+    void SetKeyDescription(QString value);
+    void SetKeyText(QString value);
+
     ~KeySetCapture();
 
 private slots:
