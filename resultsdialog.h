@@ -1,6 +1,8 @@
 #ifndef RESULTSDIALOG_H
 #define RESULTSDIALOG_H
 
+#include "sessionevent.h"
+
 #include <QDialog>
 
 namespace Ui {
@@ -25,6 +27,7 @@ public:
     QList<QPair<QString, double>> FrequencyThree, DurationThree;
 
     void BuildTables();
+    void BuildNarrative(QList<SessionEvent> *PressedKeys, QDateTime *startTime);
 
     ~ResultsDialog();
 

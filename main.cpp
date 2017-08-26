@@ -80,6 +80,8 @@ int main(int argc, char *argv[])
 
     mResults.BuildTables();
 
+    mResults.BuildNarrative(&r.PressedKeys, &r.startTime);
+
     mResults.show();
 
     return a.exec();

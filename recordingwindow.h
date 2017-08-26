@@ -52,8 +52,6 @@ private:
     QList<qint64> ScheduleDurationSums;
     QList<QDateTime> ScheduleDurationFlaggedTimes;
 
-    QString formatTimeLabel(int msecs);
-
     Schedule CurrentSchedule;
 
     void DetectScheduleKey(QKeyEvent * mKey);
@@ -70,6 +68,37 @@ private:
     bool Started = false;
 
     void reject();
+
+    QString formatScheduleString(Schedule schedule)
+    {
+        if (schedule == Schedule::One)
+        {
+            return QString("Schedule 1");
+        }
+        else if (schedule == Schedule::Two)
+        {
+            return QString("Schedule 2");
+        }
+        else
+        {
+            return QString("Schedule 3");
+        }
+    }
+
+    QString formatTimeLabel(int msecs)
+    {
+        int msecMod = msecs % 1000;
+        int secs = msecs / 1000;
+        int mins = (secs / 60) % 60;
+        int hours = (secs / 3600);
+        secs = secs % 60;
+
+        return QString("%1:%2:%3:%4")
+        .arg(hours, 2, 10, QLatin1Char('0'))
+        .arg(mins, 2, 10, QLatin1Char('0'))
+        .arg(secs, 2, 10, QLatin1Char('0'))
+        .arg(msecMod, 2, 10, QLatin1Char('0'));
+    }
 
 };
 

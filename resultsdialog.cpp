@@ -1,6 +1,11 @@
 #include "resultsdialog.h"
 #include "ui_resultsdialog.h"
 
+#include "sessionevent.h"
+
+#include <QStringListModel>
+#include <QDebug>
+
 ResultsDialog::ResultsDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ResultsDialog)
@@ -97,6 +102,23 @@ void ResultsDialog::BuildTables()
         ui->tableMainDurThree->setItem(ui->tableMainDurThree->rowCount() - 1, 2,
                                       new QTableWidgetItem(formatPercentage(DurationThree.at(i).second, TimeThree)));
     }
+}
+
+void ResultsDialog::BuildNarrative(QList<SessionEvent> * PressedKeys, QDateTime * startTime)
+{
+    QStringList *mEntries = new QStringList();
+
+    for (int i(0); i<PressedKeys->count(); i++)
+    {
+        mEntries->append("(" +
+                         formatTimeLabel(startTime->msecsTo(PressedKeys->at(i).TimePressed)) +
+                         ") " +
+                         PressedKeys->at(i).KeyEntered.KeyDescription);
+    }
+
+    QStringListModel *listModel = new QStringListModel(*mEntries, NULL);
+    listModel->setStringList(*mEntries);
+    ui->listView->setModel(listModel);
 }
 
 ResultsDialog::~ResultsDialog()

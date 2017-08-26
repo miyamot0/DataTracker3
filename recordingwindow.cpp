@@ -97,23 +97,26 @@ void RecordingWindow::UpdateGUI()
         {
             loggedClosedKeySet.KeyCode = Qt::Key_Z;
             loggedClosedKeySet.KeyName = "Schedule 1 End";
+            loggedClosedKeySet.KeyDescription = "Schedule 1 End";
         }
         else if (CurrentSchedule == Schedule::Two)
         {
             loggedClosedKeySet.KeyCode = Qt::Key_X;
             loggedClosedKeySet.KeyName = "Schedule 2 End";
+            loggedClosedKeySet.KeyDescription = "Schedule 2 End";
         }
         else if (CurrentSchedule == Schedule::Three)
         {
             loggedClosedKeySet.KeyCode = Qt::Key_C;
             loggedClosedKeySet.KeyName = "Schedule 3 End";
+            loggedClosedKeySet.KeyDescription = "Schedule 3 End";
         }
 
         loggedCloseKey.KeyEntered = loggedClosedKeySet;
 
         AddKey(loggedCloseKey);
 
-        close();
+        accept();
     }
 }
 
@@ -144,16 +147,19 @@ void RecordingWindow::reject()
         {
             loggedClosedKeySet.KeyCode = Qt::Key_Z;
             loggedClosedKeySet.KeyName = "Schedule 1 End";
+            loggedClosedKeySet.KeyDescription = "Schedule 1 End";
         }
         else if (CurrentSchedule == Schedule::Two)
         {
             loggedClosedKeySet.KeyCode = Qt::Key_X;
             loggedClosedKeySet.KeyName = "Schedule 2 End";
+            loggedClosedKeySet.KeyDescription = "Schedule 2 End";
         }
         else if (CurrentSchedule == Schedule::Three)
         {
             loggedClosedKeySet.KeyCode = Qt::Key_C;
             loggedClosedKeySet.KeyName = "Schedule 3 End";
+            loggedClosedKeySet.KeyDescription = "Schedule 3 End";
         }
 
         loggedCloseKey.KeyEntered = loggedClosedKeySet;
@@ -162,21 +168,6 @@ void RecordingWindow::reject()
 
         QDialog::reject();
     }
-}
-
-QString RecordingWindow::formatTimeLabel(int msecs)
-{
-    int msecMod = msecs % 1000;
-    int secs = msecs / 1000;
-    int mins = (secs / 60) % 60;
-    int hours = (secs / 3600);
-    secs = secs % 60;
-
-    return QString("%1:%2:%3:%4")
-    .arg(hours, 2, 10, QLatin1Char('0'))
-    .arg(mins, 2, 10, QLatin1Char('0'))
-    .arg(secs, 2, 10, QLatin1Char('0'))
-    .arg(msecMod, 2, 10, QLatin1Char('0'));
 }
 
 bool RecordingWindow::eventFilter(QObject *, QEvent *e)
@@ -214,6 +205,7 @@ bool RecordingWindow::eventFilter(QObject *, QEvent *e)
             KeySetEntry loggedKeySet;
             loggedKeySet.KeyCode = Qt::Key_Z;
             loggedKeySet.KeyName = "Schedule One Start";
+            loggedKeySet.KeyDescription = "Schedule One Start";
 
             loggedKey.KeyEntered = loggedKeySet;
 
@@ -265,6 +257,7 @@ void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
             KeySetEntry loggedScheduleSet;
             loggedScheduleSet.KeyCode = scheduleTransCode;
             loggedScheduleSet.KeyName = scheduleTransString;
+            loggedScheduleSet.KeyDescription = scheduleTransString;
 
             endOldSchedule.KeyEntered = loggedScheduleSet;
 
@@ -321,6 +314,7 @@ void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
             KeySetEntry loggedScheduleSet;
             loggedScheduleSet.KeyCode = scheduleTransCode;
             loggedScheduleSet.KeyName = scheduleTransString;
+            loggedScheduleSet.KeyDescription = scheduleTransString;
 
             endOldSchedule.KeyEntered = loggedScheduleSet;
 
@@ -377,6 +371,7 @@ void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
             KeySetEntry loggedScheduleSet;
             loggedScheduleSet.KeyCode = scheduleTransCode;
             loggedScheduleSet.KeyName = scheduleTransString;
+            loggedScheduleSet.KeyDescription = scheduleTransString;
 
             endOldSchedule.KeyEntered = loggedScheduleSet;
 
@@ -428,6 +423,7 @@ void RecordingWindow::DetectFrequencyKey(QKeyEvent * mKey)
             KeySetEntry loggedKeySet;
             loggedKeySet.KeyCode = mKey->key();
             loggedKeySet.KeyName = mKey->text();
+            loggedKeySet.KeyDescription = mKey->text();
 
             loggedKey.KeyEntered = loggedKeySet;
 
@@ -450,6 +446,7 @@ void RecordingWindow::DetectDurationKey(QKeyEvent * mKey)
             KeySetEntry loggedKeySet;
             loggedKeySet.KeyCode = mKey->key();
             loggedKeySet.KeyName = mKey->text();
+            loggedKeySet.KeyDescription = mKey->text();
 
             loggedKey.KeyEntered = loggedKeySet;
 
@@ -464,9 +461,12 @@ void RecordingWindow::AddKey(SessionEvent pressedKey)
 
     ui->tableWidgetLog->insertRow(ui->tableWidgetLog->rowCount());
 
-    ui->tableWidgetLog->setItem(ui->tableWidgetLog->rowCount() - 1, 0, new QTableWidgetItem(pressedKey.KeyEntered.KeyName));
-    ui->tableWidgetLog->setItem(ui->tableWidgetLog->rowCount() - 1, 1, new QTableWidgetItem("TODO"));
-    ui->tableWidgetLog->setItem(ui->tableWidgetLog->rowCount() - 1, 2, new QTableWidgetItem(formatTimeLabel(startTime.msecsTo(pressedKey.TimePressed))));
+    ui->tableWidgetLog->setItem(ui->tableWidgetLog->rowCount() - 1, 0,
+                                new QTableWidgetItem(pressedKey.KeyEntered.KeyName));
+    ui->tableWidgetLog->setItem(ui->tableWidgetLog->rowCount() - 1, 1,
+                                new QTableWidgetItem(formatScheduleString(CurrentSchedule)));
+    ui->tableWidgetLog->setItem(ui->tableWidgetLog->rowCount() - 1, 2,
+                                new QTableWidgetItem(formatTimeLabel(startTime.msecsTo(pressedKey.TimePressed))));
 
     ui->tableWidgetLog->scrollToBottom();
 
