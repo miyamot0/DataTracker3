@@ -69,6 +69,8 @@ private:
 
     bool Started = false;
 
+    void reject();
+
 };
 
 #endif // RECORDINGWINDOW_H

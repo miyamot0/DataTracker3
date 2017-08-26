@@ -3,6 +3,7 @@
 #include "sessionevent.h"
 
 #include <QKeyEvent>
+#include <QMessageBox>
 
 RecordingWindow::RecordingWindow(QWidget *parent) : QDialog(parent), ui(new Ui::RecordingWindow)
 {
@@ -113,6 +114,53 @@ void RecordingWindow::UpdateGUI()
         AddKey(loggedCloseKey);
 
         close();
+    }
+}
+
+void RecordingWindow::reject()
+{
+    QMessageBox::StandardButton resBtn = QMessageBox::question( this, tr("Session Recording"),
+                                                                tr("Are you sure?\n"),
+                                                                QMessageBox::Cancel |
+                                                                QMessageBox::No |
+                                                                QMessageBox::Yes,
+                                                                QMessageBox::Yes);
+    if (resBtn == QMessageBox::Yes)
+    {
+        endTime = QDateTime::currentDateTime();
+
+        ui->editTimerBase->setText(formatTimeLabel(startTime.msecsTo(endTime)));
+
+        ParseTimes();
+
+        SessionEvent loggedCloseKey;
+        loggedCloseKey.TimePressed = endTime;
+        loggedCloseKey.MeasurementType = Measurement::Schedule;
+        loggedCloseKey.ScheduleType = CurrentSchedule;
+
+        KeySetEntry loggedClosedKeySet;
+
+        if (CurrentSchedule == Schedule::One)
+        {
+            loggedClosedKeySet.KeyCode = Qt::Key_Z;
+            loggedClosedKeySet.KeyName = "Schedule 1 End";
+        }
+        else if (CurrentSchedule == Schedule::Two)
+        {
+            loggedClosedKeySet.KeyCode = Qt::Key_X;
+            loggedClosedKeySet.KeyName = "Schedule 2 End";
+        }
+        else if (CurrentSchedule == Schedule::Three)
+        {
+            loggedClosedKeySet.KeyCode = Qt::Key_C;
+            loggedClosedKeySet.KeyName = "Schedule 3 End";
+        }
+
+        loggedCloseKey.KeyEntered = loggedClosedKeySet;
+
+        AddKey(loggedCloseKey);
+
+        QDialog::reject();
     }
 }
 
