@@ -12,24 +12,7 @@ RecordingWindow::RecordingWindow(QWidget *parent) : QDialog(parent), ui(new Ui::
     installEventFilter(this);
 
     connect(&baseTimer, SIGNAL(timeout()), this, SLOT(UpdateGUI()));
-    baseTimer.start(50);
 
-    startTime = QDateTime::currentDateTime();
-
-    SessionEvent loggedKey;
-    loggedKey.TimePressed = startTime;
-    loggedKey.MeasurementType = Measurement::Schedule;
-    loggedKey.ScheduleType = Schedule::One;
-
-    KeySetEntry loggedKeySet;
-    loggedKeySet.KeyCode = Qt::Key_Z;
-    loggedKeySet.KeyName = "Z";
-
-    loggedKey.KeyEntered = loggedKeySet;
-
-    AddKey(loggedKey);
-
-    CurrentSchedule = Schedule::One;
 }
 
 void RecordingWindow::LoadKeys(KeySet mKeyset)
@@ -130,6 +113,42 @@ bool RecordingWindow::eventFilter(QObject *, QEvent *e)
         if (mKey->key() == Qt::Key_Backspace)
         {
             RemoveKey();
+        }
+
+        if (mKey->key() == Qt::Key_Tab && !Started)
+        {
+            Started = true;
+
+            ScheduleFlags.append(true);
+            ScheduleFlags.append(false);
+            ScheduleFlags.append(false);
+
+            ScheduleDurationSums.append(0);
+            ScheduleDurationSums.append(0);
+            ScheduleDurationSums.append(0);
+
+            ScheduleDurationFlaggedTimes.append(QDateTime());
+            ScheduleDurationFlaggedTimes.append(QDateTime());
+            ScheduleDurationFlaggedTimes.append(QDateTime());
+
+            baseTimer.start(50);
+
+            startTime = QDateTime::currentDateTime();
+
+            SessionEvent loggedKey;
+            loggedKey.TimePressed = startTime;
+            loggedKey.MeasurementType = Measurement::Schedule;
+            loggedKey.ScheduleType = Schedule::One;
+
+            KeySetEntry loggedKeySet;
+            loggedKeySet.KeyCode = Qt::Key_Z;
+            loggedKeySet.KeyName = "Z";
+
+            loggedKey.KeyEntered = loggedKeySet;
+
+            AddKey(loggedKey);
+
+            CurrentSchedule = Schedule::One;
         }
     }
 
@@ -400,6 +419,61 @@ void RecordingWindow::UpdateTables()
 
         DurationFlags[i] = (counter % 2) == 1;
     }
+
+    int keyCode;
+
+    qDebug() << "Loop: " << ScheduleDurationSums.count();
+
+    for (int i=0; i<ScheduleDurationSums.count(); i++)
+    {
+        int counter = 0;
+        ScheduleDurationSums[i] = 0;
+        waitingForNext = false;
+
+        if (i == 0)
+        {
+            keyCode = Qt::Key_Z;
+        }
+        else if (i == 1)
+        {
+            keyCode = Qt::Key_X;
+        }
+        else if (i == 2)
+        {
+            keyCode = Qt::Key_C;
+        }
+
+        for (int j=0; j<PressedKeys.count(); j++)
+        {
+            if (PressedKeys[j].MeasurementType == Measurement::Time &&
+                    PressedKeys[j].KeyEntered.KeyCode == keyCode)
+            {
+                if (waitingForNext)
+                {
+                    after = PressedKeys[j].TimePressed;
+
+                    waitingForNext = false;
+
+                    ScheduleDurationSums[i] = ScheduleDurationSums[i] + prev.msecsTo(after);
+
+                    qDebug() << "Sched Duration Sums: " << ScheduleDurationSums[i];
+                }
+                else
+                {
+                    prev = PressedKeys[j].TimePressed;
+
+                    ScheduleDurationFlaggedTimes[i] = prev;
+
+                    waitingForNext = true;
+                }
+
+                counter++;
+            }
+        }
+
+        ScheduleFlags[i] = (counter % 2) == 1;
+    }
+
 }
 
 void RecordingWindow::ParseTimes()
@@ -414,6 +488,34 @@ void RecordingWindow::ParseTimes()
         else
         {
             ui->tableWidgetDuration->item(i, 3)->setText(formatTimeLabel(DurationSums[i]));
+        }
+    }
+
+    QLineEdit * mEditRef;
+
+    for (int i=0; i<ScheduleDurationSums.count(); i++)
+    {
+        if (i == 0)
+        {
+            mEditRef = ui->editTimerOne;
+        }
+        else if (i == 1)
+        {
+            mEditRef = ui->editTimerTwo;
+        }
+        else if (i == 2)
+        {
+            mEditRef = ui->editTimerThree;
+        }
+
+        if (ScheduleFlags[i])
+        {
+            qint64 extraTime = ScheduleDurationFlaggedTimes[i].msecsTo(QDateTime::currentDateTime());
+            mEditRef->setText(formatTimeLabel(ScheduleDurationSums[i] + extraTime));
+        }
+        else
+        {
+            mEditRef->setText(formatTimeLabel(ScheduleDurationSums[i]));
         }
     }
 }

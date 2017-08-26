@@ -250,7 +250,7 @@
             </widget>
            </item>
            <item row="2" column="1">
-            <widget class="QLineEdit" name="lineEdit_2"/>
+            <widget class="QLineEdit" name="editTimerOne"/>
            </item>
            <item row="3" column="0">
             <widget class="QLabel" name="label_3">
@@ -260,7 +260,7 @@
             </widget>
            </item>
            <item row="3" column="1">
-            <widget class="QLineEdit" name="lineEdit_3"/>
+            <widget class="QLineEdit" name="editTimerTwo"/>
            </item>
            <item row="4" column="0">
             <widget class="QLabel" name="label_5">
@@ -270,7 +270,7 @@
             </widget>
            </item>
            <item row="4" column="1">
-            <widget class="QLineEdit" name="lineEdit_4"/>
+            <widget class="QLineEdit" name="editTimerThree"/>
            </item>
            <item row="5" column="0" colspan="2">
             <widget class="QTableWidget" name="tableWidgetLog">

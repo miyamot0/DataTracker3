@@ -50,6 +50,10 @@ private:
     QList<qint64> DurationSums;
     QList<QDateTime> DurationFlaggedTimes;
 
+    QList<bool> ScheduleFlags;
+    QList<qint64> ScheduleDurationSums;
+    QList<QDateTime> ScheduleDurationFlaggedTimes;
+
     QString formatTimeLabel(int msecs);
 
     Schedule CurrentSchedule;
@@ -64,6 +68,8 @@ private:
     void UpdateTables();
 
     void ParseTimes();
+
+    bool Started = false;
 
 };
 
