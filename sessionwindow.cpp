@@ -690,6 +690,8 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
 {
     if((QPushButton *)button == ui->buttonBox->button(QDialogButtonBox::Ok))
     {
+        r.LoadKeys(CurrentKeySet);
+        r.show();
         // TODO session window
     }
 }

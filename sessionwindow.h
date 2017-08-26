@@ -5,6 +5,7 @@
 #include <QComboBox>
 #include <QAbstractButton>
 
+#include "recordingwindow.h"
 #include "directoryparse.h"
 #include "directorysearcher.h"
 #include "keyset.h"
@@ -55,6 +56,8 @@ private:
     QThread *workerThread;
     DirectorySearcher *worker;
     DirectoryParse mCurrentDirectory;
+
+    RecordingWindow r;
 };
 
 #endif // SESSIONWINDOW_H

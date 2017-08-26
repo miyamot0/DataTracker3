@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>840</width>
-    <height>424</height>
+    <width>867</width>
+    <height>566</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,43 +30,116 @@
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="layoutSides">
+      <layout class="QHBoxLayout" name="horizontalTopLayout">
        <item>
-        <layout class="QVBoxLayout" name="panelLeft">
+        <layout class="QHBoxLayout" name="layoutSides">
          <item>
-          <widget class="QTableWidget" name="tableWidgetFrequency">
-           <property name="editTriggers">
-            <set>QAbstractItemView::NoEditTriggers</set>
-           </property>
-           <attribute name="horizontalHeaderStretchLastSection">
-            <bool>true</bool>
-           </attribute>
-           <attribute name="verticalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-           <column>
-            <property name="text">
-             <string>Key (Frequency)</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Description</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Count</string>
-            </property>
-           </column>
-          </widget>
+          <layout class="QVBoxLayout" name="panelLeft">
+           <item>
+            <widget class="QTableWidget" name="tableWidgetFrequency">
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <property name="tabKeyNavigation">
+              <bool>false</bool>
+             </property>
+             <property name="showDropIndicator" stdset="0">
+              <bool>false</bool>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::NoSelection</enum>
+             </property>
+             <property name="showGrid">
+              <bool>false</bool>
+             </property>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>Key (Frequency)</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Description</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Count</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
          </item>
+         <item>
+          <layout class="QVBoxLayout" name="panelRight">
+           <item>
+            <widget class="QTableWidget" name="tableWidgetDuration">
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <property name="tabKeyNavigation">
+              <bool>false</bool>
+             </property>
+             <property name="showDropIndicator" stdset="0">
+              <bool>false</bool>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::NoSelection</enum>
+             </property>
+             <property name="showGrid">
+              <bool>false</bool>
+             </property>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>Key (Duration)</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Description</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Rounds</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Duration</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <layout class="QVBoxLayout" name="panelLeftBottom">
          <item>
           <layout class="QFormLayout" name="layoutParameters">
            <item row="0" column="0" colspan="2">
             <widget class="QLabel" name="labelTitle_2">
              <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Session Parameters&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Session Parameters&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
@@ -120,76 +193,120 @@
            <item row="5" column="1">
             <widget class="QLineEdit" name="editCollector"/>
            </item>
+           <item row="6" column="0" colspan="2">
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Instructions&lt;/span&gt;&lt;/p&gt;&lt;p&gt;TAB Key: Begin Session&lt;/p&gt;&lt;p&gt;ESC Key: Terminate Session&lt;/p&gt;&lt;p&gt;Z Key: Switch to Schedule 1 (Base, Green)&lt;/p&gt;&lt;p&gt;X Key: Switch to Schedule 2 (Yellow)&lt;/p&gt;&lt;p&gt;C Key: Switch to Schedule 3 (Red)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
         </layout>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="panelRight">
-         <item>
-          <widget class="QTableWidget" name="tableWidgetDuration">
-           <property name="editTriggers">
-            <set>QAbstractItemView::NoEditTriggers</set>
-           </property>
-           <attribute name="horizontalHeaderStretchLastSection">
-            <bool>true</bool>
-           </attribute>
-           <attribute name="verticalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-           <column>
-            <property name="text">
-             <string>Key (Duration)</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Description</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Rounds</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Duration</string>
-            </property>
-           </column>
-          </widget>
-         </item>
+        <layout class="QVBoxLayout" name="panelRightBottom">
          <item>
           <layout class="QFormLayout" name="layoutDurations">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label">
+           <item row="0" column="0" colspan="2">
+            <widget class="QLabel" name="label_4">
              <property name="text">
-              <string>TextLabel</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Session Durations&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="lineEdit"/>
-           </item>
            <item row="1" column="0">
-            <widget class="QLabel" name="label_2">
+            <widget class="QLabel" name="label">
              <property name="text">
-              <string>TextLabel</string>
+              <string>Total Time:</string>
              </property>
             </widget>
            </item>
            <item row="1" column="1">
-            <widget class="QLineEdit" name="lineEdit_2"/>
+            <widget class="QLineEdit" name="editTimerBase">
+             <property name="text">
+              <string>00:00:00:000</string>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
            </item>
            <item row="2" column="0">
-            <widget class="QLabel" name="label_3">
+            <widget class="QLabel" name="label_2">
              <property name="text">
-              <string>TextLabel</string>
+              <string>Schedule 1 Time:</string>
              </property>
             </widget>
            </item>
            <item row="2" column="1">
+            <widget class="QLineEdit" name="lineEdit_2"/>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Schedule 2 Time:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
             <widget class="QLineEdit" name="lineEdit_3"/>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>Schedule 3 Time:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLineEdit" name="lineEdit_4"/>
+           </item>
+           <item row="5" column="0" colspan="2">
+            <widget class="QTableWidget" name="tableWidgetLog">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <property name="tabKeyNavigation">
+              <bool>false</bool>
+             </property>
+             <property name="showDropIndicator" stdset="0">
+              <bool>false</bool>
+             </property>
+             <property name="alternatingRowColors">
+              <bool>true</bool>
+             </property>
+             <property name="showGrid">
+              <bool>false</bool>
+             </property>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>Key</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Schedule</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Time</string>
+              </property>
+             </column>
+            </widget>
            </item>
           </layout>
          </item>

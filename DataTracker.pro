@@ -41,7 +41,8 @@ HEADERS  += startwindow.h \
     keysetcapture.h \
     keyset.h \
     keysetentry.h \
-    recordingwindow.h
+    recordingwindow.h \
+    sessionevent.h
 
 FORMS    += startwindow.ui \
     sessionwindow.ui \
