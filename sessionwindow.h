@@ -75,6 +75,8 @@ private slots:
 
     void DefaultComboBox(QComboBox *mSelectedBox);
 
+    void on_comboSessionDuration_currentIndexChanged(int index);
+
 private:
     Ui::SessionWindow *ui;
 

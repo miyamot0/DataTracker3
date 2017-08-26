@@ -6,14 +6,17 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>773</width>
-    <height>343</height>
+    <width>829</width>
+    <height>445</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="sizeConstraint">
+    <enum>QLayout::SetFixedSize</enum>
+   </property>
    <item>
     <layout class="QHBoxLayout" name="topLayout">
      <property name="sizeConstraint">
@@ -26,6 +29,9 @@
        </property>
        <item row="0" column="0">
         <widget class="QLabel" name="labelGroup">
+         <property name="styleSheet">
+          <string notr="true">padding: 10 20 10 5;</string>
+         </property>
          <property name="text">
           <string>Select Groups:</string>
          </property>
@@ -47,6 +53,9 @@
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
            </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
            <item>
             <property name="text">
              <string>Select Group</string>
@@ -65,6 +74,9 @@
            <property name="focusPolicy">
             <enum>Qt::ClickFocus</enum>
            </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
            <property name="text">
             <string>New Group</string>
            </property>
@@ -74,6 +86,9 @@
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="labelIndividual">
+         <property name="styleSheet">
+          <string notr="true">padding: 10 20 10 5;</string>
+         </property>
          <property name="text">
           <string>Select Individual:</string>
          </property>
@@ -91,6 +106,9 @@
            </property>
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
            </property>
            <item>
             <property name="text">
@@ -110,6 +128,9 @@
            <property name="focusPolicy">
             <enum>Qt::ClickFocus</enum>
            </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
            <property name="text">
             <string>New Individual</string>
            </property>
@@ -119,6 +140,9 @@
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="labelEvaluation">
+         <property name="styleSheet">
+          <string notr="true">padding: 10 20 10 5;</string>
+         </property>
          <property name="text">
           <string>Select Evaluation:</string>
          </property>
@@ -136,6 +160,9 @@
            </property>
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
            </property>
            <item>
             <property name="text">
@@ -155,6 +182,9 @@
            <property name="focusPolicy">
             <enum>Qt::ClickFocus</enum>
            </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
            <property name="text">
             <string>New Evaluation</string>
            </property>
@@ -164,6 +194,9 @@
        </item>
        <item row="3" column="0">
         <widget class="QLabel" name="labelCondition">
+         <property name="styleSheet">
+          <string notr="true">padding: 10 20 10 5;</string>
+         </property>
          <property name="text">
           <string>Select Condition:</string>
          </property>
@@ -181,6 +214,9 @@
            </property>
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
            </property>
            <item>
             <property name="text">
@@ -200,6 +236,9 @@
            <property name="focusPolicy">
             <enum>Qt::ClickFocus</enum>
            </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
            <property name="text">
             <string>New Condition</string>
            </property>
@@ -209,6 +248,9 @@
        </item>
        <item row="4" column="0">
         <widget class="QLabel" name="labelKeySet">
+         <property name="styleSheet">
+          <string notr="true">padding: 10 20 10 5;</string>
+         </property>
          <property name="text">
           <string>Select Key Set:</string>
          </property>
@@ -226,6 +268,9 @@
            </property>
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
            </property>
            <item>
             <property name="text">
@@ -245,6 +290,9 @@
            <property name="focusPolicy">
             <enum>Qt::ClickFocus</enum>
            </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
            <property name="text">
             <string>Add/Edit Key Set</string>
            </property>
@@ -254,6 +302,9 @@
        </item>
        <item row="5" column="0">
         <widget class="QLabel" name="labelTherapist">
+         <property name="styleSheet">
+          <string notr="true">padding: 10 20 10 5;</string>
+         </property>
          <property name="text">
           <string>Session Therapist:</string>
          </property>
@@ -271,6 +322,9 @@
            </property>
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
            </property>
            <item>
             <property name="text">
@@ -290,6 +344,9 @@
            <property name="focusPolicy">
             <enum>Qt::ClickFocus</enum>
            </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
            <property name="text">
             <string>New Therapist</string>
            </property>
@@ -299,6 +356,9 @@
        </item>
        <item row="6" column="0">
         <widget class="QLabel" name="labelCollector">
+         <property name="styleSheet">
+          <string notr="true">padding: 10 20 10 5;</string>
+         </property>
          <property name="text">
           <string>Data Collector:</string>
          </property>
@@ -316,6 +376,9 @@
            </property>
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
            </property>
            <item>
             <property name="text">
@@ -335,6 +398,9 @@
            <property name="focusPolicy">
             <enum>Qt::ClickFocus</enum>
            </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
            <property name="text">
             <string>New Data Collector</string>
            </property>
@@ -344,6 +410,9 @@
        </item>
        <item row="7" column="0">
         <widget class="QLabel" name="labelRole">
+         <property name="styleSheet">
+          <string notr="true">padding: 10 20 10 5;</string>
+         </property>
          <property name="text">
           <string>Collector's Role:</string>
          </property>
@@ -361,6 +430,12 @@
            </property>
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
+           </property>
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
            </property>
            <item>
             <property name="text">
@@ -387,6 +462,9 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -396,6 +474,9 @@
        </item>
        <item row="8" column="0">
         <widget class="QLabel" name="label">
+         <property name="styleSheet">
+          <string notr="true">padding: 10 20 10 5;</string>
+         </property>
          <property name="text">
           <string>Session Duration:</string>
          </property>
@@ -413,6 +494,9 @@
            </property>
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
            </property>
            <item>
             <property name="text">
@@ -469,15 +553,26 @@
              <string>120 Minutes</string>
             </property>
            </item>
+           <item>
+            <property name="text">
+             <string>Custom</string>
+            </property>
+           </item>
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="holderSessionDuration">
+          <widget class="QLineEdit" name="editSessionDuration">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
            </property>
            <property name="readOnly">
             <bool>true</bool>
@@ -488,6 +583,9 @@
        </item>
        <item row="9" column="0">
         <widget class="QLabel" name="labelSessionNumber">
+         <property name="styleSheet">
+          <string notr="true">padding: 10 20 10 5;</string>
+         </property>
          <property name="text">
           <string>Session Number:</string>
          </property>
@@ -509,6 +607,9 @@
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
            </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
            <property name="text">
             <string>1</string>
            </property>
@@ -524,6 +625,9 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
            </property>
            <property name="text">
             <string/>
@@ -591,6 +695,9 @@
          </property>
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
          </property>
          <attribute name="horizontalHeaderCascadingSectionResizes">
           <bool>false</bool>

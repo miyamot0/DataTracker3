@@ -594,6 +594,24 @@ void SessionWindow::on_buttonCollector_clicked()
     }
 }
 
+/** Combo session update
+ * @brief SessionWindow::on_comboSessionDuration_currentIndexChanged
+ * @param index
+ */
+void SessionWindow::on_comboSessionDuration_currentIndexChanged(int index)
+{
+    if (index == ui->comboSessionDuration->count() - 1)
+    {
+        ui->editSessionDuration->setReadOnly(false);
+        ui->editSessionDuration->setEnabled(true);
+    }
+    else
+    {
+        ui->editSessionDuration->setReadOnly(true);
+        ui->editSessionDuration->setEnabled(false);
+    }
+}
+
 /**
  * @brief SessionWindow::WorkUpdate
  * @param update
@@ -749,9 +767,25 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
 {
     if (ui->comboSessionDuration->currentIndex() == 0)
     {
-        // TODO error message
+        QMessageBox::critical(NULL, tr("Sussion Duration"),
+                              tr("Set a duration for the session."),
+                              QMessageBox::Ok);
 
         return;
+    }
+    else if (ui->comboSessionDuration->currentIndex() == ui->comboSessionDuration->count() - 1)
+    {
+        bool ok;
+        ui->editSessionNumber->text().toDouble(&ok);
+
+        if (!ok)
+        {
+            QMessageBox::critical(NULL, tr("Custom Sussion Duration"),
+                                  tr("The custom session duration isn't usable."),
+                                  QMessageBox::Ok);
+
+            return;
+        }
     }
 
     if((QPushButton *)button == ui->buttonBox->button(QDialogButtonBox::Ok))
