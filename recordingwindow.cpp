@@ -369,11 +369,10 @@ void RecordingWindow::DetectFrequencyKey(QKeyEvent * mKey)
     {
         if (mKey->key() == keySet.FrequencyKeys.at(i).KeyCode)
         {
-            // TODO more schedules
             SessionEvent loggedKey;
             loggedKey.TimePressed = QDateTime::currentDateTime();
             loggedKey.MeasurementType = Measurement::Rate;
-            loggedKey.ScheduleType = Schedule::One;
+            loggedKey.ScheduleType = CurrentSchedule;
 
             KeySetEntry loggedKeySet;
             loggedKeySet.KeyCode = mKey->key();
@@ -392,11 +391,10 @@ void RecordingWindow::DetectDurationKey(QKeyEvent * mKey)
     {
         if (mKey->key() == keySet.DurationKeys.at(i).KeyCode)
         {
-            // TODO more schedules
             SessionEvent loggedKey;
             loggedKey.TimePressed = QDateTime::currentDateTime();
             loggedKey.MeasurementType = Measurement::Time;
-            loggedKey.ScheduleType = Schedule::One;
+            loggedKey.ScheduleType = CurrentSchedule;
 
             KeySetEntry loggedKeySet;
             loggedKeySet.KeyCode = mKey->key();
