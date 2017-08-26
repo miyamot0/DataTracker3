@@ -80,4 +80,33 @@ DISTFILES += \
     COPYING \
     License_Tango.txt \
     License_QtXlsx.txt \
-    License_Qt.txt
+    License_Qt.txt \
+    SNS.ico
+
+RESOURCES += \
+    resourcefile.qrc
+
+###
+#
+# Win macro's, route to appropriate directories for installation prep
+#
+###
+win32 {
+    win32:RC_ICONS += SNS.ico
+
+    DT_FILES.files = License_Qt.txt \
+                     License_Tango.txt \
+                     License_QtXlsx.txt \
+                     COPYING \
+                     SNS.ico
+
+    CONFIG(debug, debug|release) {
+        DESTDIR = $$OUT_PWD/build/debug
+    } else {
+        DESTDIR = $$OUT_PWD/build/release
+    }
+
+    DT_FILES.path = $$DESTDIR
+
+    INSTALLS += DMS_FILES
+}
