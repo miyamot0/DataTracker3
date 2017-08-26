@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     KeySet mKeySet;
 
     mKeySet.KeySetName = "NameTest";
-    mKeySet.TotalSeconds = 600;
+    mKeySet.TotalSeconds = 60;
 
     KeySetEntry f1;
     f1.KeyCode = Qt::Key_1;
@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
     mKeySet.DurationKeys.append(d1);
     mKeySet.DurationKeys.append(d2);
 
+    /*
     RecordingWindow r;
     r.LoadKeys(mKeySet);
     r.SetGroup("Group");
@@ -60,6 +61,7 @@ int main(int argc, char *argv[])
     r.SetCollector("ABC");
     r.SetRole("Primary");
     r.show();
+    */
 
     return a.exec();
 }

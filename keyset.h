@@ -14,6 +14,7 @@ public:
     QList<KeySetEntry> DurationKeys;
 
     int TotalSeconds;
+    int Session;
 
 };
 

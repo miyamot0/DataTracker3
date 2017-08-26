@@ -2,7 +2,6 @@
 #include "ui_recordingwindow.h"
 #include "sessionevent.h"
 
-#include <QDebug>
 #include <QKeyEvent>
 
 RecordingWindow::RecordingWindow(QWidget *parent) : QDialog(parent), ui(new Ui::RecordingWindow)
@@ -10,6 +9,8 @@ RecordingWindow::RecordingWindow(QWidget *parent) : QDialog(parent), ui(new Ui::
     ui->setupUi(this);
 
     installEventFilter(this);
+
+    setWindowTitle(tr("Session Recording Window"));
 }
 
 void RecordingWindow::LoadKeys(KeySet mKeyset)
@@ -40,6 +41,8 @@ void RecordingWindow::LoadKeys(KeySet mKeyset)
         DurationSums.append(0);
         DurationFlaggedTimes.append(QDateTime());
     }
+
+    ui->labelTitle->setText(QString("<html><head/><body><p align='center'><span style=' font-size:12pt;'>Recording: Session #%1</span></p></body></html>").arg(keySet.Session));
 }
 
 void RecordingWindow::SetGroup(QString value)
@@ -79,6 +82,11 @@ void RecordingWindow::UpdateGUI()
     ui->editTimerBase->setText(formatTimeLabel(startTime.msecsTo(endTime)));
 
     ParseTimes();
+
+    if ((startTime.msecsTo(endTime) / 1000) >= keySet.TotalSeconds)
+    {
+        close();
+    }
 }
 
 QString RecordingWindow::formatTimeLabel(int msecs)
@@ -137,6 +145,8 @@ bool RecordingWindow::eventFilter(QObject *, QEvent *e)
             AddKey(loggedKey);
 
             CurrentSchedule = Schedule::One;
+
+            ui->editTimerOne->setStyleSheet("background: green;");
         }
     }
 
@@ -153,8 +163,6 @@ bool RecordingWindow::eventFilter(QObject *, QEvent *e)
         {
             RemoveKey();
         }
-
-
     }
 
     return false;
@@ -187,6 +195,9 @@ void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
 
             AddKey(endOldSchedule);
 
+            ui->editTimerTwo->setStyleSheet("");
+            ui->editTimerThree->setStyleSheet("");
+
             UpdateTables();
         }
 
@@ -208,6 +219,8 @@ void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
         ScheduleFlags[2] = false;
 
         CurrentSchedule = loggedKey.ScheduleType;
+
+        ui->editTimerOne->setStyleSheet("background: green;");
 
         UpdateTables();
     }
@@ -237,6 +250,9 @@ void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
 
             AddKey(endOldSchedule);
 
+            ui->editTimerOne->setStyleSheet("");
+            ui->editTimerThree->setStyleSheet("");
+
             UpdateTables();
         }
 
@@ -258,6 +274,8 @@ void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
         ScheduleFlags[2] = false;
 
         CurrentSchedule = loggedKey.ScheduleType;
+
+        ui->editTimerTwo->setStyleSheet("background: yellow;");
 
         UpdateTables();
     }
@@ -287,6 +305,9 @@ void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
 
             AddKey(endOldSchedule);
 
+            ui->editTimerOne->setStyleSheet("");
+            ui->editTimerTwo->setStyleSheet("");
+
             UpdateTables();
         }
 
@@ -308,6 +329,8 @@ void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
         ScheduleFlags[2] = true;
 
         CurrentSchedule = loggedKey.ScheduleType;
+
+        ui->editTimerThree->setStyleSheet("background: red;");
 
         UpdateTables();
     }
@@ -411,8 +434,6 @@ void RecordingWindow::UpdateTables()
 
     for (int i=0; i<keySet.DurationKeys.count(); i++)
     {
-        qDebug() << "Duration Loop " << i;
-
         int counter = 0;
         DurationSums[i] = 0;
         waitingForNext = false;

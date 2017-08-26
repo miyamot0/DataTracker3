@@ -690,8 +690,19 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
 {
     if((QPushButton *)button == ui->buttonBox->button(QDialogButtonBox::Ok))
     {
+        CurrentKeySet.TotalSeconds = 60;
+        CurrentKeySet.Session = 1;
+
         r.LoadKeys(CurrentKeySet);
-        r.show();
-        // TODO session window
+        r.SetGroup(ui->comboGroup->currentText());
+        r.SetIndividual(ui->comboIndividual->currentText());
+        r.SetEvaluation(ui->comboEvaluation->currentText());
+        r.SetCondition(ui->comboCondition->currentText());
+        r.SetCollector(ui->comboCollector->currentText());
+        r.SetRole(ui->comboRole->currentText());
+        r.exec();
+
+
+        // Scoring here
     }
 }
