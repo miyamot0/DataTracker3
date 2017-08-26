@@ -165,7 +165,7 @@ bool RecordingWindow::eventFilter(QObject *, QEvent *e)
 
             KeySetEntry loggedKeySet;
             loggedKeySet.KeyCode = Qt::Key_Z;
-            loggedKeySet.KeyName = "Z";
+            loggedKeySet.KeyName = "Schedule One Start";
 
             loggedKey.KeyEntered = loggedKeySet;
 
@@ -207,7 +207,7 @@ void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
         {
             Schedule scheduleTrans = (CurrentSchedule == Schedule::Two) ? Schedule::Two : Schedule::Three;
             int scheduleTransCode = (CurrentSchedule == Schedule::Two) ? Qt::Key_X : Qt::Key_C;
-            QString scheduleTransString = (CurrentSchedule == Schedule::Two) ? "Schedule Two" : "Schedule Three";
+            QString scheduleTransString = (CurrentSchedule == Schedule::Two) ? "Schedule Two End" : "Schedule Three End";
 
             SessionEvent endOldSchedule;
             endOldSchedule.TimePressed = QDateTime::currentDateTime();
@@ -235,7 +235,8 @@ void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
 
         KeySetEntry loggedKeySet;
         loggedKeySet.KeyCode = mKey->key();
-        loggedKeySet.KeyName = mKey->text();
+        loggedKeySet.KeyName = "Schedule One Start";
+        loggedKeySet.KeyDescription = "Schedule One Start";
 
         loggedKey.KeyEntered = loggedKeySet;
 
@@ -262,7 +263,7 @@ void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
         {
             Schedule scheduleTrans = (CurrentSchedule == Schedule::One) ? Schedule::One : Schedule::Three;
             int scheduleTransCode = (CurrentSchedule == Schedule::One) ? Qt::Key_Z : Qt::Key_C;
-            QString scheduleTransString = (CurrentSchedule == Schedule::One) ? "Schedule One" : "Schedule Three";
+            QString scheduleTransString = (CurrentSchedule == Schedule::One) ? "Schedule One End" : "Schedule Three End";
 
             SessionEvent endOldSchedule;
             endOldSchedule.TimePressed = QDateTime::currentDateTime();
@@ -290,7 +291,8 @@ void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
 
         KeySetEntry loggedKeySet;
         loggedKeySet.KeyCode = mKey->key();
-        loggedKeySet.KeyName = mKey->text();
+        loggedKeySet.KeyName = "Schedule Two Start";
+        loggedKeySet.KeyDescription = "Schedule Two Start";
 
         loggedKey.KeyEntered = loggedKeySet;
 
@@ -345,7 +347,8 @@ void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
 
         KeySetEntry loggedKeySet;
         loggedKeySet.KeyCode = mKey->key();
-        loggedKeySet.KeyName = mKey->text();
+        loggedKeySet.KeyName = "Schedule Three Start";
+        loggedKeySet.KeyDescription = "Schedule Three Start";
 
         loggedKey.KeyEntered = loggedKeySet;
 
