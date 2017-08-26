@@ -6,8 +6,6 @@
 #include <QDir>
 #include <QJsonDocument>
 
-#include <QDebug>
-
 DirectorySearcher::DirectorySearcher(DirectoryParse mPresent)
 {
     currentDirectory = mPresent;

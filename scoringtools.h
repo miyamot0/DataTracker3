@@ -7,8 +7,6 @@
 #include "keyset.h"
 #include "keysetentry.h"
 
-#include <QDebug>
-
 class ScoringTools
 {
 public:

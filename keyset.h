@@ -15,7 +15,6 @@ public:
 
     int TotalSeconds;
     int Session;
-
 };
 
 #endif // KEYSET_H

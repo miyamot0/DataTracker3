@@ -51,8 +51,6 @@ void SessionWindow::on_buttonGroup_clicked()
             QString mPath = FileTools::pathAppend(mWorkingDirectory, text);
             QDir mPresentDirectory(mPath);
 
-            qDebug() << mPresentDirectory;
-
             if (!mPresentDirectory.exists()){
                 mPresentDirectory.mkdir(".");
             }
@@ -554,7 +552,7 @@ void SessionWindow::on_buttonCollector_clicked()
  */
 void SessionWindow::WorkUpdate(QString update)
 {
-    qDebug() << "WORK_UPDATE: " << update;
+    //qDebug() << "WORK_UPDATE: " << update;
 }
 
 /**

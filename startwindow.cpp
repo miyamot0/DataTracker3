@@ -4,7 +4,6 @@
 #include "sessionwindow.h"
 #include "filetools.h"
 
-#include <QDebug>
 #include <QStandardPaths>
 #include <QDir>
 
@@ -41,7 +40,7 @@ void StartWindow::on_actionExit_triggered()
  */
 void StartWindow::on_actionCalculate_Reliability_triggered()
 {
-    qDebug() << "on_actionCalculate_Reliability_triggered";
+    //qDebug() << "on_actionCalculate_Reliability_triggered";
 }
 
 /** Open Settings Window
@@ -49,7 +48,7 @@ void StartWindow::on_actionCalculate_Reliability_triggered()
  */
 void StartWindow::on_actionSettings_2_triggered()
 {
-    qDebug() << "on_actionSettings_2_triggered";
+    //qDebug() << "on_actionSettings_2_triggered";
 }
 
 /** Open Contact Window
@@ -57,7 +56,7 @@ void StartWindow::on_actionSettings_2_triggered()
  */
 void StartWindow::on_actionContact_triggered()
 {
-    qDebug() << "on_actionContact_triggered";
+    //qDebug() << "on_actionContact_triggered";
 }
 
 /** Open About Window
@@ -65,7 +64,7 @@ void StartWindow::on_actionContact_triggered()
  */
 void StartWindow::on_actionAbout_triggered()
 {
-    qDebug() << "on_actionAbout_triggered";
+    //qDebug() << "on_actionAbout_triggered";
 }
 
 /** Open Session Window

@@ -2,8 +2,10 @@
 #define RESULTSDIALOG_H
 
 #include "sessionevent.h"
+#include "keyset.h"
 
 #include <QDialog>
+#include <QtCharts>
 
 namespace Ui {
 class ResultsDialog;
@@ -27,12 +29,35 @@ public:
     QList<QPair<QString, double>> FrequencyThree, DurationThree;
 
     void BuildTables();
+    void BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKeys, QDateTime * startTime, QDateTime *endTime);
     void BuildNarrative(QList<SessionEvent> *PressedKeys, QDateTime *startTime);
+    void BuildJson(QList<SessionEvent> * PressedKeys, QDateTime * startTime, QString mWorkingDirectory);
+
+    void SetParameters(QString group, QString individual, QString evaluation,
+                       QString condition, QString therapist, QString keySet,
+                       QString collector, QString role);
+    void SetKeySet(KeySet currKeySet);
 
     ~ResultsDialog();
 
 private:
     Ui::ResultsDialog *ui;
+
+    QChart chart, chart2;
+    QChartView *chartView, *chartView2;
+    QValueAxis axisX, axisY, axisX2, axisY2;
+    QList<QLineSeries *> lineSeries, lineSeries2;
+
+    KeySet CurrentKeySet;
+
+    QString Group;
+    QString Individual;
+    QString Evaluation;
+    QString Condition;
+    QString Therapist;
+    QString KeySetName;
+    QString Collector;
+    QString Role;
 
     QString formatTimeLabel(int msecs)
     {
@@ -70,6 +95,38 @@ private:
         else
         {
             return QString(QString::number((percent / ((double) totalTime)) * 100, 'f', 2) + "%");
+        }
+    }
+
+    QString formatSchedule(Schedule schedule)
+    {
+        if (schedule == Schedule::One)
+        {
+            return QString("Schedule 1");
+        }
+        else if (schedule == Schedule::Two)
+        {
+            return QString("Schedule 2");
+        }
+        else
+        {
+            return QString("Schedule 3");
+        }
+    }
+
+    QString formatMeasurement(Measurement measurement)
+    {
+        if (measurement == Measurement::Rate)
+        {
+            return QString("Rate");
+        }
+        else if (measurement == Measurement::Time)
+        {
+            return QString("Time");
+        }
+        else
+        {
+            return QString("Schedule");
         }
     }
 };

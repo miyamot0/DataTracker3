@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     KeySet mKeySet;
 
     mKeySet.KeySetName = "NameTest";
-    mKeySet.TotalSeconds = 10;
+    mKeySet.TotalSeconds = 25;
     mKeySet.Session = 1;
 
     KeySetEntry f1;
@@ -38,27 +38,45 @@ int main(int argc, char *argv[])
     f2.KeyDescription = "AGG";
     f2.KeyName = "2";
 
+    KeySetEntry f3;
+    f3.KeyCode = Qt::Key_3;
+    f3.KeyDescription = "DIS";
+    f3.KeyName = "3";
+
+    KeySetEntry f4;
+    f4.KeyCode = Qt::Key_4;
+    f4.KeyDescription = "DA";
+    f4.KeyName = "4";
+
     mKeySet.FrequencyKeys.append(f1);
     mKeySet.FrequencyKeys.append(f2);
+    mKeySet.FrequencyKeys.append(f3);
+    mKeySet.FrequencyKeys.append(f4);
 
     KeySetEntry d1;
     d1.KeyCode = Qt::Key_R;
-    d1.KeyDescription = "R";
+    d1.KeyDescription = "RRR";
     d1.KeyName = "R";
 
     KeySetEntry d2;
     d2.KeyCode = Qt::Key_Q;
-    d2.KeyDescription = "Q";
+    d2.KeyDescription = "QQQ";
     d2.KeyName = "Q";
+
+    KeySetEntry d3;
+    d3.KeyCode = Qt::Key_T;
+    d3.KeyDescription = "TTT";
+    d3.KeyName = "T";
 
     mKeySet.DurationKeys.append(d1);
     mKeySet.DurationKeys.append(d2);
+    mKeySet.DurationKeys.append(d3);
 
     RecordingWindow r;
     r.LoadKeys(mKeySet);
-    r.SetGroup("Group");
-    r.SetIndividual("Individual");
-    r.SetEvaluation("Functional Analysis");
+    r.SetGroup("Participants");
+    r.SetIndividual("Shawn");
+    r.SetEvaluation("FA");
     r.SetCondition("Control");
     r.SetCollector("ABC");
     r.SetRole("Primary");
@@ -78,9 +96,16 @@ int main(int argc, char *argv[])
     ScoringTools::ScoreSpecificSchedule(&r.PressedKeys, &mKeySet, &r.endTime, Schedule::Three,
                                         &mResults.FrequencyThree, &mResults.DurationThree, &mResults.TimeThree);
 
-    mResults.BuildTables();
+    mResults.SetKeySet(mKeySet);
 
+    mResults.BuildTables();
     mResults.BuildNarrative(&r.PressedKeys, &r.startTime);
+    mResults.SetParameters("Participants", "Shawn", "FA",
+                           "Control", "ABC", "keySet",
+                           "BA", "Primary");
+
+    mResults.BuildJson(&r.PressedKeys, &r.startTime, FileTools::pathAppend(QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)[0], "DataTracker3"));
+    mResults.BuildPlot(mKeySet, &r.PressedKeys, &r.startTime, &r.endTime);
 
     mResults.show();
 

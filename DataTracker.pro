@@ -4,11 +4,20 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+TEST_FEATURES = 1
+VERSION_MAJOR = 0
+VERSION_MINOR = 0
+VERSION_BUILD = 1
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+DEFINES += "VERSION_MAJOR=$$VERSION_MAJOR"\
+       "VERSION_MINOR=$$VERSION_MINOR"\
+       "VERSION_BUILD=$$VERSION_BUILD"\
+       "VERSION_TESTING=$$TEST_FEATURES"
+
+QT       += core gui xlsx charts widgets
 
 TARGET = DataTracker
+
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -24,7 +33,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-        startwindow.cpp \
+    startwindow.cpp \
     sessionwindow.cpp \
     directorysearcher.cpp \
     keyseteditor.cpp \
