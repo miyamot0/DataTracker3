@@ -110,3 +110,22 @@ win32 {
 
     INSTALLS += DT_FILES
 }
+
+###
+#
+# Mac macro's, route to appropriate directories for installation prep
+#
+###
+macx {
+    macx:ICON = $${PWD}/SNS.icns
+
+    DT_FILES.files = License_Qt.txt \
+                     License_Tango.txt \
+                     License_QtXlsx.txt \
+                     COPYING \
+                     SNS.icns
+
+    DT_FILES.path = Contents/Resources
+
+    QMAKE_BUNDLE_DATA += DT_FILES
+}
