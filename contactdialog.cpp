@@ -6,6 +6,8 @@ ContactDialog::ContactDialog(QWidget *parent) :
     ui(new Ui::ContactDialog)
 {
     ui->setupUi(this);
+
+    setWindowTitle(tr("Contact"));
 }
 
 ContactDialog::~ContactDialog()

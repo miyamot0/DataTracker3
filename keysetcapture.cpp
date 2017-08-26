@@ -33,6 +33,8 @@ KeySetCapture::KeySetCapture(QWidget *parent) :
     ui->editKey->setText("No Key Set");
 
     installEventFilter(this);
+
+    setWindowTitle(tr("Capture Keys"));
 }
 
 KeySetCapture::~KeySetCapture()

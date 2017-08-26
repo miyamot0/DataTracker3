@@ -37,6 +37,8 @@ ResultsDialog::ResultsDialog(QWidget *parent) :
     ui(new Ui::ResultsDialog)
 {
     ui->setupUi(this);
+
+    setWindowTitle(tr("Session Results"));
 }
 
 /** Set up results window with information

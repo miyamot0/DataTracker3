@@ -39,6 +39,8 @@ KeySetEditor::KeySetEditor(QWidget *parent) :
 
     ui->tableWidgetDuration->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->tableWidgetDuration, SIGNAL(customContextMenuRequested(QPoint)), SLOT(customDurationMenuRequested(QPoint)));
+
+    setWindowTitle(tr("Key Set Editor"));
 }
 
 /**

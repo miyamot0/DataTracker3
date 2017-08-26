@@ -37,7 +37,7 @@ StartWindow::StartWindow(QWidget *parent) :
     ui->setupUi(this);
 
     folderTitle = "DataTracker3";
-    setWindowTitle(tr("Data Tracker"));
+    setWindowTitle(QString(tr("Data Tracker")) + " v" + QString("%1.%2.%3").arg(VERSION_MAJOR).arg(VERSION_MINOR).arg(VERSION_BUILD));
 
     if (FileTools::CheckAndPrepDirectory(folderTitle))
     {
