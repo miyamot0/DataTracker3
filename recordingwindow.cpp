@@ -15,6 +15,21 @@ RecordingWindow::RecordingWindow(QWidget *parent) : QDialog(parent), ui(new Ui::
     baseTimer.start(50);
 
     startTime = QDateTime::currentDateTime();
+
+    SessionEvent loggedKey;
+    loggedKey.TimePressed = startTime;
+    loggedKey.MeasurementType = Measurement::Schedule;
+    loggedKey.ScheduleType = Schedule::One;
+
+    KeySetEntry loggedKeySet;
+    loggedKeySet.KeyCode = Qt::Key_Z;
+    loggedKeySet.KeyName = "Z";
+
+    loggedKey.KeyEntered = loggedKeySet;
+
+    AddKey(loggedKey);
+
+    CurrentSchedule = Schedule::One;
 }
 
 void RecordingWindow::LoadKeys(KeySet mKeyset)
@@ -110,6 +125,8 @@ bool RecordingWindow::eventFilter(QObject *, QEvent *e)
         DetectFrequencyKey(mKey);
         DetectDurationKey(mKey);
 
+        DetectScheduleKey(mKey);
+
         if (mKey->key() == Qt::Key_Backspace)
         {
             RemoveKey();
@@ -117,6 +134,138 @@ bool RecordingWindow::eventFilter(QObject *, QEvent *e)
     }
 
     return false;
+}
+
+void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
+{
+    if (mKey->key() == Qt::Key_Z)
+    {
+        if (CurrentSchedule == Schedule::One)
+        {
+            return;
+        }
+        else
+        {
+            Schedule scheduleTrans = (CurrentSchedule == Schedule::Two) ? Schedule::Two : Schedule::Three;
+            int scheduleTransCode = (CurrentSchedule == Schedule::Two) ? Qt::Key_X : Qt::Key_C;
+            QString scheduleTransString = (CurrentSchedule == Schedule::Two) ? "X" : "C";
+
+            SessionEvent endOldSchedule;
+            endOldSchedule.TimePressed = QDateTime::currentDateTime();
+            endOldSchedule.MeasurementType = Measurement::Schedule;
+            endOldSchedule.ScheduleType = scheduleTrans;
+
+            KeySetEntry loggedScheduleSet;
+            loggedScheduleSet.KeyCode = scheduleTransCode;
+            loggedScheduleSet.KeyName = scheduleTransString;
+
+            endOldSchedule.KeyEntered = loggedScheduleSet;
+
+            AddKey(endOldSchedule);
+
+        }
+
+        SessionEvent loggedKey;
+        loggedKey.TimePressed = QDateTime::currentDateTime();
+        loggedKey.MeasurementType = Measurement::Schedule;
+        loggedKey.ScheduleType = Schedule::One;
+
+        KeySetEntry loggedKeySet;
+        loggedKeySet.KeyCode = mKey->key();
+        loggedKeySet.KeyName = mKey->text();
+
+        loggedKey.KeyEntered = loggedKeySet;
+
+        AddKey(loggedKey);
+
+        CurrentSchedule = loggedKey.ScheduleType;
+    }
+
+    if (mKey->key() == Qt::Key_X)
+    {
+        if (CurrentSchedule == Schedule::Two)
+        {
+            return;
+        }
+        else
+        {
+            Schedule scheduleTrans = (CurrentSchedule == Schedule::One) ? Schedule::One : Schedule::Three;
+            int scheduleTransCode = (CurrentSchedule == Schedule::Two) ? Qt::Key_Z : Qt::Key_C;
+            QString scheduleTransString = (CurrentSchedule == Schedule::One) ? "Z" : "C";
+
+            SessionEvent endOldSchedule;
+            endOldSchedule.TimePressed = QDateTime::currentDateTime();
+            endOldSchedule.MeasurementType = Measurement::Schedule;
+            endOldSchedule.ScheduleType = scheduleTrans;
+
+            KeySetEntry loggedScheduleSet;
+            loggedScheduleSet.KeyCode = scheduleTransCode;
+            loggedScheduleSet.KeyName = scheduleTransString;
+
+            endOldSchedule.KeyEntered = loggedScheduleSet;
+
+            AddKey(endOldSchedule);
+
+        }
+
+        SessionEvent loggedKey;
+        loggedKey.TimePressed = QDateTime::currentDateTime();
+        loggedKey.MeasurementType = Measurement::Schedule;
+        loggedKey.ScheduleType = Schedule::Two;
+
+        KeySetEntry loggedKeySet;
+        loggedKeySet.KeyCode = mKey->key();
+        loggedKeySet.KeyName = mKey->text();
+
+        loggedKey.KeyEntered = loggedKeySet;
+
+        AddKey(loggedKey);
+
+        CurrentSchedule = loggedKey.ScheduleType;
+    }
+
+    if (mKey->key() == Qt::Key_C)
+    {
+        if (CurrentSchedule == Schedule::Three)
+        {
+            return;
+        }
+        else
+        {
+            Schedule scheduleTrans = (CurrentSchedule == Schedule::One) ? Schedule::One : Schedule::Two;
+            int scheduleTransCode = (CurrentSchedule == Schedule::Two) ? Qt::Key_Z : Qt::Key_X;
+            QString scheduleTransString = (CurrentSchedule == Schedule::One) ? "Z" : "X";
+
+            SessionEvent endOldSchedule;
+            endOldSchedule.TimePressed = QDateTime::currentDateTime();
+            endOldSchedule.MeasurementType = Measurement::Schedule;
+            endOldSchedule.ScheduleType = scheduleTrans;
+
+            KeySetEntry loggedScheduleSet;
+            loggedScheduleSet.KeyCode = scheduleTransCode;
+            loggedScheduleSet.KeyName = scheduleTransString;
+
+            endOldSchedule.KeyEntered = loggedScheduleSet;
+
+            AddKey(endOldSchedule);
+
+        }
+
+        SessionEvent loggedKey;
+        loggedKey.TimePressed = QDateTime::currentDateTime();
+        loggedKey.MeasurementType = Measurement::Schedule;
+        loggedKey.ScheduleType = Schedule::Three;
+
+        KeySetEntry loggedKeySet;
+        loggedKeySet.KeyCode = mKey->key();
+        loggedKeySet.KeyName = mKey->text();
+
+        loggedKey.KeyEntered = loggedKeySet;
+
+        AddKey(loggedKey);
+
+        CurrentSchedule = loggedKey.ScheduleType;
+    }
 }
 
 void RecordingWindow::DetectFrequencyKey(QKeyEvent * mKey)

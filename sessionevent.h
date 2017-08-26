@@ -16,7 +16,8 @@ enum class Schedule
 enum class Measurement
 {
     Rate,
-    Time
+    Time,
+    Schedule
 };
 
 class SessionEvent

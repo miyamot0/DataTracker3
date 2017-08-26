@@ -52,7 +52,10 @@ private:
 
     QString formatTimeLabel(int msecs);
 
-    void DetectFrequencyKey(QKeyEvent *mKey);
+    Schedule CurrentSchedule;
+
+    void DetectScheduleKey(QKeyEvent * mKey);
+    void DetectFrequencyKey(QKeyEvent * mKey);
     void DetectDurationKey(QKeyEvent * mKey);
 
     void AddKey(SessionEvent pressedKey);

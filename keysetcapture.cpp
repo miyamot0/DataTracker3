@@ -61,7 +61,11 @@ bool KeySetCapture::eventFilter(QObject *, QEvent *e)
 
         if (mKey->key() == Qt::Key_Shift ||
             mKey->key() == Qt::Key_Control ||
-            mKey->key() == Qt::Key_Escape)
+            mKey->key() == Qt::Key_Escape ||
+            mKey->key() == Qt::Key_Z ||
+            mKey->key() == Qt::Key_X ||
+            mKey->key() == Qt::Key_C ||
+            mKey->key() == Qt::Key_Tab)
         {
             return false;
         }
