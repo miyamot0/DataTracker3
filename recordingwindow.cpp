@@ -96,19 +96,16 @@ void RecordingWindow::UpdateGUI()
         {
             loggedClosedKeySet.KeyCode = Qt::Key_Z;
             loggedClosedKeySet.KeyName = "Schedule 1 End";
-
         }
         else if (CurrentSchedule == Schedule::Two)
         {
             loggedClosedKeySet.KeyCode = Qt::Key_X;
             loggedClosedKeySet.KeyName = "Schedule 2 End";
-
         }
         else if (CurrentSchedule == Schedule::Three)
         {
             loggedClosedKeySet.KeyCode = Qt::Key_C;
             loggedClosedKeySet.KeyName = "Schedule 3 End";
-
         }
 
         loggedCloseKey.KeyEntered = loggedClosedKeySet;

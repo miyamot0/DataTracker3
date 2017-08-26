@@ -10,6 +10,7 @@
 #include "recordingwindow.h"
 #include "scoringtools.h"
 #include "filetools.h"
+#include "resultsdialog.h"
 
 int main(int argc, char *argv[])
 {
@@ -63,36 +64,23 @@ int main(int argc, char *argv[])
     r.SetRole("Primary");
     r.exec();
 
-    qint64 timeMeasured;
-    QList<QPair<QString, double>> freq, dur;
+    ResultsDialog mResults;
 
-    ScoringTools::ScoreOverallSchedule(&r.PressedKeys, &mKeySet, &r.startTime, &r.endTime, &freq, &dur, &timeMeasured);
+    ScoringTools::ScoreOverallSchedule(&r.PressedKeys, &mKeySet, &r.startTime, &r.endTime,
+                                       &mResults.FrequencyOverall, &mResults.DurationOverall, &mResults.TimeOverall);
 
-    qDebug() << "Total Time Sched: ALL " << timeMeasured;
-    qDebug()<< freq;
-    qDebug()<< dur;
-    qDebug() << endl;
+    ScoringTools::ScoreSpecificSchedule(&r.PressedKeys, &mKeySet, &r.endTime, Schedule::One,
+                                        &mResults.FrequencyOne, &mResults.DurationOne, &mResults.TimeOne);
 
-    ScoringTools::ScoreSpecificSchedule(&r.PressedKeys, &mKeySet, &r.endTime, Schedule::One, &freq, &dur, &timeMeasured);
+    ScoringTools::ScoreSpecificSchedule(&r.PressedKeys, &mKeySet, &r.endTime, Schedule::Two,
+                                        &mResults.FrequencyTwo, &mResults.DurationTwo, &mResults.TimeTwo);
 
-    qDebug() << "Total Time Sched: 1 " << timeMeasured;
-    qDebug()<< freq;
-    qDebug()<< dur;
-    qDebug() << endl;
+    ScoringTools::ScoreSpecificSchedule(&r.PressedKeys, &mKeySet, &r.endTime, Schedule::Three,
+                                        &mResults.FrequencyThree, &mResults.DurationThree, &mResults.TimeThree);
 
-    ScoringTools::ScoreSpecificSchedule(&r.PressedKeys, &mKeySet, &r.endTime, Schedule::Two, &freq, &dur, &timeMeasured);
+    mResults.BuildTables();
 
-    qDebug() << "Total Time Sched: 2 " << timeMeasured;
-    qDebug()<< freq;
-    qDebug()<< dur;
-    qDebug() << endl;
-
-    ScoringTools::ScoreSpecificSchedule(&r.PressedKeys, &mKeySet, &r.endTime, Schedule::Three, &freq, &dur, &timeMeasured);
-
-    qDebug() << "Total Time Sched: 3 " << timeMeasured;
-    qDebug()<< freq;
-    qDebug()<< dur;
-    qDebug() << endl;
+    mResults.show();
 
     return a.exec();
 }
