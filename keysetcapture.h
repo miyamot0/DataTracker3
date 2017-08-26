@@ -55,7 +55,6 @@ public:
 
 private slots:
     void on_buttonKey_clicked();
-
     void on_buttonBox_clicked(QAbstractButton *button);
 
 protected:

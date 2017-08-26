@@ -44,15 +44,10 @@ public:
 
 private slots:
     void on_actionExit_triggered();
-
     void on_actionCalculate_Reliability_triggered();
-
     void on_actionSettings_2_triggered();
-
     void on_actionContact_triggered();
-
     void on_actionAbout_triggered();
-
     void on_buttonStart_clicked();
 
 private:
@@ -67,7 +62,6 @@ private:
     bool foundFolder = false;
 
     QString workingDirectory;
-
 
 };
 

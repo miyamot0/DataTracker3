@@ -39,6 +39,17 @@ ResultsDialog::ResultsDialog(QWidget *parent) :
     ui->setupUi(this);
 }
 
+/** Set up results window with information
+ * @brief ResultsDialog::SetParameters
+ * @param group
+ * @param individual
+ * @param evaluation
+ * @param condition
+ * @param therapist
+ * @param keySet
+ * @param collector
+ * @param role
+ */
 void ResultsDialog::SetParameters(QString group, QString individual, QString evaluation,
                                   QString condition, QString therapist, QString keySet,
                                   QString collector, QString role)
@@ -51,13 +62,23 @@ void ResultsDialog::SetParameters(QString group, QString individual, QString eva
     KeySetName = keySet;
     Collector = collector;
     Role = role;
+
+    ui->labelTitle->setText(QString("<html><head/><body><p align='center'><span style=' font-size:12pt;'>Recording: Session #%1</span></p></body></html>")
+                            .arg(CurrentKeySet.Session));
 }
 
+/** Assign key set
+ * @brief ResultsDialog::SetKeySet
+ * @param currKeySet
+ */
 void ResultsDialog::SetKeySet(KeySet currKeySet)
 {
     CurrentKeySet = currKeySet;
 }
 
+/** Build display tables
+ * @brief ResultsDialog::BuildTables
+ */
 void ResultsDialog::BuildTables()
 {
     for (int i(0); i<FrequencyOverall.count(); i++)
@@ -149,20 +170,26 @@ void ResultsDialog::BuildTables()
     }
 }
 
+/** Build plots for display
+ * @brief ResultsDialog::BuildPlot
+ * @param currKeySet
+ * @param PressedKeys
+ * @param startTime
+ * @param endTime
+ */
 void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKeys, QDateTime * startTime, QDateTime * endTime)
 {
-    qint64 totalMsecs = startTime->secsTo(*endTime);
+    qint64 totalSecs = startTime->secsTo(*endTime);
 
-    int bins = totalMsecs / 10;
-    int overflow = ((totalMsecs % 10) > 0) ? 1 : 0;
-        bins = bins + overflow;
+    int bins = totalSecs / 10;
+    int overflow = ((totalSecs % 10) > 0) ? 1 : 0;
+    bins = bins + overflow;
 
     int fKeys = currKeySet.FrequencyKeys.count();
     int dKeys = currKeySet.DurationKeys.count();
 
     // Prepopulate bins
     QList<QList<int>> mFrequencyBins;
-
     for (int i(0); i<bins; i++)
     {
         mFrequencyBins.append(QList<int>());
@@ -174,7 +201,6 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
     }
 
     QList<QList<double>> mDurationBins;
-
     for (int i(0); i<bins; i++)
     {
         mDurationBins.append(QList<double>());
@@ -188,7 +214,6 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
     KeySetEntry temp;
     int timeHolder;
 
-    // Good, freq counts
     for (int i(0); i<fKeys; i++)
     {
         temp = currKeySet.FrequencyKeys.at(i);
@@ -198,7 +223,6 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
             if (event.KeyEntered.KeyCode == temp.KeyCode)
             {
                 timeHolder = startTime->secsTo(event.TimePressed) / 10;
-
                 //mFrequencyBins[i][timeHolder] = mFrequencyBins[i][timeHolder] + 1;
                 mFrequencyBins[timeHolder][i] = mFrequencyBins[timeHolder][i] + 1;
             }
@@ -213,7 +237,7 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
 
     for (int i(0); i<dKeys; i++)
     {
-        KeySetEntry temp = currKeySet.DurationKeys.at(i);
+        temp = currKeySet.DurationKeys.at(i);
         waitingForNext = false;
         runs.clear();
 
@@ -237,7 +261,7 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
 
         if (waitingForNext)
         {
-            runs.append(QPair<qint64, qint64>(startTime->msecsTo(prev), startTime->msecsTo(*endTime)));
+            runs.append(QPair<qint64, qint64>(startTime->msecsTo(prev), (startTime->msecsTo(*endTime) - (startTime->msecsTo(*endTime) % 1000))));
         }
 
         for (int j(0); j<runs.length(); j++)
@@ -247,6 +271,12 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
 
             int index1 = (int)(start / 10000);
             int index2 = (int)(stop / 10000);
+
+            // !important In case overshot
+            if (index2 == bins)
+            {
+                index2--;
+            }
 
             if (index1 == index2)
             {
@@ -258,7 +288,7 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
                 //mDurationBins[i][index1] = mDurationBins[i][index1] + ((double)(10000 - (start % 10000)))/1000;
                 //mDurationBins[i][index2] = mDurationBins[i][index2] + ((double)(stop % 10000))/1000;
                 mDurationBins[index1][i] = mDurationBins[index1][i] + ((double)(10000 - (start % 10000)))/1000;
-                mDurationBins[index1][i] = mDurationBins[index1][i] + ((double)(stop % 10000))/1000;
+                mDurationBins[index2][i] = mDurationBins[index2][i] + ((double)(stop % 10000))/1000;
             }
             else
             {
@@ -438,8 +468,14 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
 
     axisX2.setMin(0);
     axisX2.setMax(mDurationBins.length() + 1);
+
 }
 
+/** Build log output
+ * @brief ResultsDialog::BuildNarrative
+ * @param PressedKeys
+ * @param startTime
+ */
 void ResultsDialog::BuildNarrative(QList<SessionEvent> * PressedKeys, QDateTime * startTime)
 {
     QStringList *mEntries = new QStringList();
@@ -455,93 +491,6 @@ void ResultsDialog::BuildNarrative(QList<SessionEvent> * PressedKeys, QDateTime 
     QStringListModel *listModel = new QStringListModel(*mEntries, NULL);
     listModel->setStringList(*mEntries);
     ui->listView->setModel(listModel);
-}
-
-void ResultsDialog::BuildJson(QList<SessionEvent> * PressedKeys, QDateTime * startTime, QString mWorkingDirectory)
-{
-    QJsonObject json;
-
-    // Demographics
-    json["Session"] = CurrentKeySet.Session;
-    json["Group"] = Group;
-    json["Individual"] = Individual;
-    json["Evaluation"] = Evaluation;
-    json["Condition"] = Condition;
-    json["Therapist"] = Therapist;
-    json["KeySet"] = KeySetName;
-    json["Collector"] = Collector;
-    json["Role"] = Role;
-    json["StartTime"] = startTime->toString();
-    json["SessionDuration"] = TimeOverall;
-    json["ScheduleOneDuration"] = TimeOne;
-    json["ScheduleTwoDuration"] = TimeTwo;
-    json["ScheduleThreeDuration"] = TimeThree;
-
-    // Keys
-    QJsonArray frequencyKeys;
-    foreach(KeySetEntry entry, CurrentKeySet.FrequencyKeys)
-    {
-        QJsonObject mEntry;
-        mEntry["Code"] = entry.KeyCode;
-        mEntry["Name"] = entry.KeyName;
-        mEntry["Description"] = entry.KeyDescription;
-
-        frequencyKeys.append(mEntry);
-    }
-    json["FrequencyKeys"] = frequencyKeys;
-
-    QJsonArray durationKeys;
-    foreach(KeySetEntry entry, CurrentKeySet.DurationKeys)
-    {
-        QJsonObject mEntry;
-        mEntry["Code"] = entry.KeyCode;
-        mEntry["Name"] = entry.KeyName;
-        mEntry["Description"] = entry.KeyDescription;
-
-        durationKeys.append(mEntry);
-    }
-    json["DurationKeys"] = durationKeys;
-
-    QJsonArray pressedKeys;
-    foreach(SessionEvent event, *PressedKeys)
-    {
-        QJsonObject mEntry;
-        mEntry["KeyCode"] = event.KeyEntered.KeyCode;
-        mEntry["KeyName"] = event.KeyEntered.KeyName;
-        mEntry["KeyDescription"] = event.KeyEntered.KeyDescription;
-        mEntry["TimePressed"] = event.TimePressed.toString();
-        mEntry["Schedule"] = formatSchedule(event.ScheduleType);
-        mEntry["Measurement"] = formatMeasurement(event.MeasurementType);
-
-        pressedKeys.append(mEntry);
-    }
-    json["PressedKeys"] = pressedKeys;
-
-    QJsonDocument jsonDoc(json);
-
-    QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, Group);
-    mKeyPath = FileTools::pathAppend(mKeyPath, Individual);
-    mKeyPath = FileTools::pathAppend(mKeyPath, Evaluation);
-    mKeyPath = FileTools::pathAppend(mKeyPath, Condition);
-
-    QString mFileName = QString("%1%2%3%4_%5.json")
-            .arg(QString::number(CurrentKeySet.Session).rightJustified(3, '0'))
-            .arg(Group.mid(0, 3))
-            .arg(Individual.mid(0, 3))
-            .arg(Evaluation.mid(0, 3))
-            .arg(Role.mid(0, 1));
-
-    QString path = FileTools::pathAppend(mKeyPath, mFileName);
-
-    QFile saveFile(path);
-
-    if (!saveFile.open(QIODevice::WriteOnly)) {
-        // TODO error handling
-        return;
-    }
-
-    saveFile.write(jsonDoc.toJson());
-
 }
 
 ResultsDialog::~ResultsDialog()

@@ -454,7 +454,7 @@ void SessionWindow::on_buttonKeySet_clicked()
 
 }
 
-/**
+/** Fire when keyboard changes
  * @brief SessionWindow::on_comboKeySet_currentIndexChanged
  * @param index
  */
@@ -708,6 +708,10 @@ SessionWindow::~SessionWindow()
     delete ui;
 }
 
+/** Begin session
+ * @brief SessionWindow::on_buttonBox_clicked
+ * @param button
+ */
 void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
 {
     if (ui->comboSessionDuration->currentIndex() == 0)
@@ -744,17 +748,25 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
         r.SetRole(ui->comboRole->currentText());
         r.exec();
 
-        ScoringTools::ScoreOverallSchedule(&r.PressedKeys, &CurrentKeySet, &r.startTime, &r.endTime,
-                                           &mResults.FrequencyOverall, &mResults.DurationOverall, &mResults.TimeOverall);
+        ScoringTools::ScoreOverallSchedule(&r.PressedKeys, &CurrentKeySet,
+                                           &r.startTime, &r.endTime,
+                                           &mResults.FrequencyOverall, &mResults.DurationOverall,
+                                           &mResults.TimeOverall);
 
-        ScoringTools::ScoreSpecificSchedule(&r.PressedKeys, &CurrentKeySet, &r.endTime, Schedule::One,
-                                            &mResults.FrequencyOne, &mResults.DurationOne, &mResults.TimeOne);
+        ScoringTools::ScoreSpecificSchedule(&r.PressedKeys, &CurrentKeySet,
+                                            &r.endTime, Schedule::One,
+                                            &mResults.FrequencyOne, &mResults.DurationOne,
+                                            &mResults.TimeOne);
 
-        ScoringTools::ScoreSpecificSchedule(&r.PressedKeys, &CurrentKeySet, &r.endTime, Schedule::Two,
-                                            &mResults.FrequencyTwo, &mResults.DurationTwo, &mResults.TimeTwo);
+        ScoringTools::ScoreSpecificSchedule(&r.PressedKeys, &CurrentKeySet,
+                                            &r.endTime, Schedule::Two,
+                                            &mResults.FrequencyTwo, &mResults.DurationTwo,
+                                            &mResults.TimeTwo);
 
-        ScoringTools::ScoreSpecificSchedule(&r.PressedKeys, &CurrentKeySet, &r.endTime, Schedule::Three,
-                                            &mResults.FrequencyThree, &mResults.DurationThree, &mResults.TimeThree);
+        ScoringTools::ScoreSpecificSchedule(&r.PressedKeys, &CurrentKeySet,
+                                            &r.endTime, Schedule::Three,
+                                            &mResults.FrequencyThree, &mResults.DurationThree,
+                                            &mResults.TimeThree);
 
         mResults.SetKeySet(CurrentKeySet);
 
@@ -771,7 +783,14 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
                                ui->comboCollector->currentText(),
                                ui->comboRole->currentText());
 
-        mResults.BuildJson(&r.PressedKeys, &r.startTime, mWorkingDirectory);
+        FileTools::WriteSessionJSON(mWorkingDirectory,CurrentKeySet,ui->comboGroup->currentText(),
+                                    ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
+                                    ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
+                                    ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
+                                    ui->comboRole->currentText(),r.startTime.toString(),
+                                    mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree,
+                                    &r.PressedKeys);
+
         mResults.BuildPlot(CurrentKeySet, &r.PressedKeys, &r.startTime, &r.endTime);
 
         mResults.show();

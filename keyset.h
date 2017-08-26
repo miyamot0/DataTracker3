@@ -28,6 +28,9 @@
 
 #include "keysetentry.h"
 
+/** Class for holding information related to key pairs
+ * @brief The KeySet class
+ */
 class KeySet
 {
 public:

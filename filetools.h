@@ -36,11 +36,17 @@
 #include "parsetypes.h"
 #include "keyset.h"
 #include "keysetentry.h"
+#include "sessionevent.h"
 
 class FileTools
 {
 public:
 
+/** Read keys in from file
+ * @brief ReadKeySet
+ * @param path
+ * @param keySet
+ */
 static void ReadKeySet(QString path, KeySet * keySet)
 {
     QFile mKeySet(path);
@@ -89,6 +95,11 @@ static void ReadKeySet(QString path, KeySet * keySet)
     }
 }
 
+/** Write key set to JSON file
+ * @brief WriteKeySet
+ * @param path
+ * @param keySet
+ */
 static void WriteKeySet(QString path, KeySet keySet)
 {
     QJsonObject json;
@@ -130,6 +141,11 @@ static void WriteKeySet(QString path, KeySet keySet)
     saveFile.write(jsonDoc.toJson());
 }
 
+/** Read therapists from file
+ * @brief ReadTherapists
+ * @param path
+ * @param therapists
+ */
 static void ReadTherapists(QString path, QStringList * therapists)
 {
     QFile mTherapists(path);
@@ -151,6 +167,11 @@ static void ReadTherapists(QString path, QStringList * therapists)
     }
 }
 
+/** Write therapists to JSON file
+ * @brief WriteTherapists
+ * @param path
+ * @param therapists
+ */
 static void WriteTherapists(QString path, QStringList therapists)
 {
     QJsonObject json;
@@ -176,6 +197,11 @@ static void WriteTherapists(QString path, QStringList therapists)
     saveFile.write(jsonDoc.toJson());
 }
 
+/** Read collectors from file
+ * @brief ReadCollectors
+ * @param path
+ * @param collectors
+ */
 static void ReadCollectors(QString path, QStringList * collectors)
 {
     QFile mCollectors(path);
@@ -197,6 +223,11 @@ static void ReadCollectors(QString path, QStringList * collectors)
     }
 }
 
+/** Write collectors to JSON file
+ * @brief WriteCollectors
+ * @param path
+ * @param collectors
+ */
 static void WriteCollectors(QString path, QStringList collectors)
 {
     QJsonObject json;
@@ -222,18 +253,144 @@ static void WriteCollectors(QString path, QStringList collectors)
     saveFile.write(jsonDoc.toJson());
 }
 
+static void WriteSessionJSON(QString mWorkingDirectory, KeySet CurrentKeySet, QString Group, QString Individual,
+                             QString Evaluation, QString Condition, QString Therapist,
+                             QString KeySetName, QString Collector, QString Role,
+                             QString StartTime, qint64 TimeOverall, qint64 TimeOne,
+                             qint64 TimeTwo, qint64 TimeThree, QList<SessionEvent> *PressedKeys)
+{
+    QJsonObject json;
+
+    // Demographics
+    json["Session"] = CurrentKeySet.Session;
+    json["Group"] = Group;
+    json["Individual"] = Individual;
+    json["Evaluation"] = Evaluation;
+    json["Condition"] = Condition;
+    json["Therapist"] = Therapist;
+    json["KeySet"] = KeySetName;
+    json["Collector"] = Collector;
+    json["Role"] = Role;
+    json["StartTime"] = StartTime;
+    json["SessionDuration"] = TimeOverall;
+    json["ScheduleOneDuration"] = TimeOne;
+    json["ScheduleTwoDuration"] = TimeTwo;
+    json["ScheduleThreeDuration"] = TimeThree;
+
+    // Keys
+    QJsonArray frequencyKeys;
+    foreach(KeySetEntry entry, CurrentKeySet.FrequencyKeys)
+    {
+        QJsonObject mEntry;
+        mEntry["Code"] = entry.KeyCode;
+        mEntry["Name"] = entry.KeyName;
+        mEntry["Description"] = entry.KeyDescription;
+
+        frequencyKeys.append(mEntry);
+    }
+    json["FrequencyKeys"] = frequencyKeys;
+
+    QJsonArray durationKeys;
+    foreach(KeySetEntry entry, CurrentKeySet.DurationKeys)
+    {
+        QJsonObject mEntry;
+        mEntry["Code"] = entry.KeyCode;
+        mEntry["Name"] = entry.KeyName;
+        mEntry["Description"] = entry.KeyDescription;
+
+        durationKeys.append(mEntry);
+    }
+    json["DurationKeys"] = durationKeys;
+
+    QJsonArray pressedKeys;
+    foreach(SessionEvent event, *PressedKeys)
+    {
+        QJsonObject mEntry;
+        mEntry["KeyCode"] = event.KeyEntered.KeyCode;
+        mEntry["KeyName"] = event.KeyEntered.KeyName;
+        mEntry["KeyDescription"] = event.KeyEntered.KeyDescription;
+        mEntry["TimePressed"] = event.TimePressed.toString();
+        mEntry["Schedule"] = formatSchedule(event.ScheduleType);
+        mEntry["Measurement"] = formatMeasurement(event.MeasurementType);
+
+        pressedKeys.append(mEntry);
+    }
+    json["PressedKeys"] = pressedKeys;
+
+    QJsonDocument jsonDoc(json);
+
+    QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, Group);
+    mKeyPath = FileTools::pathAppend(mKeyPath, Individual);
+    mKeyPath = FileTools::pathAppend(mKeyPath, Evaluation);
+    mKeyPath = FileTools::pathAppend(mKeyPath, Condition);
+
+    QString mFileName = QString("%1%2%3%4_%5.json")
+            .arg(QString::number(CurrentKeySet.Session).rightJustified(3, '0'))
+            .arg(Group.mid(0, 3))
+            .arg(Individual.mid(0, 3))
+            .arg(Evaluation.mid(0, 3))
+            .arg(Role.mid(0, 1));
+
+    QString path = FileTools::pathAppend(mKeyPath, mFileName);
+
+    QFile saveFile(path);
+
+    if (!saveFile.open(QIODevice::WriteOnly)) {
+        // TODO error handling
+        return;
+    }
+
+    saveFile.write(jsonDoc.toJson());
+}
+
+static QString formatSchedule(Schedule schedule)
+{
+    if (schedule == Schedule::One)
+    {
+        return QString("Schedule 1");
+    }
+    else if (schedule == Schedule::Two)
+    {
+        return QString("Schedule 2");
+    }
+    else
+    {
+        return QString("Schedule 3");
+    }
+}
+
+static QString formatMeasurement(Measurement measurement)
+{
+    if (measurement == Measurement::Rate)
+    {
+        return QString("Rate");
+    }
+    else if (measurement == Measurement::Time)
+    {
+        return QString("Time");
+    }
+    else
+    {
+        return QString("Schedule");
+    }
+}
+
+/** Format path for multi-platform use
+ * @brief pathAppend
+ * @param path
+ * @param file
+ * @return
+ */
 static QString pathAppend(const QString& path, const QString& file)
 {
     return QDir::cleanPath(path + QDir::separator() + file);
 }
 
-static QStringList ParseDirectory(DirectoryParse mDirectory, ParseTypes)
-{
-    QStringList mParsedDirectories;
-
-    return mParsedDirectories;
-}
-
+/** Check and prepare a directory for writing
+ * @brief CheckAndPrepDirectory
+ * @param folderTitle
+ * @return
+ */
 static bool CheckAndPrepDirectory(QString folderTitle)
 {
     QStringList mDocFolder = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
@@ -257,6 +414,12 @@ static bool CheckAndPrepDirectory(QString folderTitle)
     return false;
 }
 
+/** Check for designated folder
+ * @brief CheckDirectory
+ * @param mEntries
+ * @param folderTitle
+ * @return
+ */
 static bool CheckDirectory(QFileInfoList mEntries, QString folderTitle)
 {
     for (QFileInfo mInf : mEntries)

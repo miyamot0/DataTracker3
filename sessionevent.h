@@ -45,14 +45,12 @@ enum class Measurement
 
 class SessionEvent
 {
+
 public:
     KeySetEntry KeyEntered;
     QDateTime TimePressed;
     Schedule ScheduleType;
     Measurement MeasurementType;
-
-
-
 };
 
 #endif // SESSIONEVENT_H

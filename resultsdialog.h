@@ -54,7 +54,7 @@ public:
     void BuildTables();
     void BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKeys, QDateTime * startTime, QDateTime *endTime);
     void BuildNarrative(QList<SessionEvent> *PressedKeys, QDateTime *startTime);
-    void BuildJson(QList<SessionEvent> * PressedKeys, QDateTime * startTime, QString mWorkingDirectory);
+    //void BuildJson(QList<SessionEvent> * PressedKeys, QDateTime * startTime, QString mWorkingDirectory);
 
     void SetParameters(QString group, QString individual, QString evaluation,
                        QString condition, QString therapist, QString keySet,
@@ -121,37 +121,7 @@ private:
         }
     }
 
-    QString formatSchedule(Schedule schedule)
-    {
-        if (schedule == Schedule::One)
-        {
-            return QString("Schedule 1");
-        }
-        else if (schedule == Schedule::Two)
-        {
-            return QString("Schedule 2");
-        }
-        else
-        {
-            return QString("Schedule 3");
-        }
-    }
 
-    QString formatMeasurement(Measurement measurement)
-    {
-        if (measurement == Measurement::Rate)
-        {
-            return QString("Rate");
-        }
-        else if (measurement == Measurement::Time)
-        {
-            return QString("Time");
-        }
-        else
-        {
-            return QString("Schedule");
-        }
-    }
 };
 
 #endif // RESULTSDIALOG_H
