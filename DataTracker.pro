@@ -108,5 +108,5 @@ win32 {
 
     DT_FILES.path = $$DESTDIR
 
-    INSTALLS += DMS_FILES
+    INSTALLS += DT_FILES
 }
