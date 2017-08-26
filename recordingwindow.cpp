@@ -47,6 +47,36 @@ void RecordingWindow::LoadKeys(KeySet mKeyset)
     }
 }
 
+void RecordingWindow::SetGroup(QString value)
+{
+    ui->editGroup->setText(value);
+}
+
+void RecordingWindow::SetIndividual(QString value)
+{
+    ui->editPatient->setText(value);
+}
+
+void RecordingWindow::SetEvaluation(QString value)
+{
+    ui->editEvaluation->setText(value);
+}
+
+void RecordingWindow::SetCondition(QString value)
+{
+    ui->editCondition->setText(value);
+}
+
+void RecordingWindow::SetCollector(QString value)
+{
+    ui->editCollector->setText(value);
+}
+
+void RecordingWindow::SetRole(QString value)
+{
+    ui->editPrimary->setText(value);
+}
+
 void RecordingWindow::UpdateGUI()
 {
     endTime = QDateTime::currentDateTime();

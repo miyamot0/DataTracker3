@@ -7,6 +7,8 @@
 #include "keyseteditor.h"
 #include "keysetcapture.h"
 
+#include "recordingwindow.h"
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -18,7 +20,6 @@ int main(int argc, char *argv[])
     w.show();
 
 
-    /*
     KeySet mKeySet;
 
     mKeySet.KeySetName = "NameTest";
@@ -29,21 +30,36 @@ int main(int argc, char *argv[])
     f1.KeyDescription = "SIB";
     f1.KeyName = "1";
 
+    KeySetEntry f2;
+    f2.KeyCode = Qt::Key_2;
+    f2.KeyDescription = "AGG";
+    f2.KeyName = "2";
+
     mKeySet.FrequencyKeys.append(f1);
+    mKeySet.FrequencyKeys.append(f2);
 
     KeySetEntry d1;
-    d1.KeyCode = Qt::Key_4;
-    d1.KeyDescription = "SR";
-    d1.KeyName = "4";
+    d1.KeyCode = Qt::Key_R;
+    d1.KeyDescription = "R";
+    d1.KeyName = "R";
+
+    KeySetEntry d2;
+    d2.KeyCode = Qt::Key_Q;
+    d2.KeyDescription = "Q";
+    d2.KeyName = "Q";
 
     mKeySet.DurationKeys.append(d1);
-
+    mKeySet.DurationKeys.append(d2);
 
     RecordingWindow r;
     r.LoadKeys(mKeySet);
+    r.SetGroup("Group");
+    r.SetIndividual("Individual");
+    r.SetEvaluation("Functional Analysis");
+    r.SetCondition("Control");
+    r.SetCollector("ABC");
+    r.SetRole("Primary");
     r.show();
-    */
-
 
     return a.exec();
 }

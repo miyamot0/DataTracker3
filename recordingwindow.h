@@ -25,11 +25,14 @@ public:
     KeySet keySet;
 
     void LoadKeys(KeySet mKeyset);
+    void SetGroup(QString value);
+    void SetIndividual(QString value);
+    void SetEvaluation(QString value);
+    void SetCondition(QString value);
+    void SetCollector(QString value);
+    void SetRole(QString value);
 
     bool eventFilter(QObject *, QEvent *e);
-
-    void AddKey(SessionEvent pressedKey);
-    void RemoveKey();
 
 public slots:
     void UpdateGUI();
@@ -51,6 +54,9 @@ private:
 
     void DetectFrequencyKey(QKeyEvent *mKey);
     void DetectDurationKey(QKeyEvent * mKey);
+
+    void AddKey(SessionEvent pressedKey);
+    void RemoveKey();
 
     void UpdateTables();
 
