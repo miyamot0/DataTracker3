@@ -1,5 +1,17 @@
 #-------------------------------------------------
 #
+# Data Tracker, Qt Port
+# Copyright 2017, Shawn P. Gilroy
+# Released under the GPL-V3 license
+#
+# Source code for project hosted at:
+#
+# https://github.com/miyamot0/DataTracker3
+#
+#-------------------------------------------------
+
+#-------------------------------------------------
+#
 # Project created by QtCreator 2017-08-24T14:42:07
 #
 #-------------------------------------------------
