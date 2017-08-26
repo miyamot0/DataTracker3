@@ -51,7 +51,9 @@ SOURCES += main.cpp\
     keyseteditor.cpp \
     keysetcapture.cpp \
     recordingwindow.cpp \
-    resultsdialog.cpp
+    resultsdialog.cpp \
+    aboutdialog.cpp \
+    contactdialog.cpp
 
 HEADERS  += startwindow.h \
     sessionwindow.h \
@@ -66,14 +68,18 @@ HEADERS  += startwindow.h \
     recordingwindow.h \
     sessionevent.h \
     scoringtools.h \
-    resultsdialog.h
+    resultsdialog.h \
+    aboutdialog.h \
+    contactdialog.h
 
 FORMS    += startwindow.ui \
     sessionwindow.ui \
     keyseteditor.ui \
     keysetcapture.ui \
     recordingwindow.ui \
-    resultsdialog.ui
+    resultsdialog.ui \
+    aboutdialog.ui \
+    contactdialog.ui
 
 DISTFILES += \
     README.md \

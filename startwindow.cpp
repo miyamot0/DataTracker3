@@ -79,7 +79,7 @@ void StartWindow::on_actionSettings_2_triggered()
  */
 void StartWindow::on_actionContact_triggered()
 {
-    //qDebug() << "on_actionContact_triggered";
+    contactDialog.show();
 }
 
 /** Open About Window
@@ -87,7 +87,7 @@ void StartWindow::on_actionContact_triggered()
  */
 void StartWindow::on_actionAbout_triggered()
 {
-    //qDebug() << "on_actionAbout_triggered";
+    aboutDialogWindow.show();
 }
 
 /** Open Session Window

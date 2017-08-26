@@ -27,6 +27,8 @@
 #include <QMainWindow>
 
 #include "sessionwindow.h"
+#include "aboutdialog.h"
+#include "contactdialog.h"
 
 namespace Ui {
 class StartWindow;
@@ -55,6 +57,9 @@ private slots:
 
 private:
     Ui::StartWindow *ui;
+
+    AboutDialog aboutDialogWindow;
+    ContactDialog contactDialog;
 
     SessionWindow *sessionWindow;
 
