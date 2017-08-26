@@ -85,6 +85,36 @@ void RecordingWindow::UpdateGUI()
 
     if ((startTime.msecsTo(endTime) / 1000) >= keySet.TotalSeconds)
     {
+        SessionEvent loggedCloseKey;
+        loggedCloseKey.TimePressed = endTime;
+        loggedCloseKey.MeasurementType = Measurement::Schedule;
+        loggedCloseKey.ScheduleType = CurrentSchedule;
+
+        KeySetEntry loggedClosedKeySet;
+
+        if (CurrentSchedule == Schedule::One)
+        {
+            loggedClosedKeySet.KeyCode = Qt::Key_Z;
+            loggedClosedKeySet.KeyName = "Schedule 1 End";
+
+        }
+        else if (CurrentSchedule == Schedule::Two)
+        {
+            loggedClosedKeySet.KeyCode = Qt::Key_X;
+            loggedClosedKeySet.KeyName = "Schedule 2 End";
+
+        }
+        else if (CurrentSchedule == Schedule::Three)
+        {
+            loggedClosedKeySet.KeyCode = Qt::Key_C;
+            loggedClosedKeySet.KeyName = "Schedule 3 End";
+
+        }
+
+        loggedCloseKey.KeyEntered = loggedClosedKeySet;
+
+        AddKey(loggedCloseKey);
+
         close();
     }
 }

@@ -23,6 +23,8 @@ public:
     ~RecordingWindow();
 
     KeySet keySet;
+    QDateTime startTime, endTime;
+    QList<SessionEvent> PressedKeys;
 
     void LoadKeys(KeySet mKeyset);
     void SetGroup(QString value);
@@ -41,10 +43,6 @@ private:
     Ui::RecordingWindow *ui;
 
     QTimer baseTimer;
-
-    QDateTime startTime, endTime;
-
-    QList<SessionEvent> PressedKeys;
 
     QList<bool> DurationFlags;
     QList<qint64> DurationSums;

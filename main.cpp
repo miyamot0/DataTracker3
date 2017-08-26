@@ -8,6 +8,8 @@
 #include "keysetcapture.h"
 
 #include "recordingwindow.h"
+#include "scoringtools.h"
+#include "filetools.h"
 
 int main(int argc, char *argv[])
 {
@@ -19,11 +21,11 @@ int main(int argc, char *argv[])
     StartWindow w;
     w.show();
 
-
     KeySet mKeySet;
 
     mKeySet.KeySetName = "NameTest";
-    mKeySet.TotalSeconds = 60;
+    mKeySet.TotalSeconds = 10;
+    mKeySet.Session = 1;
 
     KeySetEntry f1;
     f1.KeyCode = Qt::Key_1;
@@ -51,7 +53,6 @@ int main(int argc, char *argv[])
     mKeySet.DurationKeys.append(d1);
     mKeySet.DurationKeys.append(d2);
 
-    /*
     RecordingWindow r;
     r.LoadKeys(mKeySet);
     r.SetGroup("Group");
@@ -60,8 +61,38 @@ int main(int argc, char *argv[])
     r.SetCondition("Control");
     r.SetCollector("ABC");
     r.SetRole("Primary");
-    r.show();
-    */
+    r.exec();
+
+    qint64 timeMeasured;
+    QList<QPair<QString, double>> freq, dur;
+
+    ScoringTools::ScoreOverallSchedule(&r.PressedKeys, &mKeySet, &r.startTime, &r.endTime, &freq, &dur, &timeMeasured);
+
+    qDebug() << "Total Time Sched: ALL " << timeMeasured;
+    qDebug()<< freq;
+    qDebug()<< dur;
+    qDebug() << endl;
+
+    ScoringTools::ScoreSpecificSchedule(&r.PressedKeys, &mKeySet, &r.endTime, Schedule::One, &freq, &dur, &timeMeasured);
+
+    qDebug() << "Total Time Sched: 1 " << timeMeasured;
+    qDebug()<< freq;
+    qDebug()<< dur;
+    qDebug() << endl;
+
+    ScoringTools::ScoreSpecificSchedule(&r.PressedKeys, &mKeySet, &r.endTime, Schedule::Two, &freq, &dur, &timeMeasured);
+
+    qDebug() << "Total Time Sched: 2 " << timeMeasured;
+    qDebug()<< freq;
+    qDebug()<< dur;
+    qDebug() << endl;
+
+    ScoringTools::ScoreSpecificSchedule(&r.PressedKeys, &mKeySet, &r.endTime, Schedule::Three, &freq, &dur, &timeMeasured);
+
+    qDebug() << "Total Time Sched: 3 " << timeMeasured;
+    qDebug()<< freq;
+    qDebug()<< dur;
+    qDebug() << endl;
 
     return a.exec();
 }
