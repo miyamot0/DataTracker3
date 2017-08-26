@@ -94,6 +94,7 @@ bool KeySetCapture::eventFilter(QObject *, QEvent *e)
         }
 
         ui->editDescription->setReadOnly(false);
+        ui->editDescription->setFocus();
 
         KeyCode = mKey->key();
         KeyText = mKey->text();

@@ -603,12 +603,12 @@ void SessionWindow::on_comboSessionDuration_currentIndexChanged(int index)
     if (index == ui->comboSessionDuration->count() - 1)
     {
         ui->editSessionDuration->setReadOnly(false);
-        ui->editSessionDuration->setEnabled(true);
+        //ui->editSessionDuration->setEnabled(true);
     }
     else
     {
         ui->editSessionDuration->setReadOnly(true);
-        ui->editSessionDuration->setEnabled(false);
+        //ui->editSessionDuration->setEnabled(false);
     }
 }
 
