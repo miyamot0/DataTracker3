@@ -20,6 +20,9 @@
       <layout class="QVBoxLayout" name="leftPanel">
        <item>
         <widget class="QTableWidget" name="tableWidgetFrequency">
+         <property name="focusPolicy">
+          <enum>Qt::TabFocus</enum>
+         </property>
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
          </property>
@@ -78,6 +81,9 @@
       <layout class="QVBoxLayout" name="rightPanel">
        <item>
         <widget class="QTableWidget" name="tableWidgetDuration">
+         <property name="focusPolicy">
+          <enum>Qt::ClickFocus</enum>
+         </property>
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
          </property>
