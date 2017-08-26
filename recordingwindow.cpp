@@ -10,9 +10,6 @@ RecordingWindow::RecordingWindow(QWidget *parent) : QDialog(parent), ui(new Ui::
     ui->setupUi(this);
 
     installEventFilter(this);
-
-    connect(&baseTimer, SIGNAL(timeout()), this, SLOT(UpdateGUI()));
-
 }
 
 void RecordingWindow::LoadKeys(KeySet mKeyset)
@@ -105,16 +102,6 @@ bool RecordingWindow::eventFilter(QObject *, QEvent *e)
     {
         QKeyEvent * mKey = static_cast<QKeyEvent *>(e);
 
-        DetectFrequencyKey(mKey);
-        DetectDurationKey(mKey);
-
-        DetectScheduleKey(mKey);
-
-        if (mKey->key() == Qt::Key_Backspace)
-        {
-            RemoveKey();
-        }
-
         if (mKey->key() == Qt::Key_Tab && !Started)
         {
             Started = true;
@@ -131,6 +118,7 @@ bool RecordingWindow::eventFilter(QObject *, QEvent *e)
             ScheduleDurationFlaggedTimes.append(QDateTime());
             ScheduleDurationFlaggedTimes.append(QDateTime());
 
+            connect(&baseTimer, SIGNAL(timeout()), this, SLOT(UpdateGUI()));
             baseTimer.start(50);
 
             startTime = QDateTime::currentDateTime();
@@ -152,6 +140,23 @@ bool RecordingWindow::eventFilter(QObject *, QEvent *e)
         }
     }
 
+    if (e->type() == QEvent::KeyRelease && Started)
+    {
+        QKeyEvent * mKey = static_cast<QKeyEvent *>(e);
+
+        DetectFrequencyKey(mKey);
+        DetectDurationKey(mKey);
+
+        DetectScheduleKey(mKey);
+
+        if (mKey->key() == Qt::Key_Backspace)
+        {
+            RemoveKey();
+        }
+
+
+    }
+
     return false;
 }
 
@@ -167,7 +172,7 @@ void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
         {
             Schedule scheduleTrans = (CurrentSchedule == Schedule::Two) ? Schedule::Two : Schedule::Three;
             int scheduleTransCode = (CurrentSchedule == Schedule::Two) ? Qt::Key_X : Qt::Key_C;
-            QString scheduleTransString = (CurrentSchedule == Schedule::Two) ? "X" : "C";
+            QString scheduleTransString = (CurrentSchedule == Schedule::Two) ? "Schedule Two" : "Schedule Three";
 
             SessionEvent endOldSchedule;
             endOldSchedule.TimePressed = QDateTime::currentDateTime();
@@ -182,6 +187,7 @@ void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
 
             AddKey(endOldSchedule);
 
+            UpdateTables();
         }
 
         SessionEvent loggedKey;
@@ -197,7 +203,13 @@ void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
 
         AddKey(loggedKey);
 
+        ScheduleFlags[0] = true;
+        ScheduleFlags[1] = false;
+        ScheduleFlags[2] = false;
+
         CurrentSchedule = loggedKey.ScheduleType;
+
+        UpdateTables();
     }
 
     if (mKey->key() == Qt::Key_X)
@@ -209,8 +221,8 @@ void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
         else
         {
             Schedule scheduleTrans = (CurrentSchedule == Schedule::One) ? Schedule::One : Schedule::Three;
-            int scheduleTransCode = (CurrentSchedule == Schedule::Two) ? Qt::Key_Z : Qt::Key_C;
-            QString scheduleTransString = (CurrentSchedule == Schedule::One) ? "Z" : "C";
+            int scheduleTransCode = (CurrentSchedule == Schedule::One) ? Qt::Key_Z : Qt::Key_C;
+            QString scheduleTransString = (CurrentSchedule == Schedule::One) ? "Schedule One" : "Schedule Three";
 
             SessionEvent endOldSchedule;
             endOldSchedule.TimePressed = QDateTime::currentDateTime();
@@ -225,6 +237,7 @@ void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
 
             AddKey(endOldSchedule);
 
+            UpdateTables();
         }
 
         SessionEvent loggedKey;
@@ -240,7 +253,13 @@ void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
 
         AddKey(loggedKey);
 
+        ScheduleFlags[0] = false;
+        ScheduleFlags[1] = true;
+        ScheduleFlags[2] = false;
+
         CurrentSchedule = loggedKey.ScheduleType;
+
+        UpdateTables();
     }
 
     if (mKey->key() == Qt::Key_C)
@@ -252,8 +271,8 @@ void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
         else
         {
             Schedule scheduleTrans = (CurrentSchedule == Schedule::One) ? Schedule::One : Schedule::Two;
-            int scheduleTransCode = (CurrentSchedule == Schedule::Two) ? Qt::Key_Z : Qt::Key_X;
-            QString scheduleTransString = (CurrentSchedule == Schedule::One) ? "Z" : "X";
+            int scheduleTransCode = (CurrentSchedule == Schedule::One) ? Qt::Key_Z : Qt::Key_X;
+            QString scheduleTransString = (CurrentSchedule == Schedule::One) ? "Schedule One" : "Schedule Two";
 
             SessionEvent endOldSchedule;
             endOldSchedule.TimePressed = QDateTime::currentDateTime();
@@ -268,6 +287,7 @@ void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
 
             AddKey(endOldSchedule);
 
+            UpdateTables();
         }
 
         SessionEvent loggedKey;
@@ -283,7 +303,13 @@ void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
 
         AddKey(loggedKey);
 
+        ScheduleFlags[0] = false;
+        ScheduleFlags[1] = false;
+        ScheduleFlags[2] = true;
+
         CurrentSchedule = loggedKey.ScheduleType;
+
+        UpdateTables();
     }
 }
 
@@ -385,6 +411,8 @@ void RecordingWindow::UpdateTables()
 
     for (int i=0; i<keySet.DurationKeys.count(); i++)
     {
+        qDebug() << "Duration Loop " << i;
+
         int counter = 0;
         DurationSums[i] = 0;
         waitingForNext = false;
@@ -422,8 +450,6 @@ void RecordingWindow::UpdateTables()
 
     int keyCode;
 
-    qDebug() << "Loop: " << ScheduleDurationSums.count();
-
     for (int i=0; i<ScheduleDurationSums.count(); i++)
     {
         int counter = 0;
@@ -445,8 +471,7 @@ void RecordingWindow::UpdateTables()
 
         for (int j=0; j<PressedKeys.count(); j++)
         {
-            if (PressedKeys[j].MeasurementType == Measurement::Time &&
-                    PressedKeys[j].KeyEntered.KeyCode == keyCode)
+            if (PressedKeys[j].MeasurementType == Measurement::Schedule && PressedKeys[j].KeyEntered.KeyCode == keyCode)
             {
                 if (waitingForNext)
                 {
@@ -455,8 +480,6 @@ void RecordingWindow::UpdateTables()
                     waitingForNext = false;
 
                     ScheduleDurationSums[i] = ScheduleDurationSums[i] + prev.msecsTo(after);
-
-                    qDebug() << "Sched Duration Sums: " << ScheduleDurationSums[i];
                 }
                 else
                 {
