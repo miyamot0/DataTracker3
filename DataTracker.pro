@@ -62,3 +62,10 @@ FORMS    += startwindow.ui \
     keysetcapture.ui \
     recordingwindow.ui \
     resultsdialog.ui
+
+DISTFILES += \
+    README.md \
+    COPYING \
+    License_Tango.txt \
+    License_QtXlsx.txt \
+    License_Qt.txt
