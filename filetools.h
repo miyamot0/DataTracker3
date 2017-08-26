@@ -253,6 +253,38 @@ static void WriteCollectors(QString path, QStringList collectors)
     saveFile.write(jsonDoc.toJson());
 }
 
+/** Read directories and parse for session
+ * @brief ReadSessionJSONint
+ * @param path
+ * @return
+ */
+static int ReadSessionJSONint(QString path)
+{
+    QFile mSession(path);
+
+    if (mSession.exists())
+    {
+        if (mSession.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            QString sessionData = mSession.readAll();
+            mSession.close();
+
+            QJsonDocument loadSession = QJsonDocument::fromJson(sessionData.toUtf8());
+            QJsonObject sessionObject = loadSession.object();
+
+            return sessionObject["Session"].toInt();
+        }
+        else
+        {
+            return -1;
+        }
+    }
+    else
+    {
+        return -1;
+    }
+}
+
 static void WriteSessionJSON(QString mWorkingDirectory, KeySet CurrentKeySet, QString Group, QString Individual,
                              QString Evaluation, QString Condition, QString Therapist,
                              QString KeySetName, QString Collector, QString Role,

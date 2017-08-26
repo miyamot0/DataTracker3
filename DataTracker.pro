@@ -53,7 +53,8 @@ SOURCES += main.cpp\
     recordingwindow.cpp \
     resultsdialog.cpp \
     aboutdialog.cpp \
-    contactdialog.cpp
+    contactdialog.cpp \
+    sessioncounter.cpp
 
 HEADERS  += startwindow.h \
     sessionwindow.h \
@@ -70,7 +71,8 @@ HEADERS  += startwindow.h \
     scoringtools.h \
     resultsdialog.h \
     aboutdialog.h \
-    contactdialog.h
+    contactdialog.h \
+    sessioncounter.h
 
 FORMS    += startwindow.ui \
     sessionwindow.ui \

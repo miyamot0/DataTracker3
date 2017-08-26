@@ -30,6 +30,7 @@
 
 #include "recordingwindow.h"
 #include "resultsdialog.h"
+#include "sessioncounter.h"
 #include "directoryparse.h"
 #include "directorysearcher.h"
 #include "keyset.h"
@@ -57,6 +58,8 @@ private slots:
     void WorkUpdate(QString results);
     void WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAction action);
 
+    void UpdateSessionCount(int session);
+
     void on_comboGroup_currentIndexChanged(int index);
     void on_comboIndividual_currentIndexChanged(int index);
     void on_comboEvaluation_currentIndexChanged(int index);
@@ -77,8 +80,13 @@ private:
 
     QString mWorkingDirectory;
     KeySet CurrentKeySet;
+
     QThread *workerThread;
     DirectorySearcher *worker;
+
+    QThread *counterThread;
+    SessionCounter *counter;
+
     DirectoryParse mCurrentDirectory;
 
     RecordingWindow r;

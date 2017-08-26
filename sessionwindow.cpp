@@ -31,6 +31,7 @@
 #include "keysetentry.h"
 
 #include <QtWidgets>
+#include <QDebug>
 
 SessionWindow::SessionWindow(QString mCurrentWorkingDirectory, QWidget *parent) :
     QDialog(parent),
@@ -268,6 +269,8 @@ void SessionWindow::on_buttonEvaluation_clicked()
  */
 void SessionWindow::on_comboEvaluation_currentIndexChanged(int index)
 {
+    // Field populator
+
     workerThread = new QThread();
 
     mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
@@ -288,6 +291,27 @@ void SessionWindow::on_comboEvaluation_currentIndexChanged(int index)
 
     workerThread->wait();
     worker->startWork();
+
+    // Session counter
+
+    counterThread = new QThread();
+
+    counter = new SessionCounter(mWorkingDirectory,
+                                 ui->comboGroup->currentText(),
+                                 ui->comboIndividual->currentText(),
+                                 ui->comboEvaluation->currentText());
+
+    counter->moveToThread(counterThread);
+
+    connect(counter, SIGNAL(workStarted()), counterThread, SLOT(start()));
+    connect(counterThread, SIGNAL(started()), counter, SLOT(working()));
+    connect(counter, SIGNAL(workFinished(int)), counterThread, SLOT(quit()), Qt::DirectConnection);
+    connect(counter, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
+    connect(counter, SIGNAL(workFinished(int)), this, SLOT(UpdateSessionCount(int)));
+
+    counterThread->wait();
+    counter->startWork();
+
 }
 
 /** Add a new condition
@@ -576,7 +600,7 @@ void SessionWindow::on_buttonCollector_clicked()
  */
 void SessionWindow::WorkUpdate(QString update)
 {
-    //qDebug() << "WORK_UPDATE: " << update;
+    qDebug() << "WORK_UPDATE: " << update;
 }
 
 /**
@@ -602,6 +626,15 @@ void SessionWindow::WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAc
     {
         SetConditions(finalResult.Conditions);
     }
+}
+
+/**
+ * @brief SessionWindow::UpdateSessionCount
+ * @param session
+ */
+void SessionWindow::UpdateSessionCount(int session)
+{
+    ui->editSessionNumber->setText(QString::number(session));
 }
 
 /**
@@ -794,5 +827,25 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
         mResults.BuildPlot(CurrentKeySet, &r.PressedKeys, &r.startTime, &r.endTime);
 
         mResults.show();
+
+        // Session counter
+
+        counterThread = new QThread();
+
+        counter = new SessionCounter(mWorkingDirectory,
+                                     ui->comboGroup->currentText(),
+                                     ui->comboIndividual->currentText(),
+                                     ui->comboEvaluation->currentText());
+
+        counter->moveToThread(counterThread);
+
+        connect(counter, SIGNAL(workStarted()), counterThread, SLOT(start()));
+        connect(counterThread, SIGNAL(started()), counter, SLOT(working()));
+        connect(counter, SIGNAL(workFinished(int)), counterThread, SLOT(quit()), Qt::DirectConnection);
+        connect(counter, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
+        connect(counter, SIGNAL(workFinished(int)), this, SLOT(UpdateSessionCount(int)));
+
+        counterThread->wait();
+        counter->startWork();
     }
 }
