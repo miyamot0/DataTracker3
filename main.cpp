@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
     StartWindow w;
     w.show();
 
+    /*
     KeySet mKeySet;
 
     mKeySet.KeySetName = "NameTest";
@@ -108,6 +109,7 @@ int main(int argc, char *argv[])
     mResults.BuildPlot(mKeySet, &r.PressedKeys, &r.startTime, &r.endTime);
 
     mResults.show();
+    */
 
     return a.exec();
 }

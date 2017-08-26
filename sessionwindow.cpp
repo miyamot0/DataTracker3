@@ -2,6 +2,7 @@
 #include "ui_sessionwindow.h"
 
 #include "filetools.h"
+#include "scoringtools.h"
 #include "parsetypes.h"
 #include "keyseteditor.h"
 #include "keysetentry.h"
@@ -686,10 +687,30 @@ SessionWindow::~SessionWindow()
 
 void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
 {
+    if (ui->comboSessionDuration->currentIndex() == 0)
+    {
+        // TODO error message
+
+        return;
+    }
+
     if((QPushButton *)button == ui->buttonBox->button(QDialogButtonBox::Ok))
     {
-        CurrentKeySet.TotalSeconds = 60;
-        CurrentKeySet.Session = 1;
+        QString mDuration = ui->comboSessionDuration->currentText();
+        QStringList durationValue = mDuration.split(' ');
+
+        bool ok;
+        durationValue[0].toDouble(&ok);
+
+        if (!ok)
+        {
+            // TODO error message
+
+            return;
+        }
+
+        CurrentKeySet.TotalSeconds = durationValue[0].toDouble(&ok) * 60;
+        CurrentKeySet.Session = ui->editSessionNumber->text().toInt();
 
         r.LoadKeys(CurrentKeySet);
         r.SetGroup(ui->comboGroup->currentText());
@@ -700,7 +721,36 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
         r.SetRole(ui->comboRole->currentText());
         r.exec();
 
+        ScoringTools::ScoreOverallSchedule(&r.PressedKeys, &CurrentKeySet, &r.startTime, &r.endTime,
+                                           &mResults.FrequencyOverall, &mResults.DurationOverall, &mResults.TimeOverall);
 
-        // Scoring here
+        ScoringTools::ScoreSpecificSchedule(&r.PressedKeys, &CurrentKeySet, &r.endTime, Schedule::One,
+                                            &mResults.FrequencyOne, &mResults.DurationOne, &mResults.TimeOne);
+
+        ScoringTools::ScoreSpecificSchedule(&r.PressedKeys, &CurrentKeySet, &r.endTime, Schedule::Two,
+                                            &mResults.FrequencyTwo, &mResults.DurationTwo, &mResults.TimeTwo);
+
+        ScoringTools::ScoreSpecificSchedule(&r.PressedKeys, &CurrentKeySet, &r.endTime, Schedule::Three,
+                                            &mResults.FrequencyThree, &mResults.DurationThree, &mResults.TimeThree);
+
+        mResults.SetKeySet(CurrentKeySet);
+
+        mResults.BuildTables();
+
+        mResults.BuildNarrative(&r.PressedKeys, &r.startTime);
+
+        mResults.SetParameters(ui->comboGroup->currentText(),
+                               ui->comboIndividual->currentText(),
+                               ui->comboEvaluation->currentText(),
+                               ui->comboCondition->currentText(),
+                               ui->comboTherapist->currentText(),
+                               ui->comboKeySet->currentText(),
+                               ui->comboCollector->currentText(),
+                               ui->comboRole->currentText());
+
+        mResults.BuildJson(&r.PressedKeys, &r.startTime, mWorkingDirectory);
+        mResults.BuildPlot(CurrentKeySet, &r.PressedKeys, &r.startTime, &r.endTime);
+
+        mResults.show();
     }
 }

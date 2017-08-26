@@ -6,6 +6,7 @@
 #include <QAbstractButton>
 
 #include "recordingwindow.h"
+#include "resultsdialog.h"
 #include "directoryparse.h"
 #include "directorysearcher.h"
 #include "keyset.h"
@@ -58,6 +59,7 @@ private:
     DirectoryParse mCurrentDirectory;
 
     RecordingWindow r;
+    ResultsDialog mResults;
 };
 
 #endif // SESSIONWINDOW_H
