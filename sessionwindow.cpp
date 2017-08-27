@@ -912,10 +912,14 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
         r.SetRole(ui->comboRole->currentText());
         r.exec();
 
+        qDebug() << "returned";
+
         if (!r.KeepData)
         {
             return;
         }
+
+        qDebug() << "passed catch";
 
         ScoringTools::ScoreOverallSchedule(&r.PressedKeys, &CurrentKeySet,
                                            &r.startTime, &r.endTime,
@@ -953,6 +957,14 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
                                ui->comboRole->currentText());
 
         FileTools::WriteSessionJSON(mWorkingDirectory,CurrentKeySet,ui->comboGroup->currentText(),
+                                    ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
+                                    ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
+                                    ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
+                                    ui->comboRole->currentText(),r.startTime.toString(),
+                                    mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree,
+                                    &r.PressedKeys);
+
+        FileTools::WriteSessionSpreadsheet(mWorkingDirectory,CurrentKeySet,ui->comboGroup->currentText(),
                                     ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
                                     ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
                                     ui->comboKeySet->currentText(),ui->comboCollector->currentText(),

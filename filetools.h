@@ -32,6 +32,8 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
+#include <QtXlsx>
+
 #include "directoryparse.h"
 #include "parsetypes.h"
 #include "keyset.h"
@@ -399,6 +401,148 @@ static void WriteSessionJSON(QString mWorkingDirectory, KeySet CurrentKeySet, QS
     }
 
     saveFile.write(jsonDoc.toJson());
+}
+
+static void WriteSessionSpreadsheet(QString mWorkingDirectory, KeySet CurrentKeySet, QString Group, QString Individual,
+                                    QString Evaluation, QString Condition, QString Therapist,
+                                    QString KeySetName, QString Collector, QString Role,
+                                    QString StartTime, qint64 TimeOverall, qint64 TimeOne,
+                                    qint64 TimeTwo, qint64 TimeThree, QList<SessionEvent> *PressedKeys)
+{
+    QXlsx::Document xlsx;
+
+    xlsx.addSheet("Session Information");
+
+    xlsx.write(1, 1, "Session Information");
+
+    xlsx.write(3, 1, "Session");
+    xlsx.write(3, 2, CurrentKeySet.Session);
+
+    xlsx.write(4, 1, "Group");
+    xlsx.write(4, 2, Group);
+
+    xlsx.write(5, 1, "Individual");
+    xlsx.write(5, 2, Individual);
+
+    xlsx.write(6, 1, "Evaluation");
+    xlsx.write(6, 2, Evaluation);
+
+    xlsx.write(7, 1, "Condition");
+    xlsx.write(7, 2, Condition);
+
+    xlsx.write(8, 1, "Therapist");
+    xlsx.write(8, 2, Therapist);
+
+    xlsx.write(9, 1, "KeySet");
+    xlsx.write(9, 2, KeySetName);
+
+    xlsx.write(10,1, "Evaluation");
+    xlsx.write(10,2, Evaluation);
+
+    xlsx.write(11,1, "Collector");
+    xlsx.write(11,2, Collector);
+
+    xlsx.write(12,1, "Role");
+    xlsx.write(12,2, Role);
+
+    xlsx.write(14,1, "StartTime");
+    xlsx.write(14,2, StartTime);
+
+    xlsx.write(15,1, "SessionDuration");
+    xlsx.write(15,2, TimeOverall);
+
+    xlsx.write(16,1, "ScheduleOneDuration");
+    xlsx.write(16,2, TimeOne);
+
+    xlsx.write(17,1, "ScheduleTwoDuration");
+    xlsx.write(17,2, TimeTwo);
+
+    xlsx.write(18,1, "ScheduleThreeDuration");
+    xlsx.write(18,2, TimeThree);
+
+    xlsx.write(20,1, "Frequency Keys");
+    xlsx.write(20,2, "Frequency Code");
+    xlsx.write(20,3, "Frequency Description");
+
+    int row = 21;
+
+    foreach(KeySetEntry entry, CurrentKeySet.FrequencyKeys)
+    {
+        xlsx.write(row, 1, entry.KeyName);
+        xlsx.write(row, 2, entry.KeyCode);
+        xlsx.write(row, 3, entry.KeyDescription);
+
+        row++;
+    }
+
+    row++;
+
+    xlsx.write(row, 1, "Duration Keys");
+    xlsx.write(row, 2, "Duration Code");
+    xlsx.write(row, 3, "Duration Description");
+
+    row++;
+
+    foreach(KeySetEntry entry, CurrentKeySet.DurationKeys)
+    {
+        xlsx.write(row, 1, entry.KeyName);
+        xlsx.write(row, 2, entry.KeyCode);
+        xlsx.write(row, 3, entry.KeyDescription);
+
+        row++;
+    }
+
+    xlsx.addSheet("Session Log");
+
+    row = 1;
+
+    xlsx.write(row, 1, "Coded Key");
+    xlsx.write(row, 2, "Key Name");
+    xlsx.write(row, 3, "Key Description");
+    xlsx.write(row, 4, "Time Pressed");
+    xlsx.write(row, 5, "Schedule");
+    xlsx.write(row, 6, "Measurement Type");
+
+    foreach(SessionEvent event, *PressedKeys)
+    {
+        xlsx.write(row, 1, event.KeyEntered.KeyCode);
+        xlsx.write(row, 2, event.KeyEntered.KeyName);
+        xlsx.write(row, 3, event.KeyEntered.KeyDescription);
+        xlsx.write(row, 4, event.TimePressed.toString());
+        xlsx.write(row, 5, formatSchedule(event.ScheduleType));
+        xlsx.write(row, 6, formatMeasurement(event.MeasurementType));
+
+        row++;
+    }
+
+    xlsx.addSheet("Session Results");
+
+    xlsx.write(1, 1, "Results...");
+
+    QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, Group);
+    mKeyPath = FileTools::pathAppend(mKeyPath, Individual);
+    mKeyPath = FileTools::pathAppend(mKeyPath, Evaluation);
+    mKeyPath = FileTools::pathAppend(mKeyPath, Condition);
+
+    QDir dir(mKeyPath);
+
+    if (!dir.exists())
+    {
+        dir.mkpath(mKeyPath);
+    }
+
+    QString mFileName = QString("%1%2%3%4_%5.xlsx")
+            .arg(QString::number(CurrentKeySet.Session).rightJustified(3, '0'))
+            .arg(Group.mid(0, 3))
+            .arg(Individual.mid(0, 3))
+            .arg(Evaluation.mid(0, 3))
+            .arg(Role.mid(0, 1));
+
+    QString path = FileTools::pathAppend(mKeyPath, mFileName);
+
+    xlsx.saveAs(path);
+
+    //QFile saveFile(path);
 }
 
 /**
