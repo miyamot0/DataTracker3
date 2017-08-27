@@ -888,7 +888,7 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
 
         mResults.BuildPlot(CurrentKeySet, &r.PressedKeys, &r.startTime, &r.endTime);
 
-        mResults.show();
+        mResults.exec();
 
         // Session counter
 
