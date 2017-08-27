@@ -48,6 +48,10 @@ StartWindow::StartWindow(QWidget *parent) :
     }
 
     LoadSettings();
+
+    // TODO network auto update
+
+
 }
 
 StartWindow::~StartWindow()
@@ -58,14 +62,26 @@ StartWindow::~StartWindow()
 /** Save Settings
  * @brief StartWindow::SaveSettings
  */
-void StartWindow::SaveSettings(QString savedLocation)
+void StartWindow::SaveSettings(QString savedLocation, bool plots, bool sheets)
 {
-    QSettings settings(QSettings::UserScope, QLatin1String("Data Tracker"));
-    settings.beginGroup(QLatin1String("ProgramSettings"));
-        settings.setValue(QLatin1String("alternateSaveLocation"), savedLocation);
-    settings.endGroup();
+    QSettings settings;
 
-    settings.sync();
+    settings.beginGroup(QLatin1String("DTProgramSettings"));
+        settings.setValue(QLatin1String("alternateSaveLocation"), savedLocation);
+        settings.setValue(QLatin1String("displayPlots"), plots);
+        settings.setValue(QLatin1String("outputSheets"), sheets);
+    settings.endGroup();
+}
+
+/**
+ * @brief StartWindow::closeEvent
+ * @param event
+ */
+void StartWindow::closeEvent(QCloseEvent *)
+{
+    SaveSettings(settingsDialog.alternateSaveLocation,
+                 settingsDialog.displayPlots,
+                 settingsDialog.spreadsheetOutput);
 }
 
 /** Load Settings
@@ -73,13 +89,14 @@ void StartWindow::SaveSettings(QString savedLocation)
  */
 void StartWindow::LoadSettings()
 {
-    QSettings settings(QSettings::UserScope, QLatin1String("Data Tracker"));
-    settings.beginGroup(QLatin1String("ProgramSettings"));
+    QSettings settings;
 
-    backupSaveLocation = settings.value(QLatin1String("alternateSaveLocation")).toString();
+    settings.beginGroup(QLatin1String("DTProgramSettings"));
+    backupSaveLocation = settings.value(QLatin1String("alternateSaveLocation"), "").toString();
+    displayPlots = settings.value(QLatin1String("displayPlots"), false).toBool();
+    outputSheets = settings.value(QLatin1String("outputSheets"), true).toBool();
 
     settings.endGroup();
-    settings.sync();
 }
 
 /** Close Window
@@ -103,7 +120,17 @@ void StartWindow::on_actionCalculate_Reliability_triggered()
  */
 void StartWindow::on_actionSettings_2_triggered()
 {
+    LoadSettings();
+
+    settingsDialog.SetSaveLocation(backupSaveLocation);
+    settingsDialog.SetSpreadsheetOption(outputSheets);
+    settingsDialog.SetDisplayOption(displayPlots);
+
     settingsDialog.exec();
+
+    displayPlots = settingsDialog.displayPlots;
+    backupSaveLocation = settingsDialog.alternateSaveLocation;
+    outputSheets = settingsDialog.spreadsheetOutput;
 }
 
 /** Open License Window

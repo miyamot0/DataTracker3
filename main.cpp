@@ -31,6 +31,9 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    a.setOrganizationName("SmallNStats");
+    a.setOrganizationDomain("smallnstats.com");
+    a.setApplicationName("DataTracker");
 
     qRegisterMetaType<DirectoryParse>("DirectoryParse");
     qRegisterMetaType<ParseTypes::ParseAction>("ParseTypes::ParseAction");

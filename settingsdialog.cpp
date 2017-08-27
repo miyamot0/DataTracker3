@@ -33,7 +33,36 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     setWindowTitle(tr("Program Settings"));
 }
 
+void SettingsDialog::SetSaveLocation(QString location)
+{
+    alternateSaveLocation = location;
+    ui->editSaveLocation->setText(location);
+}
+
+void SettingsDialog::SetSpreadsheetOption(bool value)
+{
+    spreadsheetOutput = value;
+    ui->checkBoxSheets->setChecked(value);
+}
+
+void SettingsDialog::SetDisplayOption(bool value)
+{
+    displayPlots = value;
+    ui->checkBoxGraphs->setChecked(value);
+}
+
+
+
 SettingsDialog::~SettingsDialog()
 {
     delete ui;
+}
+
+void SettingsDialog::on_pushButton_clicked()
+{
+    alternateSaveLocation = ui->editSaveLocation->text();
+    spreadsheetOutput = ui->checkBoxSheets->isChecked();
+    displayPlots = ui->checkBoxGraphs->isChecked();
+
+    accept();
 }

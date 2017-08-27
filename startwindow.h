@@ -45,7 +45,7 @@ public:
     explicit StartWindow(QWidget *parent = 0);
     ~StartWindow();
 
-    void SaveSettings(QString savedLocation);
+    void SaveSettings(QString savedLocation, bool plots, bool sheets);
     void LoadSettings();
 
 private slots:
@@ -75,6 +75,10 @@ private:
 
     QString workingDirectory;
     QString backupSaveLocation;
+    bool displayPlots;
+    bool outputSheets;
+
+    void closeEvent(QCloseEvent*);
 
 };
 

@@ -36,7 +36,19 @@ class SettingsDialog : public QDialog
 
 public:
     explicit SettingsDialog(QWidget *parent = 0);
+
+    QString alternateSaveLocation;
+    bool spreadsheetOutput = true;
+    bool displayPlots = false;
+
+    void SetSaveLocation(QString location);
+    void SetSpreadsheetOption(bool value);
+    void SetDisplayOption(bool value);
+
     ~SettingsDialog();
+
+private slots:
+    void on_pushButton_clicked();
 
 private:
     Ui::SettingsDialog *ui;
