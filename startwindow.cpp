@@ -28,6 +28,7 @@
 #include "filetools.h"
 
 #include <QStandardPaths>
+#include <QTextStream>
 #include <QDir>
 
 StartWindow::StartWindow(QWidget *parent) :
@@ -72,6 +73,72 @@ void StartWindow::on_actionCalculate_Reliability_triggered()
 void StartWindow::on_actionSettings_2_triggered()
 {
     //qDebug() << "on_actionSettings_2_triggered";
+}
+
+void StartWindow::on_actionQt_Framework_triggered()
+{
+    QString mFilePath = "";
+
+    #ifdef _WIN32
+            mFilePath = "License_Qt.txt";
+    #elif TARGET_OS_MAC
+            QDir runDirectory = QDir(QCoreApplication::applicationDirPath());
+            runDirectory.cdUp();
+            runDirectory.cd("Resources");
+            mFilePath = runDirectory.path() + "/";
+
+            mFilePath = mFilePath + "License_Qt.txt";
+
+    #endif
+
+    licenseDialog = new LicenseDialog(mFilePath, this);
+    licenseDialog->setWindowTitle(tr("Qt License (LGPL-V3)"));
+    licenseDialog->setModal(true);
+    licenseDialog->show();
+}
+
+void StartWindow::on_actionQtXlsx_triggered()
+{
+    QString mFilePath = "";
+
+    #ifdef _WIN32
+            mFilePath = "License_QtXlsx.txt";
+    #elif TARGET_OS_MAC
+            QDir runDirectory = QDir(QCoreApplication::applicationDirPath());
+            runDirectory.cdUp();
+            runDirectory.cd("Resources");
+            mFilePath = runDirectory.path() + "/";
+
+            mFilePath = mFilePath + "License_QtXlsx.txt";
+
+    #endif
+
+    licenseDialog = new LicenseDialog(mFilePath, this);
+    licenseDialog->setWindowTitle(tr("QtXlsx License (MIT)"));
+    licenseDialog->setModal(true);
+    licenseDialog->show();
+}
+
+void StartWindow::on_actionTango_Icons_triggered()
+{
+    QString mFilePath = "";
+
+    #ifdef _WIN32
+            mFilePath = "License_Tango.txt";
+    #elif TARGET_OS_MAC
+            QDir runDirectory = QDir(QCoreApplication::applicationDirPath());
+            runDirectory.cdUp();
+            runDirectory.cd("Resources");
+            mFilePath = runDirectory.path() + "/";
+
+            mFilePath = mFilePath + "License_Tango.txt";
+
+    #endif
+
+    licenseDialog = new LicenseDialog(mFilePath, this);
+    licenseDialog->setWindowTitle(tr("Tango Icon Set License (Public Domain)"));
+    licenseDialog->setModal(true);
+    licenseDialog->show();
 }
 
 /** Open Contact Window

@@ -29,6 +29,7 @@
 #include "sessionwindow.h"
 #include "aboutdialog.h"
 #include "contactdialog.h"
+#include "licensedialog.h"
 
 namespace Ui {
 class StartWindow;
@@ -46,6 +47,9 @@ private slots:
     void on_actionExit_triggered();
     void on_actionCalculate_Reliability_triggered();
     void on_actionSettings_2_triggered();
+    void on_actionQt_Framework_triggered();
+    void on_actionQtXlsx_triggered();
+    void on_actionTango_Icons_triggered();
     void on_actionContact_triggered();
     void on_actionAbout_triggered();
     void on_buttonStart_clicked();
@@ -55,6 +59,7 @@ private:
 
     AboutDialog aboutDialogWindow;
     ContactDialog contactDialog;
+    LicenseDialog *licenseDialog;
 
     SessionWindow *sessionWindow;
 

@@ -54,7 +54,8 @@ SOURCES += main.cpp\
     resultsdialog.cpp \
     aboutdialog.cpp \
     contactdialog.cpp \
-    sessioncounter.cpp
+    sessioncounter.cpp \
+    licensedialog.cpp
 
 HEADERS  += startwindow.h \
     sessionwindow.h \
@@ -72,7 +73,8 @@ HEADERS  += startwindow.h \
     resultsdialog.h \
     aboutdialog.h \
     contactdialog.h \
-    sessioncounter.h
+    sessioncounter.h \
+    licensedialog.h
 
 FORMS    += startwindow.ui \
     sessionwindow.ui \
@@ -81,15 +83,8 @@ FORMS    += startwindow.ui \
     recordingwindow.ui \
     resultsdialog.ui \
     aboutdialog.ui \
-    contactdialog.ui
-
-DISTFILES += \
-    README.md \
-    COPYING \
-    License_Tango.txt \
-    License_QtXlsx.txt \
-    License_Qt.txt \
-    SNS.ico
+    contactdialog.ui \
+    licensedialog.ui
 
 RESOURCES += \
     resourcefile.qrc
@@ -137,3 +132,11 @@ macx {
 
     QMAKE_BUNDLE_DATA += DT_FILES
 }
+
+DISTFILES += \
+    README.md \
+    COPYING \
+    License_Tango.txt \
+    License_QtXlsx.txt \
+    License_Qt.txt \
+    SNS.ico

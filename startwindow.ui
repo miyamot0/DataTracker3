@@ -213,6 +213,11 @@
     <string>Tango Icons</string>
    </property>
   </action>
+  <action name="actionTest">
+   <property name="text">
+    <string>Test</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
