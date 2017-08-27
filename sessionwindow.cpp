@@ -64,6 +64,9 @@ SessionWindow::SessionWindow(QString mCurrentWorkingDirectory, QWidget *parent) 
     QSettings settings;
     settings.beginGroup(QLatin1String("DTProgramSettings"));
     alternativeSaveLocation = settings.value(QLatin1String("alternateSaveLocation"), "").toString();
+
+    alternativeSaveLocation = FileTools::pathAppend(alternativeSaveLocation, "DataTracker3");
+
     settings.endGroup();
 
 
@@ -872,7 +875,7 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
                                     mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree,
                                     &r.PressedKeys);
 
-        if (alternativeSaveLocation.length() == 0)
+        if (QDir(alternativeSaveLocation).exists())
         {
             FileTools::WriteSessionJSON(alternativeSaveLocation,CurrentKeySet,ui->comboGroup->currentText(),
                                         ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),

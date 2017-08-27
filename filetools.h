@@ -372,16 +372,16 @@ static void WriteSessionJSON(QString mWorkingDirectory, KeySet CurrentKeySet, QS
     QJsonDocument jsonDoc(json);
 
     QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, Group);
-        FileTools::CheckAndCreateFolder(Group, mWorkingDirectory);
-
     mKeyPath = FileTools::pathAppend(mKeyPath, Individual);
-        FileTools::CheckAndCreateFolder(Individual, mKeyPath);
-
     mKeyPath = FileTools::pathAppend(mKeyPath, Evaluation);
-        FileTools::pathAppend(Evaluation, mKeyPath);
-
     mKeyPath = FileTools::pathAppend(mKeyPath, Condition);
-        FileTools::pathAppend(mKeyPath, Condition);
+
+    QDir dir(mKeyPath);
+
+    if (!dir.exists())
+    {
+        dir.mkpath(mKeyPath);
+    }
 
     QString mFileName = QString("%1%2%3%4_%5.json")
             .arg(QString::number(CurrentKeySet.Session).rightJustified(3, '0'))
@@ -391,8 +391,6 @@ static void WriteSessionJSON(QString mWorkingDirectory, KeySet CurrentKeySet, QS
             .arg(Role.mid(0, 1));
 
     QString path = FileTools::pathAppend(mKeyPath, mFileName);
-
-    qDebug() << path;
 
     QFile saveFile(path);
 
