@@ -3,19 +3,19 @@
 
    This file is part of Data Tracker, Qt port.
 
-   Discounting Model Selector is free software: you can redistribute it and/or modify
+   Data Tracker is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation, version 3.
 
-   Discounting Model Selector is distributed in the hope that it will be useful,
+   Data Tracker is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with Discounting Model Selector.  If not, see http://www.gnu.org/licenses/.
+   along with Data Tracker.  If not, see http://www.gnu.org/licenses/.
 
-   The Discounting Model Selector is a tool to assist researchers in behavior economics.
+   The Data Tracker is a tool to assist researchers in behavior economics.
 
    Email: shawn(dot)gilroy(at)temple.edu
 
@@ -37,6 +37,8 @@ StartWindow::StartWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    QSettings settings(QSettings::UserScope, QLatin1String("Data Tracker"));
+
     folderTitle = "DataTracker3";
     setWindowTitle(QString(tr("Data Tracker")) + " v" + QString("%1.%2.%3").arg(VERSION_MAJOR).arg(VERSION_MINOR).arg(VERSION_BUILD));
 
@@ -44,11 +46,40 @@ StartWindow::StartWindow(QWidget *parent) :
     {
         workingDirectory = FileTools::pathAppend(QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)[0], folderTitle);
     }
+
+    LoadSettings();
 }
 
 StartWindow::~StartWindow()
 {
     delete ui;
+}
+
+/** Save Settings
+ * @brief StartWindow::SaveSettings
+ */
+void StartWindow::SaveSettings(QString savedLocation)
+{
+    QSettings settings(QSettings::UserScope, QLatin1String("Data Tracker"));
+    settings.beginGroup(QLatin1String("ProgramSettings"));
+        settings.setValue(QLatin1String("alternateSaveLocation"), savedLocation);
+    settings.endGroup();
+
+    settings.sync();
+}
+
+/** Load Settings
+ * @brief StartWindow::LoadSettings
+ */
+void StartWindow::LoadSettings()
+{
+    QSettings settings(QSettings::UserScope, QLatin1String("Data Tracker"));
+    settings.beginGroup(QLatin1String("ProgramSettings"));
+
+    backupSaveLocation = settings.value(QLatin1String("alternateSaveLocation")).toString();
+
+    settings.endGroup();
+    settings.sync();
 }
 
 /** Close Window
@@ -64,7 +95,7 @@ void StartWindow::on_actionExit_triggered()
  */
 void StartWindow::on_actionCalculate_Reliability_triggered()
 {
-    //qDebug() << "on_actionCalculate_Reliability_triggered";
+    reliabilityDialog.exec();
 }
 
 /** Open Settings Window
@@ -72,7 +103,7 @@ void StartWindow::on_actionCalculate_Reliability_triggered()
  */
 void StartWindow::on_actionSettings_2_triggered()
 {
-    //qDebug() << "on_actionSettings_2_triggered";
+    settingsDialog.exec();
 }
 
 /** Open License Window
@@ -97,7 +128,7 @@ void StartWindow::on_actionQt_Framework_triggered()
     licenseDialog = new LicenseDialog(mFilePath, this);
     licenseDialog->setWindowTitle(tr("Qt License (LGPL-V3)"));
     licenseDialog->setModal(true);
-    licenseDialog->show();
+    licenseDialog->exec();
 }
 
 /** Open License Window
@@ -122,7 +153,7 @@ void StartWindow::on_actionQtXlsx_triggered()
     licenseDialog = new LicenseDialog(mFilePath, this);
     licenseDialog->setWindowTitle(tr("QtXlsx License (MIT)"));
     licenseDialog->setModal(true);
-    licenseDialog->show();
+    licenseDialog->exec();
 }
 
 /** Open License Window
@@ -147,7 +178,7 @@ void StartWindow::on_actionTango_Icons_triggered()
     licenseDialog = new LicenseDialog(mFilePath, this);
     licenseDialog->setWindowTitle(tr("Tango Icon Set License (Public Domain)"));
     licenseDialog->setModal(true);
-    licenseDialog->show();
+    licenseDialog->exec();
 }
 
 /** Open Contact Window
@@ -155,7 +186,7 @@ void StartWindow::on_actionTango_Icons_triggered()
  */
 void StartWindow::on_actionContact_triggered()
 {
-    contactDialog.show();
+    contactDialog.exec();
 }
 
 /** Open About Window
@@ -163,7 +194,7 @@ void StartWindow::on_actionContact_triggered()
  */
 void StartWindow::on_actionAbout_triggered()
 {
-    aboutDialogWindow.show();
+    aboutDialogWindow.exec();
 }
 
 /** Open Session Window
@@ -174,6 +205,6 @@ void StartWindow::on_buttonStart_clicked()
     if (FileTools::CheckAndPrepDirectory(folderTitle))
     {
         sessionWindow = new SessionWindow(workingDirectory, this);
-        sessionWindow->show();
+        sessionWindow->exec();
     }
 }

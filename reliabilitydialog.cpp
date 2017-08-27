@@ -21,35 +21,19 @@
 
   */
 
-#ifndef DIRECTORYPARSE_H
-#define DIRECTORYPARSE_H
+#include "reliabilitydialog.h"
+#include "ui_reliabilitydialog.h"
 
-#include <QWidget>
-
-class DirectoryParse
+ReliabilityDialog::ReliabilityDialog(QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::ReliabilityDialog)
 {
-public:
-    QString WorkingDirectory;
+    ui->setupUi(this);
 
-    QString CurrentGroup;
-    QString CurrentIndividual;
-    QString CurrentEvaluation;
-    QString CurrentCondition;
-    QString CurrentKeySet;
-    QString CurrentTherapist;
-    QString CurrentCollector;
+    setWindowTitle(tr("Reliability Calculator"));
+}
 
-    QStringList Groups;
-    QStringList Individuals;
-    QStringList Evaluations;
-    QStringList Conditions;
-    QStringList KeySets;
-    QStringList Therapists;
-    QStringList Collectors;
-
-    bool Primary;
-    int Duration;
-    int Session;
-};
-
-#endif // DIRECTORYPARSE_H
+ReliabilityDialog::~ReliabilityDialog()
+{
+    delete ui;
+}

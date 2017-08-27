@@ -21,35 +21,25 @@
 
   */
 
-#ifndef DIRECTORYPARSE_H
-#define DIRECTORYPARSE_H
+#ifndef RELIABILITYDIALOG_H
+#define RELIABILITYDIALOG_H
 
-#include <QWidget>
+#include <QDialog>
 
-class DirectoryParse
+namespace Ui {
+class ReliabilityDialog;
+}
+
+class ReliabilityDialog : public QDialog
 {
+    Q_OBJECT
+
 public:
-    QString WorkingDirectory;
+    explicit ReliabilityDialog(QWidget *parent = 0);
+    ~ReliabilityDialog();
 
-    QString CurrentGroup;
-    QString CurrentIndividual;
-    QString CurrentEvaluation;
-    QString CurrentCondition;
-    QString CurrentKeySet;
-    QString CurrentTherapist;
-    QString CurrentCollector;
-
-    QStringList Groups;
-    QStringList Individuals;
-    QStringList Evaluations;
-    QStringList Conditions;
-    QStringList KeySets;
-    QStringList Therapists;
-    QStringList Collectors;
-
-    bool Primary;
-    int Duration;
-    int Session;
+private:
+    Ui::ReliabilityDialog *ui;
 };
 
-#endif // DIRECTORYPARSE_H
+#endif // RELIABILITYDIALOG_H

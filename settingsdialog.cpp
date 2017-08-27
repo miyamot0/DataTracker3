@@ -21,35 +21,19 @@
 
   */
 
-#ifndef DIRECTORYPARSE_H
-#define DIRECTORYPARSE_H
+#include "settingsdialog.h"
+#include "ui_settingsdialog.h"
 
-#include <QWidget>
-
-class DirectoryParse
+SettingsDialog::SettingsDialog(QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::SettingsDialog)
 {
-public:
-    QString WorkingDirectory;
+    ui->setupUi(this);
 
-    QString CurrentGroup;
-    QString CurrentIndividual;
-    QString CurrentEvaluation;
-    QString CurrentCondition;
-    QString CurrentKeySet;
-    QString CurrentTherapist;
-    QString CurrentCollector;
+    setWindowTitle(tr("Program Settings"));
+}
 
-    QStringList Groups;
-    QStringList Individuals;
-    QStringList Evaluations;
-    QStringList Conditions;
-    QStringList KeySets;
-    QStringList Therapists;
-    QStringList Collectors;
-
-    bool Primary;
-    int Duration;
-    int Session;
-};
-
-#endif // DIRECTORYPARSE_H
+SettingsDialog::~SettingsDialog()
+{
+    delete ui;
+}

@@ -29,7 +29,7 @@ Features include:
 
 ### Referenced Works (academic works)
 ------
-The Small N Stats Discounting Model Selector is based on the following academic works:
+The Small N Stats Data Tracker is based on the following academic works:
 
 ### Acknowledgements and Credits
 ------

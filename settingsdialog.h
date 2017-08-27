@@ -21,35 +21,25 @@
 
   */
 
-#ifndef DIRECTORYPARSE_H
-#define DIRECTORYPARSE_H
+#ifndef SETTINGSDIALOG_H
+#define SETTINGSDIALOG_H
 
-#include <QWidget>
+#include <QDialog>
 
-class DirectoryParse
+namespace Ui {
+class SettingsDialog;
+}
+
+class SettingsDialog : public QDialog
 {
+    Q_OBJECT
+
 public:
-    QString WorkingDirectory;
+    explicit SettingsDialog(QWidget *parent = 0);
+    ~SettingsDialog();
 
-    QString CurrentGroup;
-    QString CurrentIndividual;
-    QString CurrentEvaluation;
-    QString CurrentCondition;
-    QString CurrentKeySet;
-    QString CurrentTherapist;
-    QString CurrentCollector;
-
-    QStringList Groups;
-    QStringList Individuals;
-    QStringList Evaluations;
-    QStringList Conditions;
-    QStringList KeySets;
-    QStringList Therapists;
-    QStringList Collectors;
-
-    bool Primary;
-    int Duration;
-    int Session;
+private:
+    Ui::SettingsDialog *ui;
 };
 
-#endif // DIRECTORYPARSE_H
+#endif // SETTINGSDIALOG_H

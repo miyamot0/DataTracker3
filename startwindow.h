@@ -3,19 +3,19 @@
 
    This file is part of Data Tracker, Qt port.
 
-   Discounting Model Selector is free software: you can redistribute it and/or modify
+   Data Tracker is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation, version 3.
 
-   Discounting Model Selector is distributed in the hope that it will be useful,
+   Data Tracker is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with Discounting Model Selector.  If not, see http://www.gnu.org/licenses/.
+   along with Data Tracker.  If not, see http://www.gnu.org/licenses/.
 
-   The Discounting Model Selector is a tool to assist researchers in behavior economics.
+   The Data Tracker is a tool to assist researchers in behavior economics.
 
    Email: shawn(dot)gilroy(at)temple.edu
 
@@ -27,6 +27,8 @@
 #include <QMainWindow>
 
 #include "sessionwindow.h"
+#include "reliabilitydialog.h"
+#include "settingsdialog.h"
 #include "aboutdialog.h"
 #include "contactdialog.h"
 #include "licensedialog.h"
@@ -42,6 +44,9 @@ class StartWindow : public QMainWindow
 public:
     explicit StartWindow(QWidget *parent = 0);
     ~StartWindow();
+
+    void SaveSettings(QString savedLocation);
+    void LoadSettings();
 
 private slots:
     void on_actionExit_triggered();
@@ -60,6 +65,8 @@ private:
     AboutDialog aboutDialogWindow;
     ContactDialog contactDialog;
     LicenseDialog *licenseDialog;
+    ReliabilityDialog reliabilityDialog;
+    SettingsDialog settingsDialog;
 
     SessionWindow *sessionWindow;
 
@@ -67,6 +74,7 @@ private:
     bool foundFolder = false;
 
     QString workingDirectory;
+    QString backupSaveLocation;
 
 };
 

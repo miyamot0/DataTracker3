@@ -55,7 +55,9 @@ SOURCES += main.cpp\
     aboutdialog.cpp \
     contactdialog.cpp \
     sessioncounter.cpp \
-    licensedialog.cpp
+    licensedialog.cpp \
+    reliabilitydialog.cpp \
+    settingsdialog.cpp
 
 HEADERS  += startwindow.h \
     sessionwindow.h \
@@ -74,7 +76,9 @@ HEADERS  += startwindow.h \
     aboutdialog.h \
     contactdialog.h \
     sessioncounter.h \
-    licensedialog.h
+    licensedialog.h \
+    reliabilitydialog.h \
+    settingsdialog.h
 
 FORMS    += startwindow.ui \
     sessionwindow.ui \
@@ -84,7 +88,9 @@ FORMS    += startwindow.ui \
     resultsdialog.ui \
     aboutdialog.ui \
     contactdialog.ui \
-    licensedialog.ui
+    licensedialog.ui \
+    reliabilitydialog.ui \
+    settingsdialog.ui
 
 RESOURCES += \
     resourcefile.qrc
