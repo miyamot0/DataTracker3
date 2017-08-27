@@ -21,7 +21,6 @@
 
   */
 
-#include <QDebug>
 #include <QObject>
 #include <QDir>
 #include <QDirIterator>

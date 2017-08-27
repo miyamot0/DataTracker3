@@ -141,6 +141,11 @@ void StartWindow::on_actionSettings_2_triggered()
     outputSheets = settingsDialog.GetSpreadsheetOption();
     displayPlots = settingsDialog.GetDisplayOption();
     displayDark = settingsDialog.GetThemeDark();
+
+    SaveSettings(backupSaveLocation,
+                 displayPlots,
+                 displayDark,
+                 outputSheets);
 }
 
 /** Open License Window

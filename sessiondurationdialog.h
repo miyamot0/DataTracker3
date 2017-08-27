@@ -24,6 +24,8 @@
 #ifndef SESSIONDURATIONDIALOG_H
 #define SESSIONDURATIONDIALOG_H
 
+#include <QDialog>
+
 namespace Ui {
 class SessionDurationDialog;
 }

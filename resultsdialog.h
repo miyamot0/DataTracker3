@@ -54,8 +54,8 @@ public:
     void BuildTables();
     void BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKeys, QDateTime * startTime, QDateTime *endTime);
     void BuildNarrative(QList<SessionEvent> *PressedKeys, QDateTime *startTime);
-    //void BuildJson(QList<SessionEvent> * PressedKeys, QDateTime * startTime, QString mWorkingDirectory);
 
+    void SetTabEnabled(int index, bool value);
     void SetParameters(QString group, QString individual, QString evaluation,
                        QString condition, QString therapist, QString keySet,
                        QString collector, QString role);

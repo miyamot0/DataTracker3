@@ -27,7 +27,6 @@
 #include <QStandardPaths>
 #include <QObject>
 #include <QDir>
-#include <QDebug>
 
 #include <QJsonDocument>
 #include <QJsonArray>

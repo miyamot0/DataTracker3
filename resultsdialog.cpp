@@ -71,6 +71,11 @@ void ResultsDialog::SetParameters(QString group, QString individual, QString eva
                             .arg(CurrentKeySet.Session));
 }
 
+void ResultsDialog::SetTabEnabled(int index, bool value)
+{
+    ui->tabWidget_2->setTabEnabled(index, value);
+}
+
 /** Assign key set
  * @brief ResultsDialog::SetKeySet
  * @param currKeySet

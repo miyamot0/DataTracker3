@@ -64,6 +64,7 @@ SessionWindow::SessionWindow(QString mCurrentWorkingDirectory, QWidget *parent) 
     QSettings settings;
     settings.beginGroup(QLatin1String("DTProgramSettings"));
     alternativeSaveLocation = settings.value(QLatin1String("alternateSaveLocation"), "").toString();
+    showPlots = settings.value(QLatin1String("displayPlots"), false).toBool();
 
     alternativeSaveLocation = FileTools::pathAppend(alternativeSaveLocation, "DataTracker3");
 
@@ -970,7 +971,18 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
                                         &r.PressedKeys);
         }
 
-        mResults.BuildPlot(CurrentKeySet, &r.PressedKeys, &r.startTime, &r.endTime);
+        if (showPlots)
+        {
+            mResults.SetTabEnabled(1, true);
+            mResults.SetTabEnabled(2, true);
+
+            mResults.BuildPlot(CurrentKeySet, &r.PressedKeys, &r.startTime, &r.endTime);
+        }
+        else
+        {
+            mResults.SetTabEnabled(1, false);
+            mResults.SetTabEnabled(2, false);
+        }
 
         mResults.exec();
 

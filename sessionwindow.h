@@ -98,6 +98,7 @@ private:
     ResultsDialog mResults;
 
     QString alternativeSaveLocation = "";
+    bool showPlots;
 
     int GetSessionDuration();
     int GetSessionNumber();
