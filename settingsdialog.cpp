@@ -26,6 +26,7 @@
 
 #include "settingsdialog.h"
 #include "ui_settingsdialog.h"
+#include "filetools.h"
 
 SettingsDialog::SettingsDialog(QWidget *parent) :
     QDialog(parent),
@@ -101,6 +102,26 @@ void SettingsDialog::SetThemeDark(bool value)
     }
 }
 
+QString SettingsDialog::GetSaveLocation()
+{
+    return ui->editSaveLocation->text();
+}
+
+bool SettingsDialog::GetSpreadsheetOption()
+{
+    return ui->checkBoxSheets->isChecked();
+}
+
+bool SettingsDialog::GetDisplayOption()
+{
+    return ui->checkBoxGraphs->isChecked();
+}
+
+bool SettingsDialog::GetThemeDark()
+{
+    return (ui->comboTheme->currentIndex() == 1);
+}
+
 SettingsDialog::~SettingsDialog()
 {
     delete ui;
@@ -112,6 +133,13 @@ void SettingsDialog::on_pushButton_clicked()
     spreadsheetOutput = ui->checkBoxSheets->isChecked();
     displayPlots = ui->checkBoxGraphs->isChecked();
     displayDark = (ui->comboTheme->currentIndex() == 1);
+
+    QDir mDir(alternateSaveLocation);
+
+    if (mDir.exists())
+    {
+        FileTools::CheckAndPrepDirectory("DataTracker3", mDir.absolutePath());
+    }
 
     accept();
 }

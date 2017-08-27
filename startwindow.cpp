@@ -79,10 +79,10 @@ void StartWindow::SaveSettings(QString savedLocation, bool plots, bool dark, boo
  */
 void StartWindow::closeEvent(QCloseEvent *)
 {
-    SaveSettings(settingsDialog.alternateSaveLocation,
-                 settingsDialog.displayPlots,
-                 settingsDialog.displayDark,
-                 settingsDialog.spreadsheetOutput);
+    SaveSettings(backupSaveLocation,
+                 displayPlots,
+                 displayDark,
+                 outputSheets);
 }
 
 /** Load Settings
@@ -122,8 +122,6 @@ void StartWindow::on_actionCalculate_Reliability_triggered()
  */
 void StartWindow::on_actionSettings_2_triggered()
 {
-    LoadSettings();
-
     settingsDialog.SetSaveLocation(backupSaveLocation);
     settingsDialog.SetSpreadsheetOption(outputSheets);
     settingsDialog.SetDisplayOption(displayPlots);
@@ -139,10 +137,10 @@ void StartWindow::on_actionSettings_2_triggered()
                                  QMessageBox::Ok);
     }
 
-    displayPlots = settingsDialog.displayPlots;
-    displayDark = settingsDialog.displayDark;
-    backupSaveLocation = settingsDialog.alternateSaveLocation;
-    outputSheets = settingsDialog.spreadsheetOutput;
+    backupSaveLocation = settingsDialog.GetSaveLocation();
+    outputSheets = settingsDialog.GetSpreadsheetOption();
+    displayPlots = settingsDialog.GetDisplayOption();
+    displayDark = settingsDialog.GetThemeDark();
 }
 
 /** Open License Window

@@ -47,6 +47,11 @@ public:
     void SetDisplayOption(bool value);
     void SetThemeDark(bool value);
 
+    QString GetSaveLocation();
+    bool GetSpreadsheetOption();
+    bool GetDisplayOption();
+    bool GetThemeDark();
+
     ~SettingsDialog();
 
 private slots:

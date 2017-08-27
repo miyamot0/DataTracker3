@@ -285,6 +285,25 @@ static int ReadSessionJSONint(QString path)
     }
 }
 
+/**
+ * @brief WriteSessionJSON
+ * @param mWorkingDirectory
+ * @param CurrentKeySet
+ * @param Group
+ * @param Individual
+ * @param Evaluation
+ * @param Condition
+ * @param Therapist
+ * @param KeySetName
+ * @param Collector
+ * @param Role
+ * @param StartTime
+ * @param TimeOverall
+ * @param TimeOne
+ * @param TimeTwo
+ * @param TimeThree
+ * @param PressedKeys
+ */
 static void WriteSessionJSON(QString mWorkingDirectory, KeySet CurrentKeySet, QString Group, QString Individual,
                              QString Evaluation, QString Condition, QString Therapist,
                              QString KeySetName, QString Collector, QString Role,
@@ -352,9 +371,16 @@ static void WriteSessionJSON(QString mWorkingDirectory, KeySet CurrentKeySet, QS
     QJsonDocument jsonDoc(json);
 
     QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, Group);
+        FileTools::CheckAndCreateFolder(Group, mWorkingDirectory);
+
     mKeyPath = FileTools::pathAppend(mKeyPath, Individual);
+        FileTools::CheckAndCreateFolder(Individual, mKeyPath);
+
     mKeyPath = FileTools::pathAppend(mKeyPath, Evaluation);
+        FileTools::pathAppend(Evaluation, mKeyPath);
+
     mKeyPath = FileTools::pathAppend(mKeyPath, Condition);
+        FileTools::pathAppend(mKeyPath, Condition);
 
     QString mFileName = QString("%1%2%3%4_%5.json")
             .arg(QString::number(CurrentKeySet.Session).rightJustified(3, '0'))
@@ -375,6 +401,11 @@ static void WriteSessionJSON(QString mWorkingDirectory, KeySet CurrentKeySet, QS
     saveFile.write(jsonDoc.toJson());
 }
 
+/**
+ * @brief formatSchedule
+ * @param schedule
+ * @return
+ */
 static QString formatSchedule(Schedule schedule)
 {
     if (schedule == Schedule::One)
@@ -391,6 +422,11 @@ static QString formatSchedule(Schedule schedule)
     }
 }
 
+/**
+ * @brief formatMeasurement
+ * @param measurement
+ * @return
+ */
 static QString formatMeasurement(Measurement measurement)
 {
     if (measurement == Measurement::Rate)
@@ -438,6 +474,55 @@ static bool CheckAndPrepDirectory(QString folderTitle)
         }
 
         if (FileTools::CheckDirectory(mEntries, folderTitle))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * @brief CheckAndPrepDirectory
+ * @param folderTitle
+ * @param path
+ * @return
+ */
+static bool CheckAndPrepDirectory(QString folderTitle, QString path)
+{
+    QDir mPath(path);
+
+    if (mPath.exists())
+    {
+        QFileInfoList mEntries = mPath.entryInfoList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden  | QDir::AllDirs | QDir::Files, QDir::DirsFirst);
+
+        if (!FileTools::CheckDirectory(mEntries, folderTitle))
+        {
+            mPath.mkdir(folderTitle);
+        }
+
+        if (FileTools::CheckDirectory(mEntries, folderTitle))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static bool CheckAndCreateFolder(QString folderTitle, QString path)
+{
+    QDir mPath(path);
+
+    if (mPath.exists())
+    {
+        QFileInfoList mEntries = mPath.entryInfoList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden  | QDir::AllDirs | QDir::Files, QDir::DirsFirst);
+
+        if (!FileTools::CheckDirectory(mEntries, folderTitle))
+        {
+            return mPath.mkdir(folderTitle);
+        }
+        else
         {
             return true;
         }

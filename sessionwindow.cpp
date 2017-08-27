@@ -858,6 +858,8 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
                                     mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree,
                                     &r.PressedKeys);
 
+        //mworking
+
         mResults.BuildPlot(CurrentKeySet, &r.PressedKeys, &r.startTime, &r.endTime);
 
         mResults.show();
