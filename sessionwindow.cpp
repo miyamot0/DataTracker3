@@ -32,6 +32,7 @@
 
 #include <QtWidgets>
 #include <QDebug>
+#include <QSettings>
 
 SessionWindow::SessionWindow(QString mCurrentWorkingDirectory, QWidget *parent) :
     QDialog(parent),
@@ -59,6 +60,14 @@ SessionWindow::SessionWindow(QString mCurrentWorkingDirectory, QWidget *parent) 
 
     workerThread->wait();
     worker->startWork();
+
+    QSettings settings;
+    settings.beginGroup(QLatin1String("DTProgramSettings"));
+    alternativeSaveLocation = settings.value(QLatin1String("alternateSaveLocation"), "").toString();
+    settings.endGroup();
+
+
+    qDebug() << alternativeSaveLocation;
 }
 
 /** Add a new group
@@ -815,6 +824,11 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
         r.SetRole(ui->comboRole->currentText());
         r.exec();
 
+        if (!r.KeepData)
+        {
+            return;
+        }
+
         ScoringTools::ScoreOverallSchedule(&r.PressedKeys, &CurrentKeySet,
                                            &r.startTime, &r.endTime,
                                            &mResults.FrequencyOverall, &mResults.DurationOverall,
@@ -858,7 +872,16 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
                                     mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree,
                                     &r.PressedKeys);
 
-        //mworking
+        if (alternativeSaveLocation.length() == 0)
+        {
+            FileTools::WriteSessionJSON(alternativeSaveLocation,CurrentKeySet,ui->comboGroup->currentText(),
+                                        ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
+                                        ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
+                                        ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
+                                        ui->comboRole->currentText(),r.startTime.toString(),
+                                        mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree,
+                                        &r.PressedKeys);
+        }
 
         mResults.BuildPlot(CurrentKeySet, &r.PressedKeys, &r.startTime, &r.endTime);
 

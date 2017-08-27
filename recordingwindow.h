@@ -49,6 +49,8 @@ public:
     QDateTime startTime, endTime;
     QList<SessionEvent> PressedKeys;
 
+    bool KeepData = true;
+
     void LoadKeys(KeySet mKeyset);
     void SetGroup(QString value);
     void SetIndividual(QString value);

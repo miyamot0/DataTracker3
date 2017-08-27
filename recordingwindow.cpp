@@ -145,6 +145,14 @@ void RecordingWindow::UpdateGUI()
 
 void RecordingWindow::reject()
 {
+    if (!Started)
+    {
+        KeepData = false;
+
+        reject();
+    }
+
+
     QMessageBox::StandardButton resBtn = QMessageBox::question( this, tr("Session Recording"),
                                                                 tr("Are you sure?\n"),
                                                                 QMessageBox::Cancel |
@@ -188,6 +196,17 @@ void RecordingWindow::reject()
         loggedCloseKey.KeyEntered = loggedClosedKeySet;
 
         AddKey(loggedCloseKey);
+
+        QMessageBox::StandardButton saveData = QMessageBox::question(this,
+                                                                     tr("Session Recording"),
+                                                                     tr("Are you sure?\n"),
+                                                                     QMessageBox::No |
+                                                                     QMessageBox::Yes);
+
+        if (saveData == QMessageBox::No)
+        {
+            KeepData = false;
+        }
 
         QDialog::reject();
     }

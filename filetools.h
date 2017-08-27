@@ -27,6 +27,7 @@
 #include <QStandardPaths>
 #include <QObject>
 #include <QDir>
+#include <QDebug>
 
 #include <QJsonDocument>
 #include <QJsonArray>
@@ -390,6 +391,8 @@ static void WriteSessionJSON(QString mWorkingDirectory, KeySet CurrentKeySet, QS
             .arg(Role.mid(0, 1));
 
     QString path = FileTools::pathAppend(mKeyPath, mFileName);
+
+    qDebug() << path;
 
     QFile saveFile(path);
 

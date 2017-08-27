@@ -93,6 +93,8 @@ private:
 
     RecordingWindow r;
     ResultsDialog mResults;
+
+    QString alternativeSaveLocation = "";
 };
 
 #endif // SESSIONWINDOW_H

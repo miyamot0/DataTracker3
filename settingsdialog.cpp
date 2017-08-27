@@ -38,6 +38,12 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     setWindowTitle(tr("Program Settings"));
 }
 
+/**
+ * @brief SettingsDialog::eventFilter
+ * @param obj
+ * @param e
+ * @return
+ */
 bool SettingsDialog::eventFilter(QObject *obj, QEvent *e)
 {
     if (e->type() == QEvent::FocusIn)
@@ -70,24 +76,40 @@ bool SettingsDialog::eventFilter(QObject *obj, QEvent *e)
     return false;
 }
 
+/**
+ * @brief SettingsDialog::SetSaveLocation
+ * @param location
+ */
 void SettingsDialog::SetSaveLocation(QString location)
 {
     alternateSaveLocation = location;
     ui->editSaveLocation->setText(location);
 }
 
+/**
+ * @brief SettingsDialog::SetSpreadsheetOption
+ * @param value
+ */
 void SettingsDialog::SetSpreadsheetOption(bool value)
 {
     spreadsheetOutput = value;
     ui->checkBoxSheets->setChecked(value);
 }
 
+/**
+ * @brief SettingsDialog::SetDisplayOption
+ * @param value
+ */
 void SettingsDialog::SetDisplayOption(bool value)
 {
     displayPlots = value;
     ui->checkBoxGraphs->setChecked(value);
 }
 
+/**
+ * @brief SettingsDialog::SetThemeDark
+ * @param value
+ */
 void SettingsDialog::SetThemeDark(bool value)
 {
     displayDark = value;
@@ -102,21 +124,37 @@ void SettingsDialog::SetThemeDark(bool value)
     }
 }
 
+/**
+ * @brief SettingsDialog::GetSaveLocation
+ * @return
+ */
 QString SettingsDialog::GetSaveLocation()
 {
     return ui->editSaveLocation->text();
 }
 
+/**
+ * @brief SettingsDialog::GetSpreadsheetOption
+ * @return
+ */
 bool SettingsDialog::GetSpreadsheetOption()
 {
     return ui->checkBoxSheets->isChecked();
 }
 
+/**
+ * @brief SettingsDialog::GetDisplayOption
+ * @return
+ */
 bool SettingsDialog::GetDisplayOption()
 {
     return ui->checkBoxGraphs->isChecked();
 }
 
+/**
+ * @brief SettingsDialog::GetThemeDark
+ * @return
+ */
 bool SettingsDialog::GetThemeDark()
 {
     return (ui->comboTheme->currentIndex() == 1);
@@ -127,6 +165,9 @@ SettingsDialog::~SettingsDialog()
     delete ui;
 }
 
+/**
+ * @brief SettingsDialog::on_pushButton_clicked
+ */
 void SettingsDialog::on_pushButton_clicked()
 {
     alternateSaveLocation = ui->editSaveLocation->text();
