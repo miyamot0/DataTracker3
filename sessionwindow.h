@@ -99,6 +99,7 @@ private:
 
     QString alternativeSaveLocation = "";
     bool showPlots;
+    bool outputSheets;
 
     int GetSessionDuration();
     int GetSessionNumber();

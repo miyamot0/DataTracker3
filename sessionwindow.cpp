@@ -63,10 +63,16 @@ SessionWindow::SessionWindow(QString mCurrentWorkingDirectory, QWidget *parent) 
 
     QSettings settings;
     settings.beginGroup(QLatin1String("DTProgramSettings"));
-    alternativeSaveLocation = settings.value(QLatin1String("alternateSaveLocation"), "").toString();
-    showPlots = settings.value(QLatin1String("displayPlots"), false).toBool();
 
-    alternativeSaveLocation = FileTools::pathAppend(alternativeSaveLocation, "DataTracker3");
+    alternativeSaveLocation = settings.value(QLatin1String("alternateSaveLocation"), "").toString();
+
+    if (!alternativeSaveLocation.isEmpty())
+    {
+        alternativeSaveLocation = FileTools::pathAppend(alternativeSaveLocation, "DataTracker3");
+    }
+
+    showPlots = settings.value(QLatin1String("displayPlots"), false).toBool();
+    outputSheets = settings.value(QLatin1String("outputSheets"), true).toBool();
 
     settings.endGroup();
 
@@ -885,23 +891,13 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
 
     if((QPushButton *)button == ui->buttonBox->button(QDialogButtonBox::Ok))
     {
-        int sessionDurationSeconds = GetSessionDuration();
+        CurrentKeySet.TotalSeconds = GetSessionDuration();
+        CurrentKeySet.Session = GetSessionNumber();
 
-        if (sessionDurationSeconds == -1)
+        if (CurrentKeySet.TotalSeconds == -1 || CurrentKeySet.Session == -1)
         {
             return;
         }
-
-        CurrentKeySet.TotalSeconds = sessionDurationSeconds;
-
-        int sessionNumber = GetSessionNumber();
-
-        if (sessionNumber == -1)
-        {
-            return;
-        }
-
-        CurrentKeySet.Session = sessionNumber;
 
         r = new RecordingWindow();
         r->LoadKeys(CurrentKeySet);
@@ -963,16 +959,20 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
                                     &mResults.FrequencyTwo, &mResults.DurationTwo,
                                     &mResults.FrequencyThree, &mResults.DurationThree);
 
-        FileTools::WriteSessionSpreadsheet(mWorkingDirectory,CurrentKeySet,ui->comboGroup->currentText(),
-                                    ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
-                                    ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
-                                    ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
-                                    ui->comboRole->currentText(),r->startTime.toString(),
-                                    mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree, &r->PressedKeys,
-                                    &mResults.FrequencyOverall, &mResults.DurationOverall,
-                                    &mResults.FrequencyOne, &mResults.DurationOne,
-                                    &mResults.FrequencyTwo, &mResults.DurationTwo,
-                                    &mResults.FrequencyThree, &mResults.DurationThree);
+        if (outputSheets)
+        {
+            FileTools::WriteSessionSpreadsheet(mWorkingDirectory,CurrentKeySet,ui->comboGroup->currentText(),
+                                        ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
+                                        ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
+                                        ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
+                                        ui->comboRole->currentText(),r->startTime.toString(),
+                                        mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree, &r->PressedKeys,
+                                        &mResults.FrequencyOverall, &mResults.DurationOverall,
+                                        &mResults.FrequencyOne, &mResults.DurationOne,
+                                        &mResults.FrequencyTwo, &mResults.DurationTwo,
+                                        &mResults.FrequencyThree, &mResults.DurationThree);
+        }
+
 
         if (QDir(alternativeSaveLocation).exists())
         {
@@ -986,6 +986,20 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
                                         &mResults.FrequencyOne, &mResults.DurationOne,
                                         &mResults.FrequencyTwo, &mResults.DurationTwo,
                                         &mResults.FrequencyThree, &mResults.DurationThree);
+
+            if (outputSheets)
+            {
+                FileTools::WriteSessionSpreadsheet(alternativeSaveLocation,CurrentKeySet,ui->comboGroup->currentText(),
+                                            ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
+                                            ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
+                                            ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
+                                            ui->comboRole->currentText(),r->startTime.toString(),
+                                            mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree, &r->PressedKeys,
+                                            &mResults.FrequencyOverall, &mResults.DurationOverall,
+                                            &mResults.FrequencyOne, &mResults.DurationOne,
+                                            &mResults.FrequencyTwo, &mResults.DurationTwo,
+                                            &mResults.FrequencyThree, &mResults.DurationThree);
+            }
         }
 
         if (showPlots)
