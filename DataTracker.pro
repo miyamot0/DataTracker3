@@ -93,7 +93,8 @@ FORMS    += startwindow.ui \
     settingsdialog.ui
 
 RESOURCES += \
-    resourcefile.qrc
+    resourcefile.qrc \
+    qdarkstyle/style.qrc
 
 ###
 #
@@ -145,4 +146,5 @@ DISTFILES += \
     License_Tango.txt \
     License_QtXlsx.txt \
     License_Qt.txt \
-    SNS.ico
+    SNS.ico \
+    License_QDarkStyleSheet.txt

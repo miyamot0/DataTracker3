@@ -40,10 +40,12 @@ public:
     QString alternateSaveLocation;
     bool spreadsheetOutput = true;
     bool displayPlots = false;
+    bool displayDark = false;
 
     void SetSaveLocation(QString location);
     void SetSpreadsheetOption(bool value);
     void SetDisplayOption(bool value);
+    void SetThemeDark(bool value);
 
     ~SettingsDialog();
 

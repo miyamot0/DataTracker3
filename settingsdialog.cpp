@@ -51,7 +51,19 @@ void SettingsDialog::SetDisplayOption(bool value)
     ui->checkBoxGraphs->setChecked(value);
 }
 
+void SettingsDialog::SetThemeDark(bool value)
+{
+    displayDark = value;
 
+    if (value)
+    {
+        ui->comboTheme->setCurrentIndex(1);
+    }
+    else
+    {
+        ui->comboTheme->setCurrentIndex(0);
+    }
+}
 
 SettingsDialog::~SettingsDialog()
 {
@@ -63,6 +75,7 @@ void SettingsDialog::on_pushButton_clicked()
     alternateSaveLocation = ui->editSaveLocation->text();
     spreadsheetOutput = ui->checkBoxSheets->isChecked();
     displayPlots = ui->checkBoxGraphs->isChecked();
+    displayDark = (ui->comboTheme->currentIndex() == 1);
 
     accept();
 }

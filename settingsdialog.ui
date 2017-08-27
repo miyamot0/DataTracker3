@@ -42,32 +42,53 @@
      <item row="0" column="1">
       <widget class="QLineEdit" name="editSaveLocation"/>
      </item>
-     <item row="1" column="0">
+     <item row="2" column="0">
       <widget class="QLabel" name="labelSpreadsheets">
        <property name="text">
         <string>Save Spreadsheets:</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="2" column="1">
       <widget class="QCheckBox" name="checkBoxSheets">
        <property name="text">
         <string/>
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
+     <item row="3" column="0">
       <widget class="QLabel" name="labelGraphs">
        <property name="text">
         <string>Save Graphs:</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="3" column="1">
       <widget class="QCheckBox" name="checkBoxGraphs">
        <property name="text">
         <string/>
        </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="labelTheme">
+       <property name="text">
+        <string>Application Theme:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QComboBox" name="comboTheme">
+       <item>
+        <property name="text">
+         <string>Light Theme</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Dark Theme</string>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>

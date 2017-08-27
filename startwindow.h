@@ -45,7 +45,7 @@ public:
     explicit StartWindow(QWidget *parent = 0);
     ~StartWindow();
 
-    void SaveSettings(QString savedLocation, bool plots, bool sheets);
+    void SaveSettings(QString savedLocation, bool plots, bool dark, bool sheets);
     void LoadSettings();
 
 private slots:
@@ -55,6 +55,7 @@ private slots:
     void on_actionQt_Framework_triggered();
     void on_actionQtXlsx_triggered();
     void on_actionTango_Icons_triggered();
+    void on_actionQDarkStyleSheet_triggered();
     void on_actionContact_triggered();
     void on_actionAbout_triggered();
     void on_buttonStart_clicked();
@@ -76,6 +77,7 @@ private:
     QString workingDirectory;
     QString backupSaveLocation;
     bool displayPlots;
+    bool displayDark;
     bool outputSheets;
 
     void closeEvent(QCloseEvent*);

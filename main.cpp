@@ -38,6 +38,27 @@ int main(int argc, char *argv[])
     qRegisterMetaType<DirectoryParse>("DirectoryParse");
     qRegisterMetaType<ParseTypes::ParseAction>("ParseTypes::ParseAction");
 
+    QSettings settings;
+
+    settings.beginGroup(QLatin1String("DTProgramSettings"));
+    bool displayDark = settings.value(QLatin1String("displayDark"), false).toBool();
+    settings.endGroup();
+
+    if (displayDark)
+    {
+        QFile f(":qdarkstyle/style.qss");
+        if (!f.exists())
+        {
+            printf("Unable to set stylesheet, file not found\n");
+        }
+        else
+        {
+            f.open(QFile::ReadOnly | QFile::Text);
+            QTextStream ts(&f);
+            a.setStyleSheet(ts.readAll());
+        }
+    }
+
     StartWindow w;
     w.show();
 

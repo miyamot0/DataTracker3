@@ -129,6 +129,7 @@
     <addaction name="actionQt_Framework"/>
     <addaction name="actionQtXlsx"/>
     <addaction name="actionTango_Icons"/>
+    <addaction name="actionQDarkStyleSheet"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOptions"/>
@@ -216,6 +217,15 @@
   <action name="actionTest">
    <property name="text">
     <string>Test</string>
+   </property>
+  </action>
+  <action name="actionQDarkStyleSheet">
+   <property name="icon">
+    <iconset resource="resourcefile.qrc">
+     <normaloff>:/images/format-justify-center.png</normaloff>:/images/format-justify-center.png</iconset>
+   </property>
+   <property name="text">
+    <string>QDarkStyleSheet</string>
    </property>
   </action>
  </widget>

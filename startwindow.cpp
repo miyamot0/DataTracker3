@@ -28,6 +28,7 @@
 #include "filetools.h"
 
 #include <QStandardPaths>
+#include <QMessageBox>
 #include <QTextStream>
 #include <QDir>
 
@@ -50,8 +51,6 @@ StartWindow::StartWindow(QWidget *parent) :
     LoadSettings();
 
     // TODO network auto update
-
-
 }
 
 StartWindow::~StartWindow()
@@ -62,13 +61,14 @@ StartWindow::~StartWindow()
 /** Save Settings
  * @brief StartWindow::SaveSettings
  */
-void StartWindow::SaveSettings(QString savedLocation, bool plots, bool sheets)
+void StartWindow::SaveSettings(QString savedLocation, bool plots, bool dark, bool sheets)
 {
     QSettings settings;
 
     settings.beginGroup(QLatin1String("DTProgramSettings"));
         settings.setValue(QLatin1String("alternateSaveLocation"), savedLocation);
         settings.setValue(QLatin1String("displayPlots"), plots);
+        settings.setValue(QLatin1String("displayDark"), dark);
         settings.setValue(QLatin1String("outputSheets"), sheets);
     settings.endGroup();
 }
@@ -81,6 +81,7 @@ void StartWindow::closeEvent(QCloseEvent *)
 {
     SaveSettings(settingsDialog.alternateSaveLocation,
                  settingsDialog.displayPlots,
+                 settingsDialog.displayDark,
                  settingsDialog.spreadsheetOutput);
 }
 
@@ -94,6 +95,7 @@ void StartWindow::LoadSettings()
     settings.beginGroup(QLatin1String("DTProgramSettings"));
     backupSaveLocation = settings.value(QLatin1String("alternateSaveLocation"), "").toString();
     displayPlots = settings.value(QLatin1String("displayPlots"), false).toBool();
+    displayDark = settings.value(QLatin1String("displayDark"), false).toBool();
     outputSheets = settings.value(QLatin1String("outputSheets"), true).toBool();
 
     settings.endGroup();
@@ -125,10 +127,20 @@ void StartWindow::on_actionSettings_2_triggered()
     settingsDialog.SetSaveLocation(backupSaveLocation);
     settingsDialog.SetSpreadsheetOption(outputSheets);
     settingsDialog.SetDisplayOption(displayPlots);
+    settingsDialog.SetThemeDark(displayDark);
 
     settingsDialog.exec();
 
+    if (displayDark != settingsDialog.displayDark)
+    {
+        QMessageBox::information(NULL,
+                                 tr("Theme Updated"),
+                                 tr("Restart for theme changes to take effect."),
+                                 QMessageBox::Ok);
+    }
+
     displayPlots = settingsDialog.displayPlots;
+    displayDark = settingsDialog.displayDark;
     backupSaveLocation = settingsDialog.alternateSaveLocation;
     outputSheets = settingsDialog.spreadsheetOutput;
 }
@@ -204,6 +216,31 @@ void StartWindow::on_actionTango_Icons_triggered()
 
     licenseDialog = new LicenseDialog(mFilePath, this);
     licenseDialog->setWindowTitle(tr("Tango Icon Set License (Public Domain)"));
+    licenseDialog->setModal(true);
+    licenseDialog->exec();
+}
+
+/** Open License Window
+ * @brief StartWindow::on_actionQDarkStyleSheet_triggered
+ */
+void StartWindow::on_actionQDarkStyleSheet_triggered()
+{
+    QString mFilePath = "";
+
+    #ifdef _WIN32
+            mFilePath = "License_QDarkStyleSheet.txt";
+    #elif TARGET_OS_MAC
+            QDir runDirectory = QDir(QCoreApplication::applicationDirPath());
+            runDirectory.cdUp();
+            runDirectory.cd("Resources");
+            mFilePath = runDirectory.path() + "/";
+
+            mFilePath = mFilePath + "License_Tango.txt";
+
+    #endif
+
+    licenseDialog = new LicenseDialog(mFilePath, this);
+    licenseDialog->setWindowTitle(tr("QDarkStyleSheet License (MIT)"));
     licenseDialog->setModal(true);
     licenseDialog->exec();
 }
