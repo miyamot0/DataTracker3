@@ -54,6 +54,8 @@ private slots:
 
 private:
     Ui::SettingsDialog *ui;
+
+    bool eventFilter(QObject *obj, QEvent *e);
 };
 
 #endif // SETTINGSDIALOG_H

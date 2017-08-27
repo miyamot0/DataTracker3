@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>277</width>
+    <width>342</width>
     <height>290</height>
    </rect>
   </property>
@@ -40,7 +40,32 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QLineEdit" name="editSaveLocation"/>
+      <widget class="QLineEdit" name="editSaveLocation">
+       <property name="focusPolicy">
+        <enum>Qt::ClickFocus</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="labelTheme">
+       <property name="text">
+        <string>Application Theme:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QComboBox" name="comboTheme">
+       <item>
+        <property name="text">
+         <string>Light Theme</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Dark Theme</string>
+        </property>
+       </item>
+      </widget>
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="labelSpreadsheets">
@@ -68,27 +93,6 @@
        <property name="text">
         <string/>
        </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="labelTheme">
-       <property name="text">
-        <string>Application Theme:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QComboBox" name="comboTheme">
-       <item>
-        <property name="text">
-         <string>Light Theme</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Dark Theme</string>
-        </property>
-       </item>
       </widget>
      </item>
     </layout>

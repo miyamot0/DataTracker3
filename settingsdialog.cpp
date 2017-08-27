@@ -21,6 +21,9 @@
 
   */
 
+#include <QFileDialog>
+#include <QStandardPaths>
+
 #include "settingsdialog.h"
 #include "ui_settingsdialog.h"
 
@@ -29,8 +32,41 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui(new Ui::SettingsDialog)
 {
     ui->setupUi(this);
+    ui->editSaveLocation->installEventFilter(this);
 
     setWindowTitle(tr("Program Settings"));
+}
+
+bool SettingsDialog::eventFilter(QObject *obj, QEvent *e)
+{
+    if (e->type() == QEvent::FocusIn)
+    {
+        if (obj == ui->editSaveLocation)
+        {
+            QString mLocation;
+
+            if (ui->editSaveLocation->text().length() == 0)
+            {
+                mLocation = QFileDialog::getExistingDirectory (this,
+                                                               tr("Pick Alternate Save Location"),
+                                                               QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)[0],
+                                                               QFileDialog::ShowDirsOnly);
+            }
+            else
+            {
+                mLocation = QFileDialog::getExistingDirectory (this,
+                                                               tr("Pick Alternate Save Location"),
+                                                               ui->editSaveLocation->text(),
+                                                               QFileDialog::ShowDirsOnly);
+            }
+
+            ui->editSaveLocation->setText(mLocation);
+        }
+
+        ui->editSaveLocation->clearFocus();
+    }
+
+    return false;
 }
 
 void SettingsDialog::SetSaveLocation(QString location)
