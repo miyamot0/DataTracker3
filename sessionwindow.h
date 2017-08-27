@@ -104,6 +104,10 @@ private:
     int GetSessionDuration();
     int GetSessionNumber();
     bool eventFilter(QObject *obj, QEvent *e);
+
+    void ScoreAvailableKeys();
+    void BuildResults();
+    void WriteOutput();
 };
 
 #endif // SESSIONWINDOW_H

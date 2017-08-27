@@ -881,6 +881,123 @@ int SessionWindow::GetSessionNumber()
     return -1;
 }
 
+/**
+ * @brief SessionWindow::ScoreAvailableKeys
+ */
+void SessionWindow::ScoreAvailableKeys()
+{
+    ScoringTools::ScoreOverallSchedule(&r->PressedKeys, &CurrentKeySet,
+                                       &r->startTime, &r->endTime,
+                                       &mResults.FrequencyOverall, &mResults.DurationOverall,
+                                       &mResults.TimeOverall);
+
+    ScoringTools::ScoreSpecificSchedule(&r->PressedKeys, &CurrentKeySet,
+                                        &r->endTime, Schedule::One,
+                                        &mResults.FrequencyOne, &mResults.DurationOne,
+                                        &mResults.TimeOne);
+
+    ScoringTools::ScoreSpecificSchedule(&r->PressedKeys, &CurrentKeySet,
+                                        &r->endTime, Schedule::Two,
+                                        &mResults.FrequencyTwo, &mResults.DurationTwo,
+                                        &mResults.TimeTwo);
+
+    ScoringTools::ScoreSpecificSchedule(&r->PressedKeys, &CurrentKeySet,
+                                        &r->endTime, Schedule::Three,
+                                        &mResults.FrequencyThree, &mResults.DurationThree,
+                                        &mResults.TimeThree);
+}
+
+/**
+ * @brief SessionWindow::BuildResults
+ */
+void SessionWindow::BuildResults()
+{
+    mResults.SetKeySet(CurrentKeySet);
+    mResults.BuildTables();
+    mResults.BuildNarrative(&r->PressedKeys, &r->startTime);
+    mResults.SetParameters(ui->comboGroup->currentText(),
+                           ui->comboIndividual->currentText(),
+                           ui->comboEvaluation->currentText(),
+                           ui->comboCondition->currentText(),
+                           ui->comboTherapist->currentText(),
+                           ui->comboKeySet->currentText(),
+                           ui->comboCollector->currentText(),
+                           ui->comboRole->currentText());
+}
+
+/**
+ * @brief SessionWindow::WriteOutput
+ */
+void SessionWindow::WriteOutput()
+{
+    FileTools::WriteSessionJSON(mWorkingDirectory,CurrentKeySet,ui->comboGroup->currentText(),
+                                ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
+                                ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
+                                ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
+                                ui->comboRole->currentText(),r->startTime.toString(),
+                                mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree,
+                                &r->PressedKeys, &mResults.FrequencyOverall, &mResults.DurationOverall,
+                                &mResults.FrequencyOne, &mResults.DurationOne,
+                                &mResults.FrequencyTwo, &mResults.DurationTwo,
+                                &mResults.FrequencyThree, &mResults.DurationThree);
+
+    if (outputSheets)
+    {
+        FileTools::WriteSessionSpreadsheet(mWorkingDirectory,CurrentKeySet,ui->comboGroup->currentText(),
+                                    ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
+                                    ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
+                                    ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
+                                    ui->comboRole->currentText(),r->startTime.toString(),
+                                    mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree, &r->PressedKeys,
+                                    &mResults.FrequencyOverall, &mResults.DurationOverall,
+                                    &mResults.FrequencyOne, &mResults.DurationOne,
+                                    &mResults.FrequencyTwo, &mResults.DurationTwo,
+                                    &mResults.FrequencyThree, &mResults.DurationThree);
+    }
+
+
+    if (QDir(alternativeSaveLocation).exists())
+    {
+        FileTools::WriteSessionJSON(alternativeSaveLocation,CurrentKeySet,ui->comboGroup->currentText(),
+                                    ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
+                                    ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
+                                    ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
+                                    ui->comboRole->currentText(),r->startTime.toString(),
+                                    mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree,
+                                    &r->PressedKeys, &mResults.FrequencyOverall, &mResults.DurationOverall,
+                                    &mResults.FrequencyOne, &mResults.DurationOne,
+                                    &mResults.FrequencyTwo, &mResults.DurationTwo,
+                                    &mResults.FrequencyThree, &mResults.DurationThree);
+
+        if (outputSheets)
+        {
+            FileTools::WriteSessionSpreadsheet(alternativeSaveLocation,CurrentKeySet,ui->comboGroup->currentText(),
+                                        ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
+                                        ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
+                                        ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
+                                        ui->comboRole->currentText(),r->startTime.toString(),
+                                        mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree, &r->PressedKeys,
+                                        &mResults.FrequencyOverall, &mResults.DurationOverall,
+                                        &mResults.FrequencyOne, &mResults.DurationOne,
+                                        &mResults.FrequencyTwo, &mResults.DurationTwo,
+                                        &mResults.FrequencyThree, &mResults.DurationThree);
+        }
+    }
+
+    if (showPlots)
+    {
+        mResults.SetTabEnabled(1, true);
+        mResults.SetTabEnabled(2, true);
+
+        mResults.BuildPlot(CurrentKeySet, &r->PressedKeys, &r->startTime, &r->endTime);
+    }
+    else
+    {
+        mResults.SetTabEnabled(1, false);
+        mResults.SetTabEnabled(2, false);
+    }
+}
+
 /** Begin session
  * @brief SessionWindow::on_buttonBox_clicked
  * @param button
@@ -913,107 +1030,11 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
             return;
         }
 
-        ScoringTools::ScoreOverallSchedule(&r->PressedKeys, &CurrentKeySet,
-                                           &r->startTime, &r->endTime,
-                                           &mResults.FrequencyOverall, &mResults.DurationOverall,
-                                           &mResults.TimeOverall);
+        ScoreAvailableKeys();
 
-        ScoringTools::ScoreSpecificSchedule(&r->PressedKeys, &CurrentKeySet,
-                                            &r->endTime, Schedule::One,
-                                            &mResults.FrequencyOne, &mResults.DurationOne,
-                                            &mResults.TimeOne);
+        BuildResults();
 
-        ScoringTools::ScoreSpecificSchedule(&r->PressedKeys, &CurrentKeySet,
-                                            &r->endTime, Schedule::Two,
-                                            &mResults.FrequencyTwo, &mResults.DurationTwo,
-                                            &mResults.TimeTwo);
-
-        ScoringTools::ScoreSpecificSchedule(&r->PressedKeys, &CurrentKeySet,
-                                            &r->endTime, Schedule::Three,
-                                            &mResults.FrequencyThree, &mResults.DurationThree,
-                                            &mResults.TimeThree);
-
-        mResults.SetKeySet(CurrentKeySet);
-
-        mResults.BuildTables();
-
-        mResults.BuildNarrative(&r->PressedKeys, &r->startTime);
-
-        mResults.SetParameters(ui->comboGroup->currentText(),
-                               ui->comboIndividual->currentText(),
-                               ui->comboEvaluation->currentText(),
-                               ui->comboCondition->currentText(),
-                               ui->comboTherapist->currentText(),
-                               ui->comboKeySet->currentText(),
-                               ui->comboCollector->currentText(),
-                               ui->comboRole->currentText());
-
-        FileTools::WriteSessionJSON(mWorkingDirectory,CurrentKeySet,ui->comboGroup->currentText(),
-                                    ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
-                                    ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
-                                    ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
-                                    ui->comboRole->currentText(),r->startTime.toString(),
-                                    mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree,
-                                    &r->PressedKeys, &mResults.FrequencyOverall, &mResults.DurationOverall,
-                                    &mResults.FrequencyOne, &mResults.DurationOne,
-                                    &mResults.FrequencyTwo, &mResults.DurationTwo,
-                                    &mResults.FrequencyThree, &mResults.DurationThree);
-
-        if (outputSheets)
-        {
-            FileTools::WriteSessionSpreadsheet(mWorkingDirectory,CurrentKeySet,ui->comboGroup->currentText(),
-                                        ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
-                                        ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
-                                        ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
-                                        ui->comboRole->currentText(),r->startTime.toString(),
-                                        mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree, &r->PressedKeys,
-                                        &mResults.FrequencyOverall, &mResults.DurationOverall,
-                                        &mResults.FrequencyOne, &mResults.DurationOne,
-                                        &mResults.FrequencyTwo, &mResults.DurationTwo,
-                                        &mResults.FrequencyThree, &mResults.DurationThree);
-        }
-
-
-        if (QDir(alternativeSaveLocation).exists())
-        {
-            FileTools::WriteSessionJSON(alternativeSaveLocation,CurrentKeySet,ui->comboGroup->currentText(),
-                                        ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
-                                        ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
-                                        ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
-                                        ui->comboRole->currentText(),r->startTime.toString(),
-                                        mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree,
-                                        &r->PressedKeys, &mResults.FrequencyOverall, &mResults.DurationOverall,
-                                        &mResults.FrequencyOne, &mResults.DurationOne,
-                                        &mResults.FrequencyTwo, &mResults.DurationTwo,
-                                        &mResults.FrequencyThree, &mResults.DurationThree);
-
-            if (outputSheets)
-            {
-                FileTools::WriteSessionSpreadsheet(alternativeSaveLocation,CurrentKeySet,ui->comboGroup->currentText(),
-                                            ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
-                                            ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
-                                            ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
-                                            ui->comboRole->currentText(),r->startTime.toString(),
-                                            mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree, &r->PressedKeys,
-                                            &mResults.FrequencyOverall, &mResults.DurationOverall,
-                                            &mResults.FrequencyOne, &mResults.DurationOne,
-                                            &mResults.FrequencyTwo, &mResults.DurationTwo,
-                                            &mResults.FrequencyThree, &mResults.DurationThree);
-            }
-        }
-
-        if (showPlots)
-        {
-            mResults.SetTabEnabled(1, true);
-            mResults.SetTabEnabled(2, true);
-
-            mResults.BuildPlot(CurrentKeySet, &r->PressedKeys, &r->startTime, &r->endTime);
-        }
-        else
-        {
-            mResults.SetTabEnabled(1, false);
-            mResults.SetTabEnabled(2, false);
-        }
+        WriteOutput();
 
         mResults.exec();
 
