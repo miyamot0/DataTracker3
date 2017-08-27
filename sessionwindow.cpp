@@ -773,6 +773,12 @@ SessionWindow::~SessionWindow()
     delete ui;
 }
 
+/** Focus checks
+ * @brief SessionWindow::eventFilter
+ * @param obj
+ * @param e
+ * @return
+ */
 bool SessionWindow::eventFilter(QObject *obj, QEvent *e)
 {
     if (e->type() == QEvent::FocusIn)
@@ -797,6 +803,10 @@ bool SessionWindow::eventFilter(QObject *obj, QEvent *e)
     return false;
 }
 
+/** Get Duration Session
+ * @brief SessionWindow::GetSessionDuration
+ * @return
+ */
 int SessionWindow::GetSessionDuration()
 {
     bool ok;
@@ -845,6 +855,10 @@ int SessionWindow::GetSessionDuration()
     return -1;
 }
 
+/** Get Session Number
+ * @brief SessionWindow::GetSessionNumber
+ * @return
+ */
 int SessionWindow::GetSessionNumber()
 {
     bool ok;

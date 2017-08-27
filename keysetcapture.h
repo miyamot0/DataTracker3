@@ -1,11 +1,3 @@
-#ifndef KEYSETCAPTURE_H
-#define KEYSETCAPTURE_H
-
-#include <QDialog>
-#include <QKeyEvent>
-#include <QAbstractButton>
-
-namespace Ui {
 /**
    Copyright 2017 Shawn Gilroy
 
@@ -28,6 +20,15 @@ namespace Ui {
    Email: shawn(dot)gilroy(at)temple.edu
 
   */
+
+#ifndef KEYSETCAPTURE_H
+#define KEYSETCAPTURE_H
+
+#include <QDialog>
+#include <QKeyEvent>
+#include <QAbstractButton>
+
+namespace Ui {
 
 class KeySetCapture;
 }
