@@ -960,17 +960,23 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
                                     ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
                                     ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
                                     ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
-                                    ui->comboRole->currentText(),r.startTime.toString(),
+                                    ui->comboRole->currentText(),r.startTime.toString(),                                    
                                     mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree,
-                                    &r.PressedKeys);
+                                    &r.PressedKeys, &mResults.FrequencyOverall, &mResults.DurationOverall,
+                                    &mResults.FrequencyOne, &mResults.DurationOne,
+                                    &mResults.FrequencyTwo, &mResults.DurationTwo,
+                                    &mResults.FrequencyThree, &mResults.DurationThree);
 
         FileTools::WriteSessionSpreadsheet(mWorkingDirectory,CurrentKeySet,ui->comboGroup->currentText(),
                                     ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
                                     ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
                                     ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
-                                    ui->comboRole->currentText(),r.startTime.toString(),
-                                    mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree,
-                                    &r.PressedKeys);
+                                    ui->comboRole->currentText(),r.startTime.toString(),                                           
+                                    mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree, &r.PressedKeys,
+                                    &mResults.FrequencyOverall, &mResults.DurationOverall,
+                                    &mResults.FrequencyOne, &mResults.DurationOne,
+                                    &mResults.FrequencyTwo, &mResults.DurationTwo,
+                                    &mResults.FrequencyThree, &mResults.DurationThree);
 
         if (QDir(alternativeSaveLocation).exists())
         {
@@ -980,7 +986,10 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
                                         ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
                                         ui->comboRole->currentText(),r.startTime.toString(),
                                         mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree,
-                                        &r.PressedKeys);
+                                        &r.PressedKeys, &mResults.FrequencyOverall, &mResults.DurationOverall,
+                                        &mResults.FrequencyOne, &mResults.DurationOne,
+                                        &mResults.FrequencyTwo, &mResults.DurationTwo,
+                                        &mResults.FrequencyThree, &mResults.DurationThree);
         }
 
         if (showPlots)

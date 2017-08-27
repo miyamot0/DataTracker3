@@ -288,6 +288,42 @@ static int ReadSessionJSONint(QString path)
 }
 
 /**
+ * @brief formatRate
+ * @param count
+ * @param totalTime
+ * @return
+ */
+static QString formatRate(double count, qint64 totalTime)
+{
+    if (totalTime == 0)
+    {
+        return QString("---");
+    }
+    else
+    {
+        return QString::number(((count) / ((double) totalTime / 60000)), 'f', 2);
+    }
+}
+
+/**
+ * @brief formatPercentage
+ * @param percent
+ * @param totalTime
+ * @return
+ */
+static QString formatPercentage(double percent, qint64 totalTime)
+{
+    if (totalTime == 0)
+    {
+        return QString("---");
+    }
+    else
+    {
+        return QString(QString::number((percent / ((double) totalTime)) * 100, 'f', 2) + "%");
+    }
+}
+
+/**
  * @brief WriteSessionJSON
  * @param mWorkingDirectory
  * @param CurrentKeySet
@@ -310,7 +346,11 @@ static void WriteSessionJSON(QString mWorkingDirectory, KeySet CurrentKeySet, QS
                              QString Evaluation, QString Condition, QString Therapist,
                              QString KeySetName, QString Collector, QString Role,
                              QString StartTime, qint64 TimeOverall, qint64 TimeOne,
-                             qint64 TimeTwo, qint64 TimeThree, QList<SessionEvent> *PressedKeys)
+                             qint64 TimeTwo, qint64 TimeThree, QList<SessionEvent> *PressedKeys,
+                             QList<QPair<QString,double>> * FrequencyKeysOverall, QList<QPair<QString,double>> * DurationKeysOverall,
+                             QList<QPair<QString,double>> * FrequencyKeysOne, QList<QPair<QString,double>> * DurationKeysOne,
+                             QList<QPair<QString,double>> * FrequencyKeysTwo, QList<QPair<QString,double>> * DurationKeysTwo,
+                             QList<QPair<QString,double>> * FrequencyKeysThree, QList<QPair<QString,double>> * DurationKeysThree)
 {
     QJsonObject json;
 
@@ -370,6 +410,111 @@ static void WriteSessionJSON(QString mWorkingDirectory, KeySet CurrentKeySet, QS
     }
     json["PressedKeys"] = pressedKeys;
 
+    QJsonArray frequencyOverall;
+    for (int i(0); i<FrequencyKeysOverall->count(); i++)
+    {
+        QJsonObject mEntry;
+        mEntry["Key"] = FrequencyKeysOverall->at(i).first;
+        mEntry["Count"] = FrequencyKeysOverall->at(i).second;
+        mEntry["Rate"] = formatRate(FrequencyKeysOverall->at(i).second, TimeOverall);
+        mEntry["Measure"] = "Rate";
+
+        frequencyOverall.append(mEntry);
+    }
+    json["FrequencyOverall"] = frequencyOverall;
+
+    QJsonArray frequencyOne;
+    for (int i(0); i<FrequencyKeysOne->count(); i++)
+    {
+        QJsonObject mEntry;
+        mEntry["Key"] = FrequencyKeysOne->at(i).first;
+        mEntry["Count"] = FrequencyKeysOne->at(i).second;
+        mEntry["Rate"] = formatRate(FrequencyKeysOne->at(i).second, TimeOverall);
+        mEntry["Measure"] = "Rate";
+
+        frequencyOne.append(mEntry);
+    }
+    json["FrequencyOne"] = frequencyOne;
+
+    QJsonArray frequencyTwo;
+    for (int i(0); i<FrequencyKeysTwo->count(); i++)
+    {
+        QJsonObject mEntry;
+        mEntry["Key"] = FrequencyKeysTwo->at(i).first;
+        mEntry["Count"] = FrequencyKeysTwo->at(i).second;
+        mEntry["Rate"] = formatRate(FrequencyKeysTwo->at(i).second, TimeOverall);
+        mEntry["Measure"] = "Rate";
+
+        frequencyTwo.append(mEntry);
+    }
+    json["FrequencyTwo"] = frequencyTwo;
+
+    QJsonArray frequencyThree;
+    for (int i(0); i<FrequencyKeysThree->count(); i++)
+    {
+        QJsonObject mEntry;
+        mEntry["Key"] = FrequencyKeysThree->at(i).first;
+        mEntry["Count"] = FrequencyKeysThree->at(i).second;
+        mEntry["Rate"] = formatRate(FrequencyKeysThree->at(i).second, TimeOverall);
+        mEntry["Measure"] = "Rate";
+
+        frequencyThree.append(mEntry);
+    }
+    json["FrequencyThree"] = frequencyThree;
+
+
+    QJsonArray durationOverall;
+    for (int i(0); i<DurationKeysOverall->count(); i++)
+    {
+        QJsonObject mEntry;
+        mEntry["Key"] = DurationKeysOverall->at(i).first;
+        mEntry["Count"] = DurationKeysOverall->at(i).second;
+        mEntry["Rate"] = formatPercentage(DurationKeysOverall->at(i).second, TimeOverall);
+        mEntry["Measure"] = "Time";
+
+        durationOverall.append(mEntry);
+    }
+    json["DurationOverall"] = durationOverall;
+
+    QJsonArray durationOne;
+    for (int i(0); i<DurationKeysOne->count(); i++)
+    {
+        QJsonObject mEntry;
+        mEntry["Key"] = DurationKeysOne->at(i).first;
+        mEntry["Count"] = DurationKeysOne->at(i).second;
+        mEntry["Rate"] = formatPercentage(DurationKeysOne->at(i).second, TimeOne);
+        mEntry["Measure"] = "Time";
+
+        durationOne.append(mEntry);
+    }
+    json["DurationOne"] = durationOne;
+
+    QJsonArray durationTwo;
+    for (int i(0); i<DurationKeysTwo->count(); i++)
+    {
+        QJsonObject mEntry;
+        mEntry["Key"] = DurationKeysTwo->at(i).first;
+        mEntry["Count"] = DurationKeysTwo->at(i).second;
+        mEntry["Rate"] = formatPercentage(DurationKeysTwo->at(i).second, TimeTwo);
+        mEntry["Measure"] = "Time";
+
+        durationTwo.append(mEntry);
+    }
+    json["DurationTwo"] = durationTwo;
+
+    QJsonArray durationThree;
+    for (int i(0); i<DurationKeysThree->count(); i++)
+    {
+        QJsonObject mEntry;
+        mEntry["Key"] = DurationKeysThree->at(i).first;
+        mEntry["Count"] = DurationKeysThree->at(i).second;
+        mEntry["Rate"] = formatPercentage(DurationKeysThree->at(i).second, TimeThree);
+        mEntry["Measure"] = "Time";
+
+        durationThree.append(mEntry);
+    }
+    json["DurationThree"] = durationThree;
+
     QJsonDocument jsonDoc(json);
 
     QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, Group);
@@ -403,13 +548,46 @@ static void WriteSessionJSON(QString mWorkingDirectory, KeySet CurrentKeySet, QS
     saveFile.write(jsonDoc.toJson());
 }
 
+/**
+ * @brief WriteSessionSpreadsheet
+ * @param mWorkingDirectory
+ * @param CurrentKeySet
+ * @param Group
+ * @param Individual
+ * @param Evaluation
+ * @param Condition
+ * @param Therapist
+ * @param KeySetName
+ * @param Collector
+ * @param Role
+ * @param StartTime
+ * @param TimeOverall
+ * @param TimeOne
+ * @param TimeTwo
+ * @param TimeThree
+ * @param PressedKeys
+ * @param FrequencyKeysOverall
+ * @param DurationKeysOverall
+ * @param FrequencyKeysOne
+ * @param DurationKeysOne
+ * @param FrequencyKeysTwo
+ * @param DurationKeysTwo
+ * @param FrequencyKeysThree
+ * @param DurationKeysThree
+ */
 static void WriteSessionSpreadsheet(QString mWorkingDirectory, KeySet CurrentKeySet, QString Group, QString Individual,
                                     QString Evaluation, QString Condition, QString Therapist,
                                     QString KeySetName, QString Collector, QString Role,
                                     QString StartTime, qint64 TimeOverall, qint64 TimeOne,
-                                    qint64 TimeTwo, qint64 TimeThree, QList<SessionEvent> *PressedKeys)
+                                    qint64 TimeTwo, qint64 TimeThree, QList<SessionEvent> *PressedKeys,
+                                    QList<QPair<QString,double>> * FrequencyKeysOverall, QList<QPair<QString,double>> * DurationKeysOverall,
+                                    QList<QPair<QString,double>> * FrequencyKeysOne, QList<QPair<QString,double>> * DurationKeysOne,
+                                    QList<QPair<QString,double>> * FrequencyKeysTwo, QList<QPair<QString,double>> * DurationKeysTwo,
+                                    QList<QPair<QString,double>> * FrequencyKeysThree, QList<QPair<QString,double>> * DurationKeysThree)
 {
     QXlsx::Document xlsx;
+
+    // Cover Sheet
 
     xlsx.addSheet("Session Information");
 
@@ -445,32 +623,35 @@ static void WriteSessionSpreadsheet(QString mWorkingDirectory, KeySet CurrentKey
     xlsx.write(12,1, "Role");
     xlsx.write(12,2, Role);
 
-    xlsx.write(14,1, "StartTime");
+    xlsx.write(14,1, "Start Time");
     xlsx.write(14,2, StartTime);
 
-    xlsx.write(15,1, "SessionDuration");
-    xlsx.write(15,2, TimeOverall);
+    xlsx.write(15,1, "End Time");
+    xlsx.write(15,2, StartTime);
 
-    xlsx.write(16,1, "ScheduleOneDuration");
-    xlsx.write(16,2, TimeOne);
+    xlsx.write(16,1, "Session Duration (seconds)");
+    xlsx.write(16,2, (int)(TimeOverall / 1000));
 
-    xlsx.write(17,1, "ScheduleTwoDuration");
-    xlsx.write(17,2, TimeTwo);
+    xlsx.write(17,1, "Schedule One Duration (seconds)");
+    xlsx.write(17,2, (int)(TimeOne / 1000));
 
-    xlsx.write(18,1, "ScheduleThreeDuration");
-    xlsx.write(18,2, TimeThree);
+    xlsx.write(18,1, "Schedule Two Duration (seconds)");
+    xlsx.write(18,2, (int)(TimeTwo / 1000));
 
-    xlsx.write(20,1, "Frequency Keys");
-    xlsx.write(20,2, "Frequency Code");
-    xlsx.write(20,3, "Frequency Description");
+    xlsx.write(19,1, "Schedule Three Duration (seconds)");
+    xlsx.write(19,2, (int)(TimeThree / 1000));
 
-    int row = 21;
+    xlsx.write(21,1, "Frequency Keys");
+    xlsx.write(21,2, "Frequency Counts");
+    xlsx.write(21,3, "Frequency Rate/Minute");
 
-    foreach(KeySetEntry entry, CurrentKeySet.FrequencyKeys)
+    int row = 22;
+
+    for (int i(0); i<FrequencyKeysOverall->count(); i++)
     {
-        xlsx.write(row, 1, entry.KeyName);
-        xlsx.write(row, 2, entry.KeyCode);
-        xlsx.write(row, 3, entry.KeyDescription);
+        xlsx.write(row, 1, FrequencyKeysOverall->at(i).first);
+        xlsx.write(row, 2, FrequencyKeysOverall->at(i).second);
+        xlsx.write(row, 3, formatRate(FrequencyKeysOverall->at(i).second, TimeOverall));
 
         row++;
     }
@@ -478,19 +659,138 @@ static void WriteSessionSpreadsheet(QString mWorkingDirectory, KeySet CurrentKey
     row++;
 
     xlsx.write(row, 1, "Duration Keys");
-    xlsx.write(row, 2, "Duration Code");
-    xlsx.write(row, 3, "Duration Description");
+    xlsx.write(row, 2, "Duration Length");
+    xlsx.write(row, 3, "Duration Percent");
 
     row++;
 
-    foreach(KeySetEntry entry, CurrentKeySet.DurationKeys)
+    for (int i(0); i<DurationKeysOverall->count(); i++)
     {
-        xlsx.write(row, 1, entry.KeyName);
-        xlsx.write(row, 2, entry.KeyCode);
-        xlsx.write(row, 3, entry.KeyDescription);
+        xlsx.write(row, 1, DurationKeysOverall->at(i).first);
+        xlsx.write(row, 2, DurationKeysOverall->at(i).second);
+        xlsx.write(row, 3, formatPercentage(DurationKeysOverall->at(i).second, TimeOverall));
 
         row++;
     }
+
+    // Schedule One
+
+    xlsx.addSheet("Schedule One");
+
+    xlsx.write(1,1, "Duration (seconds)");
+    xlsx.write(1,2, (int)(TimeOne / 1000));
+
+    xlsx.write(3,1, "Frequency Keys");
+    xlsx.write(3,2, "Frequency Counts");
+    xlsx.write(3,3, "Frequency Rate/Minute");
+
+    row = 4;
+
+    for (int i(0); i<FrequencyKeysOne->count(); i++)
+    {
+        xlsx.write(row, 1, FrequencyKeysOne->at(i).first);
+        xlsx.write(row, 2, FrequencyKeysOne->at(i).second);
+        xlsx.write(row, 3, formatRate(FrequencyKeysOne->at(i).second, TimeOne));
+
+        row++;
+    }
+
+    row++;
+
+    xlsx.write(row, 1, "Duration Keys");
+    xlsx.write(row, 2, "Duration Counts");
+    xlsx.write(row, 3, "Duration Percent");
+
+    row++;
+
+    for (int i(0); i<DurationKeysOne->count(); i++)
+    {
+        xlsx.write(row, 1, DurationKeysOne->at(i).first);
+        xlsx.write(row, 2, DurationKeysOne->at(i).second);
+        xlsx.write(row, 3, formatPercentage(DurationKeysOne->at(i).second, TimeOne));
+
+        row++;
+    }
+
+    // Schedule Two
+
+    xlsx.addSheet("Schedule Two");
+
+    xlsx.write(1,1, "Duration (seconds)");
+    xlsx.write(1,2, (int)(TimeTwo / 1000));
+
+    xlsx.write(3,1, "Frequency Keys");
+    xlsx.write(3,2, "Frequency Counts");
+    xlsx.write(3,3, "Frequency Rate/Minute");
+
+    row = 4;
+
+    for (int i(0); i<FrequencyKeysTwo->count(); i++)
+    {
+        xlsx.write(row, 1, FrequencyKeysTwo->at(i).first);
+        xlsx.write(row, 2, FrequencyKeysTwo->at(i).second);
+        xlsx.write(row, 3, formatRate(FrequencyKeysTwo->at(i).second, TimeTwo));
+
+        row++;
+    }
+
+    row++;
+
+    xlsx.write(row, 1, "Duration Keys");
+    xlsx.write(row, 2, "Duration Counts");
+    xlsx.write(row, 3, "Duration Percent");
+
+    row++;
+
+    for (int i(0); i<DurationKeysOne->count(); i++)
+    {
+        xlsx.write(row, 1, DurationKeysTwo->at(i).first);
+        xlsx.write(row, 2, DurationKeysTwo->at(i).second);
+        xlsx.write(row, 3, formatPercentage(DurationKeysTwo->at(i).second, TimeTwo));
+
+        row++;
+    }
+
+    // Schedule Three
+
+    xlsx.addSheet("Schedule Three");
+
+    xlsx.write(1,1, "Duration (seconds)");
+    xlsx.write(1,2, (int)(TimeThree / 1000));
+
+    xlsx.write(3,1, "Frequency Keys");
+    xlsx.write(3,2, "Frequency Counts");
+    xlsx.write(3,3, "Frequency Rate/Minute");
+
+    row = 4;
+
+    for (int i(0); i<FrequencyKeysThree->count(); i++)
+    {
+        xlsx.write(row, 1, FrequencyKeysThree->at(i).first);
+        xlsx.write(row, 2, FrequencyKeysThree->at(i).second);
+        xlsx.write(row, 3, formatRate(FrequencyKeysThree->at(i).second, TimeThree));
+
+        row++;
+    }
+
+    row++;
+
+    xlsx.write(row, 1, "Duration Keys");
+    xlsx.write(row, 2, "Duration Counts");
+    xlsx.write(row, 3, "Duration Percent");
+
+    row++;
+
+    for (int i(0); i<DurationKeysThree->count(); i++)
+    {
+        xlsx.write(row, 1, DurationKeysThree->at(i).first);
+        xlsx.write(row, 2, DurationKeysThree->at(i).second);
+        xlsx.write(row, 3, formatPercentage(DurationKeysThree->at(i).second, TimeThree));
+
+        row++;
+    }
+
+    // Session Log (final sheet)
 
     xlsx.addSheet("Session Log");
 
@@ -503,6 +803,8 @@ static void WriteSessionSpreadsheet(QString mWorkingDirectory, KeySet CurrentKey
     xlsx.write(row, 5, "Schedule");
     xlsx.write(row, 6, "Measurement Type");
 
+    row++;
+
     foreach(SessionEvent event, *PressedKeys)
     {
         xlsx.write(row, 1, event.KeyEntered.KeyCode);
@@ -514,10 +816,6 @@ static void WriteSessionSpreadsheet(QString mWorkingDirectory, KeySet CurrentKey
 
         row++;
     }
-
-    xlsx.addSheet("Session Results");
-
-    xlsx.write(1, 1, "Results...");
 
     QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, Group);
     mKeyPath = FileTools::pathAppend(mKeyPath, Individual);
@@ -541,8 +839,6 @@ static void WriteSessionSpreadsheet(QString mWorkingDirectory, KeySet CurrentKey
     QString path = FileTools::pathAppend(mKeyPath, mFileName);
 
     xlsx.saveAs(path);
-
-    //QFile saveFile(path);
 }
 
 /**
@@ -654,6 +950,12 @@ static bool CheckAndPrepDirectory(QString folderTitle, QString path)
     return false;
 }
 
+/**
+ * @brief CheckAndCreateFolder
+ * @param folderTitle
+ * @param path
+ * @return
+ */
 static bool CheckAndCreateFolder(QString folderTitle, QString path)
 {
     QDir mPath(path);
