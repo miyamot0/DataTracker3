@@ -67,7 +67,6 @@ private slots:
     void on_comboEvaluation_currentIndexChanged(int index);
     void on_comboKeySet_currentIndexChanged(int index);
     void on_buttonCollector_clicked();
-
     void on_buttonBox_clicked(QAbstractButton *button);
 
     void SetGroups(QStringList Groups);
@@ -94,7 +93,8 @@ private:
     DirectoryParse mCurrentDirectory;
 
     SessionDurationDialog sessionDurationDialog;
-    RecordingWindow r;
+    //RecordingWindow r;
+    RecordingWindow * r;
     ResultsDialog mResults;
 
     QString alternativeSaveLocation = "";

@@ -903,41 +903,37 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
 
         CurrentKeySet.Session = sessionNumber;
 
-        r.LoadKeys(CurrentKeySet);
-        r.SetGroup(ui->comboGroup->currentText());
-        r.SetIndividual(ui->comboIndividual->currentText());
-        r.SetEvaluation(ui->comboEvaluation->currentText());
-        r.SetCondition(ui->comboCondition->currentText());
-        r.SetCollector(ui->comboCollector->currentText());
-        r.SetRole(ui->comboRole->currentText());
-        r.exec();
+        r = new RecordingWindow();
+        r->LoadKeys(CurrentKeySet);
+        r->SetGroup(ui->comboGroup->currentText());
+        r->SetIndividual(ui->comboIndividual->currentText());
+        r->SetEvaluation(ui->comboEvaluation->currentText());
+        r->SetCondition(ui->comboCondition->currentText());
+        r->SetCollector(ui->comboCollector->currentText());
+        r->SetRole(ui->comboRole->currentText());
 
-        qDebug() << "returned";
-
-        if (!r.KeepData)
+        if (r->exec() == QDialog::Rejected)
         {
             return;
         }
 
-        qDebug() << "passed catch";
-
-        ScoringTools::ScoreOverallSchedule(&r.PressedKeys, &CurrentKeySet,
-                                           &r.startTime, &r.endTime,
+        ScoringTools::ScoreOverallSchedule(&r->PressedKeys, &CurrentKeySet,
+                                           &r->startTime, &r->endTime,
                                            &mResults.FrequencyOverall, &mResults.DurationOverall,
                                            &mResults.TimeOverall);
 
-        ScoringTools::ScoreSpecificSchedule(&r.PressedKeys, &CurrentKeySet,
-                                            &r.endTime, Schedule::One,
+        ScoringTools::ScoreSpecificSchedule(&r->PressedKeys, &CurrentKeySet,
+                                            &r->endTime, Schedule::One,
                                             &mResults.FrequencyOne, &mResults.DurationOne,
                                             &mResults.TimeOne);
 
-        ScoringTools::ScoreSpecificSchedule(&r.PressedKeys, &CurrentKeySet,
-                                            &r.endTime, Schedule::Two,
+        ScoringTools::ScoreSpecificSchedule(&r->PressedKeys, &CurrentKeySet,
+                                            &r->endTime, Schedule::Two,
                                             &mResults.FrequencyTwo, &mResults.DurationTwo,
                                             &mResults.TimeTwo);
 
-        ScoringTools::ScoreSpecificSchedule(&r.PressedKeys, &CurrentKeySet,
-                                            &r.endTime, Schedule::Three,
+        ScoringTools::ScoreSpecificSchedule(&r->PressedKeys, &CurrentKeySet,
+                                            &r->endTime, Schedule::Three,
                                             &mResults.FrequencyThree, &mResults.DurationThree,
                                             &mResults.TimeThree);
 
@@ -945,7 +941,7 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
 
         mResults.BuildTables();
 
-        mResults.BuildNarrative(&r.PressedKeys, &r.startTime);
+        mResults.BuildNarrative(&r->PressedKeys, &r->startTime);
 
         mResults.SetParameters(ui->comboGroup->currentText(),
                                ui->comboIndividual->currentText(),
@@ -960,9 +956,9 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
                                     ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
                                     ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
                                     ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
-                                    ui->comboRole->currentText(),r.startTime.toString(),                                    
+                                    ui->comboRole->currentText(),r->startTime.toString(),
                                     mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree,
-                                    &r.PressedKeys, &mResults.FrequencyOverall, &mResults.DurationOverall,
+                                    &r->PressedKeys, &mResults.FrequencyOverall, &mResults.DurationOverall,
                                     &mResults.FrequencyOne, &mResults.DurationOne,
                                     &mResults.FrequencyTwo, &mResults.DurationTwo,
                                     &mResults.FrequencyThree, &mResults.DurationThree);
@@ -971,8 +967,8 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
                                     ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
                                     ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
                                     ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
-                                    ui->comboRole->currentText(),r.startTime.toString(),                                           
-                                    mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree, &r.PressedKeys,
+                                    ui->comboRole->currentText(),r->startTime.toString(),
+                                    mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree, &r->PressedKeys,
                                     &mResults.FrequencyOverall, &mResults.DurationOverall,
                                     &mResults.FrequencyOne, &mResults.DurationOne,
                                     &mResults.FrequencyTwo, &mResults.DurationTwo,
@@ -984,9 +980,9 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
                                         ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
                                         ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
                                         ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
-                                        ui->comboRole->currentText(),r.startTime.toString(),
+                                        ui->comboRole->currentText(),r->startTime.toString(),
                                         mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree,
-                                        &r.PressedKeys, &mResults.FrequencyOverall, &mResults.DurationOverall,
+                                        &r->PressedKeys, &mResults.FrequencyOverall, &mResults.DurationOverall,
                                         &mResults.FrequencyOne, &mResults.DurationOne,
                                         &mResults.FrequencyTwo, &mResults.DurationTwo,
                                         &mResults.FrequencyThree, &mResults.DurationThree);
@@ -997,7 +993,7 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
             mResults.SetTabEnabled(1, true);
             mResults.SetTabEnabled(2, true);
 
-            mResults.BuildPlot(CurrentKeySet, &r.PressedKeys, &r.startTime, &r.endTime);
+            mResults.BuildPlot(CurrentKeySet, &r->PressedKeys, &r->startTime, &r->endTime);
         }
         else
         {

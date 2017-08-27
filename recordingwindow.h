@@ -51,6 +51,7 @@ public:
 
     bool KeepData = true;
 
+    void init();
     void LoadKeys(KeySet mKeyset);
     void SetGroup(QString value);
     void SetIndividual(QString value);

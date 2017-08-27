@@ -27,6 +27,7 @@
 
 #include <QKeyEvent>
 #include <QMessageBox>
+#include <QDebug>
 
 RecordingWindow::RecordingWindow(QWidget *parent) : QDialog(parent), ui(new Ui::RecordingWindow)
 {
@@ -35,6 +36,40 @@ RecordingWindow::RecordingWindow(QWidget *parent) : QDialog(parent), ui(new Ui::
     installEventFilter(this);
 
     setWindowTitle(tr("Session Recording Window"));
+
+    Started = false;
+}
+
+void RecordingWindow::init()
+{
+    baseTimer.stop();
+    DurationFlags.clear();
+    DurationSums.clear();
+    DurationFlaggedTimes.clear();
+
+    ScheduleFlags.clear();
+    ScheduleDurationSums.clear();
+    ScheduleDurationFlaggedTimes.clear();
+
+    PressedKeys.clear();
+
+    while (ui->tableWidgetLog->rowCount() > 0)
+    {
+        ui->tableWidgetLog->removeRow(0);
+    }
+
+    ui->editTimerBase->setText("00:00:00:000");
+    ui->editTimerOne->setText("00:00:00:000");
+    ui->editTimerTwo->setText("00:00:00:000");
+    ui->editTimerThree->setText("00:00:00:000");
+
+    ui->editTimerBase->setStyleSheet("");
+    ui->editTimerOne->setStyleSheet("");
+    ui->editTimerTwo->setStyleSheet("");
+    ui->editTimerThree->setStyleSheet("");
+
+    Started = false;
+    KeepData = true;
 }
 
 void RecordingWindow::LoadKeys(KeySet mKeyset)
@@ -149,66 +184,83 @@ void RecordingWindow::reject()
     {
         KeepData = false;
 
-        reject();
-    }
-
-
-    QMessageBox::StandardButton resBtn = QMessageBox::question( this, tr("Session Recording"),
-                                                                tr("Are you sure?\n"),
-                                                                QMessageBox::Cancel |
-                                                                QMessageBox::No |
-                                                                QMessageBox::Yes,
-                                                                QMessageBox::Yes);
-    if (resBtn == QMessageBox::Yes)
-    {
-        endTime = QDateTime::currentDateTime();
-
-        ui->editTimerBase->setText(formatTimeLabel(startTime.msecsTo(endTime)));
-
-        ParseTimes();
-
-        SessionEvent loggedCloseKey;
-        loggedCloseKey.TimePressed = endTime;
-        loggedCloseKey.MeasurementType = Measurement::Schedule;
-        loggedCloseKey.ScheduleType = CurrentSchedule;
-
-        KeySetEntry loggedClosedKeySet;
-
-        if (CurrentSchedule == Schedule::One)
-        {
-            loggedClosedKeySet.KeyCode = Qt::Key_Z;
-            loggedClosedKeySet.KeyName = "Schedule 1 End";
-            loggedClosedKeySet.KeyDescription = "Schedule 1 End";
-        }
-        else if (CurrentSchedule == Schedule::Two)
-        {
-            loggedClosedKeySet.KeyCode = Qt::Key_X;
-            loggedClosedKeySet.KeyName = "Schedule 2 End";
-            loggedClosedKeySet.KeyDescription = "Schedule 2 End";
-        }
-        else if (CurrentSchedule == Schedule::Three)
-        {
-            loggedClosedKeySet.KeyCode = Qt::Key_C;
-            loggedClosedKeySet.KeyName = "Schedule 3 End";
-            loggedClosedKeySet.KeyDescription = "Schedule 3 End";
-        }
-
-        loggedCloseKey.KeyEntered = loggedClosedKeySet;
-
-        AddKey(loggedCloseKey);
-
-        QMessageBox::StandardButton saveData = QMessageBox::question(this,
-                                                                     tr("Session Recording"),
-                                                                     tr("Are you sure?\n"),
-                                                                     QMessageBox::No |
-                                                                     QMessageBox::Yes);
-
-        if (saveData == QMessageBox::No)
-        {
-            KeepData = false;
-        }
+        baseTimer.stop();
 
         QDialog::reject();
+        QDialog::close();
+    }
+    else
+    {
+        QMessageBox::StandardButton resBtn = QMessageBox::question( this, tr("Session Recording"),
+                                                                    tr("Are you sure?\n"),
+                                                                    QMessageBox::Cancel |
+                                                                    QMessageBox::No |
+                                                                    QMessageBox::Yes,
+                                                                    QMessageBox::Yes);
+        if (resBtn == QMessageBox::Yes)
+        {
+            baseTimer.stop();
+
+            endTime = QDateTime::currentDateTime();
+
+            ui->editTimerBase->setText(formatTimeLabel(startTime.msecsTo(endTime)));
+
+            ParseTimes();
+
+            SessionEvent loggedCloseKey;
+            loggedCloseKey.TimePressed = endTime;
+            loggedCloseKey.MeasurementType = Measurement::Schedule;
+            loggedCloseKey.ScheduleType = CurrentSchedule;
+
+            KeySetEntry loggedClosedKeySet;
+
+            if (CurrentSchedule == Schedule::One)
+            {
+                loggedClosedKeySet.KeyCode = Qt::Key_Z;
+                loggedClosedKeySet.KeyName = "Schedule 1 End";
+                loggedClosedKeySet.KeyDescription = "Schedule 1 End";
+            }
+            else if (CurrentSchedule == Schedule::Two)
+            {
+                loggedClosedKeySet.KeyCode = Qt::Key_X;
+                loggedClosedKeySet.KeyName = "Schedule 2 End";
+                loggedClosedKeySet.KeyDescription = "Schedule 2 End";
+            }
+            else if (CurrentSchedule == Schedule::Three)
+            {
+                loggedClosedKeySet.KeyCode = Qt::Key_C;
+                loggedClosedKeySet.KeyName = "Schedule 3 End";
+                loggedClosedKeySet.KeyDescription = "Schedule 3 End";
+            }
+
+            loggedCloseKey.KeyEntered = loggedClosedKeySet;
+
+            AddKey(loggedCloseKey);
+
+            QMessageBox::StandardButton saveData = QMessageBox::question(this,
+                                                                         tr("Keep Recorded Data?"),
+                                                                         tr("Do you want to discard this data?"),
+                                                                         QMessageBox::No |
+                                                                         QMessageBox::Yes);
+
+
+            if (saveData == QMessageBox::No)
+            {
+                QDialog::accept();
+
+                KeepData = true;
+            }
+            else
+            {
+                QDialog::reject();
+
+                KeepData = false;
+            }
+        }
+        else
+        {
+            QDialog::reject();
+        }
     }
 }
 
