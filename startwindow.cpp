@@ -75,6 +75,9 @@ void StartWindow::on_actionSettings_2_triggered()
     //qDebug() << "on_actionSettings_2_triggered";
 }
 
+/** Open License Window
+ * @brief StartWindow::on_actionQt_Framework_triggered
+ */
 void StartWindow::on_actionQt_Framework_triggered()
 {
     QString mFilePath = "";
@@ -97,6 +100,9 @@ void StartWindow::on_actionQt_Framework_triggered()
     licenseDialog->show();
 }
 
+/** Open License Window
+ * @brief StartWindow::on_actionQtXlsx_triggered
+ */
 void StartWindow::on_actionQtXlsx_triggered()
 {
     QString mFilePath = "";
@@ -119,6 +125,9 @@ void StartWindow::on_actionQtXlsx_triggered()
     licenseDialog->show();
 }
 
+/** Open License Window
+ * @brief StartWindow::on_actionTango_Icons_triggered
+ */
 void StartWindow::on_actionTango_Icons_triggered()
 {
     QString mFilePath = "";
