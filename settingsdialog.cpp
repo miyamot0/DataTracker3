@@ -67,10 +67,17 @@ bool SettingsDialog::eventFilter(QObject *obj, QEvent *e)
                                                                QFileDialog::ShowDirsOnly);
             }
 
-            ui->editSaveLocation->setText(mLocation);
+            QDir mPotentialDir(mLocation);
+
+            if (mLocation.length() !=0 && mPotentialDir.exists())
+            {
+                ui->editSaveLocation->setText(mLocation);
+            }
         }
 
+        ui->pushButton->setFocus();
         ui->editSaveLocation->clearFocus();
+        ui->pushButton->setFocus();
     }
 
     return false;

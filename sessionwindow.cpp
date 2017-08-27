@@ -69,8 +69,10 @@ SessionWindow::SessionWindow(QString mCurrentWorkingDirectory, QWidget *parent) 
 
     settings.endGroup();
 
+    ui->editSaveLocation->setText(mWorkingDirectory);
+    ui->editAlternativeSaveLocation->setText(alternativeSaveLocation);
 
-    qDebug() << alternativeSaveLocation;
+    ui->editSessionDuration->installEventFilter(this);
 }
 
 /** Add a new group
@@ -771,24 +773,49 @@ SessionWindow::~SessionWindow()
     delete ui;
 }
 
-/** Begin session
- * @brief SessionWindow::on_buttonBox_clicked
- * @param button
- */
-void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
+bool SessionWindow::eventFilter(QObject *obj, QEvent *e)
 {
+    if (e->type() == QEvent::FocusIn)
+    {
+        if (obj == ui->editSessionDuration && !sessionDurationDialog.AcceptDialog)
+        {
+            sessionDurationDialog.AcceptDialog = true;
+
+            if (sessionDurationDialog.exec() == QDialog::Accepted)
+            {
+                ui->editSessionDuration->setText(QString("%1 Seconds").arg(sessionDurationDialog.GetSeconds()));
+            }
+
+            ui->editSessionDuration->clearFocus();
+
+            ui->comboSessionDuration->setCurrentIndex(ui->comboSessionDuration->count() - 1);
+
+            sessionDurationDialog.AcceptDialog = false;
+        }
+    }
+
+    return false;
+}
+
+int SessionWindow::GetSessionDuration()
+{
+    bool ok;
+    QString mDuration;
+    QStringList durationValue;
+
     if (ui->comboSessionDuration->currentIndex() == 0)
     {
         QMessageBox::critical(NULL, tr("Sussion Duration"),
                               tr("Set a duration for the session."),
                               QMessageBox::Ok);
 
-        return;
+        return -1;
     }
     else if (ui->comboSessionDuration->currentIndex() == ui->comboSessionDuration->count() - 1)
     {
-        bool ok;
-        ui->editSessionNumber->text().toDouble(&ok);
+        mDuration = ui->editSessionDuration->text();
+        durationValue = mDuration.split(' ');
+        durationValue[0].toInt(&ok);
 
         if (!ok)
         {
@@ -796,27 +823,70 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
                                   tr("The custom session duration isn't usable."),
                                   QMessageBox::Ok);
 
-            return;
+            return -1;
+        }
+        else
+        {
+            return durationValue[0].toInt(&ok);
+        }
+    }
+    else
+    {
+        mDuration = ui->comboSessionDuration->currentText();
+        durationValue = mDuration.split(' ');
+        durationValue[0].toInt(&ok);
+
+        if (ok)
+        {
+            return durationValue[0].toInt(&ok) * 60;
         }
     }
 
+    return -1;
+}
+
+int SessionWindow::GetSessionNumber()
+{
+    bool ok;
+    QString text = ui->editSessionNumber->text();
+
+    text.toInt(&ok);
+
+    if (ok)
+    {
+        return text.toInt();
+    }
+
+    return -1;
+}
+
+/** Begin session
+ * @brief SessionWindow::on_buttonBox_clicked
+ * @param button
+ */
+void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
+{
+    // todo session number
+
     if((QPushButton *)button == ui->buttonBox->button(QDialogButtonBox::Ok))
     {
-        QString mDuration = ui->comboSessionDuration->currentText();
-        QStringList durationValue = mDuration.split(' ');
+        int sessionDurationSeconds = GetSessionDuration();
 
-        bool ok;
-        durationValue[0].toDouble(&ok);
-
-        if (!ok)
+        if (sessionDurationSeconds == -1)
         {
-            // TODO error message
-
             return;
         }
 
-        CurrentKeySet.TotalSeconds = durationValue[0].toDouble(&ok) * 60;
-        CurrentKeySet.Session = ui->editSessionNumber->text().toInt();
+        CurrentKeySet.TotalSeconds = sessionDurationSeconds;
+
+        int sessionNumber = GetSessionNumber();
+
+        if (sessionNumber == -1)
+        {
+            return;
+        }
+
+        CurrentKeySet.Session = sessionNumber;
 
         r.LoadKeys(CurrentKeySet);
         r.SetGroup(ui->comboGroup->currentText());

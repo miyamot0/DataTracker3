@@ -30,6 +30,8 @@
 
 #include "recordingwindow.h"
 #include "resultsdialog.h"
+#include "sessiondurationdialog.h"
+
 #include "sessioncounter.h"
 #include "directoryparse.h"
 #include "directorysearcher.h"
@@ -91,10 +93,15 @@ private:
 
     DirectoryParse mCurrentDirectory;
 
+    SessionDurationDialog sessionDurationDialog;
     RecordingWindow r;
     ResultsDialog mResults;
 
     QString alternativeSaveLocation = "";
+
+    int GetSessionDuration();
+    int GetSessionNumber();
+    bool eventFilter(QObject *obj, QEvent *e);
 };
 
 #endif // SESSIONWINDOW_H
