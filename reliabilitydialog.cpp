@@ -205,6 +205,7 @@ void ReliabilityDialog::on_comboEvaluation_currentIndexChanged(int index)
                         mReliObj.Collector = sessionObject["Collector"].toString();
                         mReliObj.Condition = sessionObject["Condition"].toString();
                         mReliObj.SecondaryObserver = QString("---");
+                        mReliObj.PrimaryFilePath = mFileName;
                         mReliObj.Reli = false;
 
                         PrimaryReliabilityObjects.append(mReliObj);
@@ -215,6 +216,7 @@ void ReliabilityDialog::on_comboEvaluation_currentIndexChanged(int index)
                         mReliObj.SessionNumber = sessionObject["Session"].toInt();
                         mReliObj.Collector = sessionObject["Collector"].toString();
                         mReliObj.Condition = sessionObject["Condition"].toString();
+                        mReliObj.PrimaryFilePath = mFileName;
                         mReliObj.Reli = true;
 
                         SecondaryReliabilityObjects.append(mReliObj);
@@ -232,6 +234,7 @@ void ReliabilityDialog::on_comboEvaluation_currentIndexChanged(int index)
                     PrimaryReliabilityObjects[i].Condition == SecondaryReliabilityObjects[j].Condition)
             {
                 PrimaryReliabilityObjects[i].SecondaryObserver = SecondaryReliabilityObjects[j].Collector;
+                PrimaryReliabilityObjects[i].ReliFilePath = SecondaryReliabilityObjects[j].PrimaryFilePath;
             }
         }
     }

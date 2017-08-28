@@ -13,6 +13,9 @@ public:
     QString Collector;
     QString SecondaryObserver;
 
+    QString PrimaryFilePath;
+    QString ReliFilePath;
+
     bool Reli;
 
     int Row;
