@@ -299,6 +299,8 @@ static bool ReadSessionFromJSON(QString path, QJsonObject * json)
 
     if (mSession.exists())
     {
+        qDebug() << "exists";
+
         if (mSession.open(QIODevice::ReadOnly | QIODevice::Text))
         {
             QString sessionData = mSession.readAll();

@@ -194,7 +194,11 @@ void ResultsDialog::BuildTables()
 void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKeys, QDateTime * startTime, QDateTime * endTime)
 {
     //test
+    chart = new QChart();
+    chart2 = new QChart();
 
+    lineSeries.clear();
+    lineSeries2.clear();
     //
 
     qint64 totalSecs = startTime->secsTo(*endTime);
@@ -325,9 +329,9 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
         }
     }
 
-    chart.setTitle("Cumulative Target Counts");
-    chart.setTitleFont(QFont("Serif", 10, -1, false));
-    chart.setTitleBrush(Qt::black);
+    chart->setTitle("Cumulative Target Counts");
+    chart->setTitleFont(QFont("Serif", 10, -1, false));
+    chart->setTitleBrush(Qt::black);
 
     axisX.applyNiceNumbers();
     axisX.setGridLineColor(Qt::transparent);
@@ -368,15 +372,15 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
         lineSeries[i]->clear();
         lineSeries[i]->show();
 
-        chart.addSeries(lineSeries[i]);
+        chart->addSeries(lineSeries[i]);
 
-        chart.setAxisX(&axisX, lineSeries[i]);
-        chart.setAxisY(&axisY, lineSeries[i]);
+        chart->setAxisX(&axisX, lineSeries[i]);
+        chart->setAxisY(&axisY, lineSeries[i]);
 
         runTotal = 0;
     }
 
-    chartView = new QChartView(&chart);
+    chartView = new QChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
 
     ui->plotLayout->addWidget(chartView);
@@ -408,9 +412,9 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
 
     // dur
 
-    chart2.setTitle("Cumulative Time Counts");
-    chart2.setTitleFont(QFont("Serif", 10, -1, false));
-    chart2.setTitleBrush(Qt::black);
+    chart2->setTitle("Cumulative Time Counts");
+    chart2->setTitleFont(QFont("Serif", 10, -1, false));
+    chart2->setTitleBrush(Qt::black);
 
     axisX2.applyNiceNumbers();
     axisX2.setGridLineColor(Qt::transparent);
@@ -451,15 +455,15 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
         lineSeries2[i]->clear();
         lineSeries2[i]->show();
 
-        chart2.addSeries(lineSeries2[i]);
+        chart2->addSeries(lineSeries2[i]);
 
-        chart2.setAxisX(&axisX2, lineSeries2[i]);
-        chart2.setAxisY(&axisY2, lineSeries2[i]);
+        chart2->setAxisX(&axisX2, lineSeries2[i]);
+        chart2->setAxisY(&axisY2, lineSeries2[i]);
 
         runTotal = 0;
     }
 
-    chartView2 = new QChartView(&chart2);
+    chartView2 = new QChartView(chart2);
     chartView2->setRenderHint(QPainter::Antialiasing);
 
     ui->plotLayout2->addWidget(chartView2);

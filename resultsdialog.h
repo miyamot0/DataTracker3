@@ -66,8 +66,8 @@ public:
 private:
     Ui::ResultsDialog *ui;
 
-    QChart chart, chart2;
-    QChartView *chartView, *chartView2;
+    QChart * chart, * chart2;
+    QChartView * chartView, * chartView2;
     QValueAxis axisX, axisY, axisX2, axisY2;
     QList<QLineSeries *> lineSeries, lineSeries2;
 
