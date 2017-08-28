@@ -27,6 +27,7 @@
 #include <QDialog>
 #include "directorysearcher.h"
 #include "reliabilityparse.h"
+#include "reliabilitymeasure.h"
 
 namespace Ui {
 class ReliabilityDialog;
@@ -63,6 +64,8 @@ private:
 
     QList<ReliabilityParse> PrimaryReliabilityObjects;
     QList<ReliabilityParse> SecondaryReliabilityObjects;
+
+    QList<ReliabilityMeasure> ReliResults;
 };
 
 #endif // RELIABILITYDIALOG_H

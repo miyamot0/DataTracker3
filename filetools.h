@@ -39,6 +39,8 @@
 #include "keyset.h"
 #include "keysetentry.h"
 #include "sessionevent.h"
+#include "reliabilitymeasure.h"
+#include "reliabilityparse.h"
 
 class FileTools
 {
@@ -877,6 +879,146 @@ static void WriteSessionSpreadsheet(QString mWorkingDirectory, KeySet CurrentKey
     QString path = FileTools::pathAppend(mKeyPath, mFileName);
 
     xlsx.saveAs(path);
+}
+
+static void WriteReliSpreadsheet(QString mWorkingDirectory, QString Group, QString Individual, QString Evaluation, QList<ReliabilityMeasure> * ReliResults,
+                                 QList<ReliabilityParse> * PrimaryReliabilityObjects, QList<ReliabilityParse> * SecondaryReliabilityObjects)
+{
+    QXlsx::Document xlsx;
+
+    xlsx.addSheet("Session Information");
+
+    ReliabilityMeasure temp;
+
+    int spacer = 4;
+
+    xlsx.write(1, 1, "Reliability Summary");
+    xlsx.write(2, 1, "Group: " + Group);
+    xlsx.write(3, 1, "Individual: " + Individual);
+    xlsx.write(4, 1, "Group: " + Group);
+    xlsx.write(5, 1, "Evaluation: " + Evaluation);
+    xlsx.write(6, 1, "Processed: " + QDate::currentDate().toString());
+
+
+    int topOffset = 9;
+
+    xlsx.write(8, 1, "Session");
+    xlsx.write(8, 2, "Primary");
+    xlsx.write(8, 3, "Reliability");
+
+    for (int row(0); row < ReliResults->count(); row++)
+    {
+        temp = ReliResults->at(row);
+
+        xlsx.write(topOffset + row, 1, temp.Session);
+        xlsx.write(topOffset + row, 2, temp.Primary);
+        xlsx.write(topOffset + row, 3, temp.Reliability);
+
+        spacer = 4;
+
+        if (row == 0) xlsx.write(topOffset - 3 + row, spacer, "Frequency Keys");
+
+        for (int j(0); j<temp.fEIA.count(); j++)
+        {
+            if (row == 0) xlsx.write(topOffset - 2 + row, spacer, temp.fEIA.at(j).first);
+            if (row == 0) xlsx.write(topOffset - 1 + row, spacer, "EIA");
+            xlsx.write(topOffset + row, spacer, temp.fEIA.at(j).second);
+            spacer++;
+
+            if (row == 0) xlsx.write(topOffset - 1 + row, spacer, "PIA");
+            xlsx.write(topOffset + row, spacer, temp.fPIA.at(j).second);
+            spacer++;
+
+            if (row == 0) xlsx.write(topOffset - 1 + row, spacer, "TIA");
+            xlsx.write(topOffset + row, spacer, temp.fTIA.at(j).second);
+            spacer++;
+
+            if (row == 0) xlsx.write(topOffset - 1 + row, spacer, "OIA");
+            xlsx.write(topOffset + row, spacer, temp.fOIA.at(j).second);
+            spacer++;
+
+            if (row == 0) xlsx.write(topOffset - 1 + row, spacer, "NIA");
+            xlsx.write(topOffset + row, spacer, temp.fNIA.at(j).second);
+            spacer++;
+
+            if (row == 0) xlsx.write(topOffset - 1 + row, spacer, "PMA");
+            xlsx.write(topOffset + row, spacer, temp.fPMA.at(j).second);
+            spacer++;
+        }
+
+        if (row == 0) xlsx.write(topOffset - 3 + row, spacer, "Duration Keys");
+
+        for (int j(0); j<temp.dEIA.count(); j++)
+        {
+            if (row == 0) xlsx.write(topOffset - 2 + row, spacer, temp.dEIA.at(j).first);
+            if (row == 0) xlsx.write(topOffset - 1 + row, spacer, "EIA");
+            xlsx.write(topOffset + row, spacer, temp.dEIA.at(j).second);
+            spacer++;
+
+            if (row == 0) xlsx.write(topOffset - 1 + row, spacer, "PIA");
+            xlsx.write(topOffset + row, spacer, temp.dPIA.at(j).second);
+            spacer++;
+
+            if (row == 0) xlsx.write(topOffset - 1 + row, spacer, "TIA");
+            xlsx.write(topOffset + row, spacer, temp.dTIA.at(j).second);
+            spacer++;
+
+            if (row == 0) xlsx.write(topOffset - 1 + row, spacer, "OIA");
+            xlsx.write(topOffset + row, spacer, temp.dOIA.at(j).second);
+            spacer++;
+
+            if (row == 0) xlsx.write(topOffset - 1 + row, spacer, "NIA");
+            xlsx.write(topOffset + row, spacer, temp.dNIA.at(j).second);
+            spacer++;
+
+            if (row == 0) xlsx.write(topOffset - 1 + row, spacer, "PMA");
+            xlsx.write(topOffset + row, spacer, temp.dPMA.at(j).second);
+            spacer++;
+        }
+    }
+
+
+    int row = 9 + ReliResults->count();
+
+    xlsx.write(row, 1, "Files Included:");
+
+    row++;
+    row++;
+
+    for (int i(0); i<PrimaryReliabilityObjects->count(); i++)
+    {
+        xlsx.write(row, 1, PrimaryReliabilityObjects->at(i).PrimaryFilePath);
+
+        row++;
+    }
+
+    for (int i(0); i<SecondaryReliabilityObjects->count(); i++)
+    {
+        xlsx.write(row, 1, SecondaryReliabilityObjects->at(i).PrimaryFilePath);
+
+        row++;
+    }
+
+    QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, Group);
+    mKeyPath = FileTools::pathAppend(mKeyPath, Individual);
+    mKeyPath = FileTools::pathAppend(mKeyPath, Evaluation);
+
+    QDir dir(mKeyPath);
+
+    if (!dir.exists())
+    {
+        dir.mkpath(mKeyPath);
+    }
+
+    QString mFileName = QString("%1%2%3%4_%5.xlsx")
+            .arg(Group.mid(0, 3))
+            .arg(Individual.mid(0, 3))
+            .arg(Evaluation.mid(0, 3));
+
+    QString path = FileTools::pathAppend(mKeyPath, mFileName);
+
+    xlsx.saveAs(path);
+
 }
 
 /**

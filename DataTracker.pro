@@ -82,7 +82,8 @@ HEADERS  += startwindow.h \
     settingsdialog.h \
     sessiondurationdialog.h \
     reliabilityparse.h \
-    reliabilityscoring.h
+    reliabilityscoring.h \
+    reliabilitymeasure.h
 
 FORMS    += startwindow.ui \
     sessionwindow.ui \
