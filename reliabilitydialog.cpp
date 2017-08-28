@@ -359,70 +359,7 @@ void ReliabilityDialog::on_pushButton_clicked()
 
             if (mPrimaryCheck && mReliCheck)
             {
-                startTime = QDateTime(QDateTime::fromString(mPrimary["StartTime"].toString()));
-                endTime = QDateTime(QDateTime::fromString(mPrimary["EndTime"].toString()));
-
-                int totalSecs = (int)((double) mPrimary["SessionDuration"].toInt() / 1000);
-
-                int bins = totalSecs / 10;
-                int overflow = ((totalSecs % 10) > 0) ? 1 : 0;
-                    bins = bins + overflow;
-
-                QList<KeySetEntry> FrequencyKeys;
-
-                QJsonArray frequencyArray = mPrimary["FrequencyKeys"].toArray();
-                foreach (const QJsonValue collector, frequencyArray) {
-                    QJsonObject mObj = collector.toObject();
-
-                    KeySetEntry mEntry;
-                    mEntry.KeyCode = mObj["Code"].toInt();
-                    mEntry.KeyDescription = mObj["Description"].toString();
-                    mEntry.KeyName = mObj["Name"].toString();
-
-                    FrequencyKeys.append(mEntry);
-                }
-
-                QList<KeySetEntry> DurationKeys;
-
-                QJsonArray durationArray = mPrimary["DurationKeys"].toArray();
-                foreach (const QJsonValue collector, durationArray) {
-                    QJsonObject mObj = collector.toObject();
-
-                    KeySetEntry mEntry;
-                    mEntry.KeyCode = mObj["Code"].toInt();
-                    mEntry.KeyDescription = mObj["Description"].toString();
-                    mEntry.KeyName = mObj["Name"].toString();
-
-                    DurationKeys.append(mEntry);
-                }
-
-                QList<SessionEvent> PressedKeys;
-
-                QJsonArray pressedKeysJson = mPrimary["PressedKeys"].toArray();
-                foreach (const QJsonValue collector, pressedKeysJson) {
-                    QJsonObject mObj = collector.toObject();
-
-                    SessionEvent mEntry;
-                    mEntry.KeyEntered.KeyCode = mObj["KeyCode"].toInt();
-                    mEntry.KeyEntered.KeyDescription = mObj["KeyDescription"].toString();
-                    mEntry.KeyEntered.KeyName = mObj["KeyName"].toString();
-                    //mEntry.MeasurementType = mObj["Measurement"].toString();
-                    //mEntry.ScheduleType = mObj["Schedule"].toString();
-                    mEntry.TimePressed = QDateTime(QDateTime::fromString(mObj["TimePressed"].toString()));
-
-                    PressedKeys.append(mEntry);
-                }
-
-                auto mFrequencyBins = ReliabilityScoring::GetFrequencyBins(bins, FrequencyKeys, startTime, PressedKeys);
-
-                auto mDurationBins = ReliabilityScoring::GetDurationBins(bins, DurationKeys, startTime, endTime, PressedKeys);
-
-
-                qDebug() << mFrequencyBins;
-                qDebug() << mDurationBins;
-
-
-
+                ReliabilityScoring::CompareObservers(mPrimary, mReli);
             }
         }
     }

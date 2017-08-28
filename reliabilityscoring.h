@@ -10,19 +10,152 @@ class ReliabilityScoring
 {
 public:
 
+static void CompareObservers(QJsonObject mPrimary, QJsonObject mSecondary)
+{
+    QDateTime startTime = QDateTime(QDateTime::fromString(mPrimary["StartTime"].toString()));
+    QDateTime endTime = QDateTime(QDateTime::fromString(mPrimary["EndTime"].toString()));
+
+    int totalSecs = (int)((double) mPrimary["SessionDuration"].toInt() / 1000);
+
+    int bins = totalSecs / 10;
+    int overflow = ((totalSecs % 10) > 0) ? 1 : 0;
+        bins = bins + overflow;
+
+    QList<KeySetEntry> FrequencyKeys;
+
+    QJsonArray frequencyArray = mPrimary["FrequencyKeys"].toArray();
+    foreach (const QJsonValue collector, frequencyArray) {
+        QJsonObject mObj = collector.toObject();
+
+        KeySetEntry mEntry;
+        mEntry.KeyCode = mObj["Code"].toInt();
+        mEntry.KeyDescription = mObj["Description"].toString();
+        mEntry.KeyName = mObj["Name"].toString();
+
+        FrequencyKeys.append(mEntry);
+    }
+
+    QList<KeySetEntry> DurationKeys;
+
+    QJsonArray durationArray = mPrimary["DurationKeys"].toArray();
+    foreach (const QJsonValue collector, durationArray) {
+        QJsonObject mObj = collector.toObject();
+
+        KeySetEntry mEntry;
+        mEntry.KeyCode = mObj["Code"].toInt();
+        mEntry.KeyDescription = mObj["Description"].toString();
+        mEntry.KeyName = mObj["Name"].toString();
+
+        DurationKeys.append(mEntry);
+    }
+
+    QList<SessionEvent> PressedKeys;
+
+    QJsonArray pressedKeysJson = mPrimary["PressedKeys"].toArray();
+    foreach (const QJsonValue collector, pressedKeysJson) {
+        QJsonObject mObj = collector.toObject();
+
+        SessionEvent mEntry;
+        mEntry.KeyEntered.KeyCode = mObj["KeyCode"].toInt();
+        mEntry.KeyEntered.KeyDescription = mObj["KeyDescription"].toString();
+        mEntry.KeyEntered.KeyName = mObj["KeyName"].toString();
+        //mEntry.MeasurementType = mObj["Measurement"].toString();
+        //mEntry.ScheduleType = mObj["Schedule"].toString();
+        mEntry.TimePressed = QDateTime(QDateTime::fromString(mObj["TimePressed"].toString()));
+
+        PressedKeys.append(mEntry);
+    }
+
+    QList<QList<int>> mPrimaryFrequencyBins = ReliabilityScoring::GetFrequencyBins(bins, FrequencyKeys, startTime, PressedKeys);
+    QList<QList<double>> mPrimaryDurationBins = ReliabilityScoring::GetDurationBins(bins, DurationKeys, startTime, endTime, PressedKeys);
+
+    FrequencyKeys.clear();
+
+    frequencyArray = mSecondary["FrequencyKeys"].toArray();
+    foreach (const QJsonValue collector, frequencyArray) {
+        QJsonObject mObj = collector.toObject();
+
+        KeySetEntry mEntry;
+        mEntry.KeyCode = mObj["Code"].toInt();
+        mEntry.KeyDescription = mObj["Description"].toString();
+        mEntry.KeyName = mObj["Name"].toString();
+
+        FrequencyKeys.append(mEntry);
+    }
+
+    DurationKeys.clear();
+
+    durationArray = mSecondary["DurationKeys"].toArray();
+    foreach (const QJsonValue collector, durationArray) {
+        QJsonObject mObj = collector.toObject();
+
+        KeySetEntry mEntry;
+        mEntry.KeyCode = mObj["Code"].toInt();
+        mEntry.KeyDescription = mObj["Description"].toString();
+        mEntry.KeyName = mObj["Name"].toString();
+
+        DurationKeys.append(mEntry);
+    }
+
+    PressedKeys.clear();
+
+    pressedKeysJson = mSecondary["PressedKeys"].toArray();
+    foreach (const QJsonValue collector, pressedKeysJson) {
+        QJsonObject mObj = collector.toObject();
+
+        SessionEvent mEntry;
+        mEntry.KeyEntered.KeyCode = mObj["KeyCode"].toInt();
+        mEntry.KeyEntered.KeyDescription = mObj["KeyDescription"].toString();
+        mEntry.KeyEntered.KeyName = mObj["KeyName"].toString();
+        //mEntry.MeasurementType = mObj["Measurement"].toString();
+        //mEntry.ScheduleType = mObj["Schedule"].toString();
+        mEntry.TimePressed = QDateTime(QDateTime::fromString(mObj["TimePressed"].toString()));
+
+        PressedKeys.append(mEntry);
+    }
+
+    QList<QList<int>> mSecondaryFrequencyBins = ReliabilityScoring::GetFrequencyBins(bins, FrequencyKeys, startTime, PressedKeys);
+    QList<QList<double>> mSecondaryDurationBins = ReliabilityScoring::GetDurationBins(bins, DurationKeys, startTime, endTime, PressedKeys);
+
+    //qDebug() << mPrimaryFrequencyBins << endl << mSecondaryFrequencyBins;
+    qDebug() << mPrimaryDurationBins << endl << mSecondaryDurationBins;
+
+    //QList<int> tempFreq;
+
+    /*
+    for (int i(0); i<FrequencyKeys.count(); i++)
+    {
+        tempFreq.clear();
+
+        for (int j(0); j<mPrimaryFrequencyBins.length(); j++)
+        {
+            tempFreq.append(mPrimaryFrequencyBins.at(j).at(i));
+        }
+
+        qDebug() << tempFreq;
+
+    }
+    */
+
+
+}
+
 static QList<QList<int>> GetFrequencyBins(int bins, QList<KeySetEntry> FrequencyKeys, QDateTime startTime, QList<SessionEvent> PressedKeys)
 {
     QList<QList<int>> mFrequencyBins;
     int fKeys = FrequencyKeys.count();
 
-    for (int i(0); i<bins; i++)
-    {
-        mFrequencyBins.append(QList<int>());
+    QList<int> tempList;
 
-        for (int j(0); j<fKeys; j++)
+    for (int i(0); i<fKeys; i++)
+    {
+        tempList.clear();
+        for (int i(0); i<bins; i++)
         {
-            mFrequencyBins[i].append(0);
+            tempList.append(0);
         }
+
+        mFrequencyBins.append(tempList);
     }
 
     KeySetEntry temp;
@@ -37,8 +170,7 @@ static QList<QList<int>> GetFrequencyBins(int bins, QList<KeySetEntry> Frequency
             if (event.KeyEntered.KeyCode == temp.KeyCode)
             {
                 timeHolder = startTime.secsTo(event.TimePressed) / 10;
-                //mFrequencyBins[i][timeHolder] = mFrequencyBins[i][timeHolder] + 1;
-                mFrequencyBins[timeHolder][i] = mFrequencyBins[timeHolder][i] + 1;
+                mFrequencyBins[i][timeHolder] = mFrequencyBins[i][timeHolder] + 1;
             }
         }
     }
