@@ -8,6 +8,11 @@ Features include:
   - Charting...
   - Automation...
 
+TODO
+  - Reli Checks
+  - Charting
+  - Session Viewer
+
 ### Version
 ------
 0.0.1 (beta)

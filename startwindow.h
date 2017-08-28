@@ -66,10 +66,11 @@ private:
     AboutDialog aboutDialogWindow;
     ContactDialog contactDialog;
     LicenseDialog *licenseDialog;
-    ReliabilityDialog reliabilityDialog;
     SettingsDialog settingsDialog;
 
-    SessionWindow *sessionWindow;
+    ReliabilityDialog * reliabilityDialog;
+
+    SessionWindow * sessionWindow;
 
     QString folderTitle;
     bool foundFolder = false;

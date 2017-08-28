@@ -93,7 +93,6 @@ private:
     DirectoryParse mCurrentDirectory;
 
     SessionDurationDialog sessionDurationDialog;
-    //RecordingWindow r;
     RecordingWindow * r;
     ResultsDialog mResults;
 

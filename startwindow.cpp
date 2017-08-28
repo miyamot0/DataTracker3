@@ -114,7 +114,11 @@ void StartWindow::on_actionExit_triggered()
  */
 void StartWindow::on_actionCalculate_Reliability_triggered()
 {
-    reliabilityDialog.exec();
+    reliabilityDialog = new ReliabilityDialog(workingDirectory, this);
+    reliabilityDialog->exec();
+
+    //workingDirectory
+    //reliabilityDialog.exec();
 }
 
 /** Open Settings Window

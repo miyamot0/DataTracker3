@@ -25,6 +25,7 @@
 #define RELIABILITYDIALOG_H
 
 #include <QDialog>
+#include "directorysearcher.h"
 
 namespace Ui {
 class ReliabilityDialog;
@@ -35,11 +36,27 @@ class ReliabilityDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ReliabilityDialog(QWidget *parent = 0);
+    explicit ReliabilityDialog(QString mCurrentWorkingDirectory = "", QWidget *parent = 0);
     ~ReliabilityDialog();
+
+public slots:
+    void WorkUpdate(QString update);
+    void WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAction action);
+
+private slots:
+    void on_comboGroup_currentIndexChanged(int index);
+
+    void on_comboIndividual_currentIndexChanged(int index);
+
+    void on_comboEvaluation_currentIndexChanged(int index);
 
 private:
     Ui::ReliabilityDialog *ui;
+
+    DirectoryParse mCurrentDirectory;
+    QString mWorkingDirectory;
+    QThread *workerThread;
+    DirectorySearcher *worker;
 };
 
 #endif // RELIABILITYDIALOG_H

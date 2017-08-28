@@ -1004,8 +1004,6 @@ void SessionWindow::WriteOutput()
  */
 void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
 {
-    // todo session number
-
     if((QPushButton *)button == ui->buttonBox->button(QDialogButtonBox::Ok))
     {
         CurrentKeySet.TotalSeconds = GetSessionDuration();

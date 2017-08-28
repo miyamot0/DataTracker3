@@ -24,16 +24,210 @@
 #include "reliabilitydialog.h"
 #include "ui_reliabilitydialog.h"
 
-ReliabilityDialog::ReliabilityDialog(QWidget *parent) :
+#include "directorysearcher.h"
+#include "filetools.h"
+
+#include <QObject>
+#include <QDebug>
+#include <QThread>
+
+ReliabilityDialog::ReliabilityDialog(QString mCurrentWorkingDirectory, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ReliabilityDialog)
 {
     ui->setupUi(this);
 
     setWindowTitle(tr("Reliability Calculator"));
+
+    workerThread = new QThread();
+
+    mWorkingDirectory = mCurrentWorkingDirectory;
+
+    mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
+
+    worker = new DirectorySearcher(mCurrentDirectory);
+
+    worker->moveToThread(workerThread);
+
+    connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
+    connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
+    connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
+    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
+    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
+
+    workerThread->wait();
+
+    ui->comboGroup->addItem("Select Group");
+    ui->comboIndividual->addItem("Select Individual");
+    ui->comboEvaluation->addItem("Select Evaluation");
+
+    worker->startWork();
 }
 
 ReliabilityDialog::~ReliabilityDialog()
 {
     delete ui;
+}
+
+void ReliabilityDialog::on_comboGroup_currentIndexChanged(int index)
+{
+    if (index == 0)
+    {
+        while (ui->comboIndividual->count() > 1)
+        {
+            ui->comboIndividual->removeItem(1);
+        }
+        while (ui->comboEvaluation->count() > 1)
+        {
+            ui->comboEvaluation->removeItem(1);
+        }
+
+        return;
+    }
+
+    workerThread = new QThread();
+
+    mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
+    mCurrentDirectory.CurrentGroup = ui->comboGroup->currentText();
+    mCurrentDirectory.CurrentIndividual = "";
+    mCurrentDirectory.CurrentEvaluation = "";
+    mCurrentDirectory.CurrentCondition = "";
+    mCurrentDirectory.CurrentKeySet = "";
+
+    worker = new DirectorySearcher(mCurrentDirectory);
+
+    worker->moveToThread(workerThread);
+
+    connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
+    connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
+    connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
+    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
+    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
+
+    workerThread->wait();
+    worker->startWork();
+}
+
+void ReliabilityDialog::on_comboIndividual_currentIndexChanged(int index)
+{
+    if (index == 0)
+    {
+        while (ui->comboEvaluation->count() > 1)
+        {
+            ui->comboEvaluation->removeItem(1);
+        }
+
+        return;
+    }
+
+    workerThread = new QThread();
+
+    mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
+    mCurrentDirectory.CurrentGroup = ui->comboGroup->currentText();
+    mCurrentDirectory.CurrentIndividual = ui->comboIndividual->currentText();
+    mCurrentDirectory.CurrentEvaluation = "";
+    mCurrentDirectory.CurrentCondition = "";
+    mCurrentDirectory.CurrentKeySet = "";
+
+    worker = new DirectorySearcher(mCurrentDirectory);
+
+    worker->moveToThread(workerThread);
+
+    connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
+    connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
+    connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
+    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
+    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
+
+    workerThread->wait();
+    worker->startWork();
+}
+
+void ReliabilityDialog::on_comboEvaluation_currentIndexChanged(int index)
+{
+    if (index == 0)
+    {
+        return;
+    }
+
+    workerThread = new QThread();
+
+    mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
+    mCurrentDirectory.CurrentGroup = ui->comboGroup->currentText();
+    mCurrentDirectory.CurrentIndividual = ui->comboIndividual->currentText();
+    mCurrentDirectory.CurrentEvaluation = ui->comboEvaluation->currentText();
+    mCurrentDirectory.CurrentCondition = "";
+    mCurrentDirectory.CurrentKeySet = "";
+
+    /*
+    worker = new DirectorySearcher(mCurrentDirectory);
+
+    worker->moveToThread(workerThread);
+
+    connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
+    connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
+    connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
+    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
+    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
+
+    workerThread->wait();
+    worker->startWork();
+    */
+}
+
+void ReliabilityDialog::WorkUpdate(QString update)
+{
+    qDebug() << "WORK_UPDATE: " << update;
+}
+
+void ReliabilityDialog::WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAction action)
+{
+    if (action == ParseTypes::ParseAction::Group)
+    {
+        while (ui->comboGroup->count() > 1)
+        {
+            ui->comboGroup->removeItem(1);
+        }
+        while (ui->comboIndividual->count() > 1)
+        {
+            ui->comboIndividual->removeItem(1);
+        }
+        while (ui->comboEvaluation->count() > 1)
+        {
+            ui->comboEvaluation->removeItem(1);
+        }
+
+        for (int i(0); i<finalResult.Groups.count(); i++)
+        {
+            ui->comboGroup->addItem(finalResult.Groups.at(i));
+        }
+    }
+    else if (action == ParseTypes::ParseAction::Individual)
+    {
+        while (ui->comboIndividual->count() > 1)
+        {
+            ui->comboIndividual->removeItem(1);
+        }
+        while (ui->comboEvaluation->count() > 1)
+        {
+            ui->comboEvaluation->removeItem(1);
+        }
+
+        for (int i(0); i<finalResult.Individuals.count(); i++)
+        {
+            ui->comboIndividual->addItem(finalResult.Individuals.at(i));
+        }
+    }
+    else if (action == ParseTypes::ParseAction::Evaluation)
+    {
+        while (ui->comboEvaluation->count() > 1)
+        {
+            ui->comboEvaluation->removeItem(1);
+        }
+
+        for (int i(0); i<finalResult.Evaluations.count(); i++)
+        {
+            ui->comboEvaluation->addItem(finalResult.Evaluations.at(i));
+        }
+    }
 }
