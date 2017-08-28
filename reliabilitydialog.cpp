@@ -31,6 +31,7 @@
 #include <QObject>
 #include <QDebug>
 #include <QThread>
+#include <QJsonObject>
 
 ReliabilityDialog::ReliabilityDialog(QString mCurrentWorkingDirectory, QWidget *parent) :
     QDialog(parent),
@@ -70,6 +71,10 @@ ReliabilityDialog::~ReliabilityDialog()
     delete ui;
 }
 
+/**
+ * @brief ReliabilityDialog::on_comboGroup_currentIndexChanged
+ * @param index
+ */
 void ReliabilityDialog::on_comboGroup_currentIndexChanged(int index)
 {
     if (index == 0)
@@ -111,6 +116,10 @@ void ReliabilityDialog::on_comboGroup_currentIndexChanged(int index)
     worker->startWork();
 }
 
+/**
+ * @brief ReliabilityDialog::on_comboIndividual_currentIndexChanged
+ * @param index
+ */
 void ReliabilityDialog::on_comboIndividual_currentIndexChanged(int index)
 {
     if (index == 0)
@@ -148,6 +157,10 @@ void ReliabilityDialog::on_comboIndividual_currentIndexChanged(int index)
     worker->startWork();
 }
 
+/**
+ * @brief ReliabilityDialog::on_comboEvaluation_currentIndexChanged
+ * @param index
+ */
 void ReliabilityDialog::on_comboEvaluation_currentIndexChanged(int index)
 {
     if (index == 0)
@@ -184,8 +197,6 @@ void ReliabilityDialog::on_comboEvaluation_currentIndexChanged(int index)
 
         if (mFileName.contains(".json", Qt::CaseInsensitive))
         {
-            qDebug() << mFileName;
-
             QFile mSession(mFileName);
 
             if (mSession.exists())
@@ -207,6 +218,7 @@ void ReliabilityDialog::on_comboEvaluation_currentIndexChanged(int index)
                         mReliObj.SecondaryObserver = QString("---");
                         mReliObj.PrimaryFilePath = mFileName;
                         mReliObj.Reli = false;
+                        mReliObj.CanScoreAsReli = false;
 
                         PrimaryReliabilityObjects.append(mReliObj);
                     }
@@ -218,6 +230,7 @@ void ReliabilityDialog::on_comboEvaluation_currentIndexChanged(int index)
                         mReliObj.Condition = sessionObject["Condition"].toString();
                         mReliObj.PrimaryFilePath = mFileName;
                         mReliObj.Reli = true;
+                        mReliObj.CanScoreAsReli = false;
 
                         SecondaryReliabilityObjects.append(mReliObj);
                     }
@@ -235,6 +248,7 @@ void ReliabilityDialog::on_comboEvaluation_currentIndexChanged(int index)
             {
                 PrimaryReliabilityObjects[i].SecondaryObserver = SecondaryReliabilityObjects[j].Collector;
                 PrimaryReliabilityObjects[i].ReliFilePath = SecondaryReliabilityObjects[j].PrimaryFilePath;
+                PrimaryReliabilityObjects[i].CanScoreAsReli = true;
             }
         }
     }
@@ -252,11 +266,20 @@ void ReliabilityDialog::on_comboEvaluation_currentIndexChanged(int index)
     }
 }
 
+/**
+ * @brief ReliabilityDialog::WorkUpdate
+ * @param update
+ */
 void ReliabilityDialog::WorkUpdate(QString update)
 {
     qDebug() << "WORK_UPDATE: " << update;
 }
 
+/**
+ * @brief ReliabilityDialog::WorkFinished
+ * @param finalResult
+ * @param action
+ */
 void ReliabilityDialog::WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAction action)
 {
     if (action == ParseTypes::ParseAction::Group)
@@ -311,6 +334,34 @@ void ReliabilityDialog::WorkFinished(DirectoryParse finalResult, ParseTypes::Par
         for (int i(0); i<finalResult.Evaluations.count(); i++)
         {
             ui->comboEvaluation->addItem(finalResult.Evaluations.at(i));
+        }
+    }
+}
+
+void ReliabilityDialog::on_pushButton_clicked()
+{
+    QJsonObject mPrimary, mReli;
+
+    bool mPrimaryCheck = false,
+         mReliCheck = false;
+
+    for(int i(0); i<PrimaryReliabilityObjects.count(); i++)
+    {
+        if (PrimaryReliabilityObjects[i].CanScoreAsReli)
+        {
+            mPrimaryCheck = FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects[i].PrimaryFilePath, &mPrimary);
+            mReliCheck = FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects[i].SecondaryObserver, &mReli);
+
+            if (mPrimaryCheck && mReliCheck)
+            {
+
+
+
+
+
+
+
+            }
         }
     }
 }

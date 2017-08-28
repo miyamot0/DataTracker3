@@ -34,6 +34,16 @@ class ScoringTools
 {
 public:
 
+/**
+ * @brief ScoreOverallSchedule
+ * @param PressedKeys
+ * @param currentKeySet
+ * @param startTime
+ * @param endTime
+ * @param FrequencyKeys
+ * @param DurationKeys
+ * @param timeMeasured
+ */
 static void ScoreOverallSchedule(QList<SessionEvent> * PressedKeys, KeySet * currentKeySet, QDateTime * startTime, QDateTime * endTime, QList<QPair<QString, double> > * FrequencyKeys,
                                  QList<QPair<QString, double> > * DurationKeys, qint64 *timeMeasured)
 {
@@ -105,6 +115,11 @@ static void ScoreOverallSchedule(QList<SessionEvent> * PressedKeys, KeySet * cur
     }
 }
 
+/**
+ * @brief GetScheduleCode
+ * @param schedule
+ * @return
+ */
 static int GetScheduleCode(Schedule schedule)
 {
     if (schedule == Schedule::One)
@@ -121,6 +136,13 @@ static int GetScheduleCode(Schedule schedule)
     }
 }
 
+/**
+ * @brief GetScheduleTotalTime
+ * @param PressedKeys
+ * @param schedule
+ * @param endTime
+ * @return
+ */
 static qint64 GetScheduleTotalTime(QList<SessionEvent> * PressedKeys, Schedule schedule, QDateTime * endTime)
 {
     bool isSchedule = false;
@@ -159,6 +181,16 @@ static qint64 GetScheduleTotalTime(QList<SessionEvent> * PressedKeys, Schedule s
     return msecCounter;
 }
 
+/**
+ * @brief ScoreSpecificSchedule
+ * @param PressedKeys
+ * @param currentKeySet
+ * @param endTime
+ * @param schedule
+ * @param FrequencyKeys
+ * @param DurationKeys
+ * @param timeMeasured
+ */
 static void ScoreSpecificSchedule(QList<SessionEvent> * PressedKeys, KeySet * currentKeySet, QDateTime * endTime, Schedule schedule,
                                   QList<QPair<QString, double> > * FrequencyKeys, QList<QPair<QString, double> > * DurationKeys, qint64 * timeMeasured)
 {

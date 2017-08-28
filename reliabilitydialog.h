@@ -51,6 +51,8 @@ private slots:
 
     void on_comboEvaluation_currentIndexChanged(int index);
 
+    void on_pushButton_clicked();
+
 private:
     Ui::ReliabilityDialog *ui;
 

@@ -20,6 +20,8 @@ public:
 
     int Row;
 
+    bool CanScoreAsReli;
+
 };
 
 #endif // RELIABILITYPARSE_H

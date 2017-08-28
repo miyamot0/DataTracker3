@@ -288,6 +288,41 @@ static int ReadSessionJSONint(QString path)
 }
 
 /**
+ * @brief ReadSessionFromJSON
+ * @param path
+ * @param json
+ * @return
+ */
+static bool ReadSessionFromJSON(QString path, QJsonObject * json)
+{
+    QFile mSession(path);
+
+    if (mSession.exists())
+    {
+        if (mSession.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            QString sessionData = mSession.readAll();
+
+            mSession.close();
+
+            QJsonDocument loadSession = QJsonDocument::fromJson(sessionData.toUtf8());
+
+            * json = loadSession.object();
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    else
+    {
+        return false;
+    }
+}
+
+/**
  * @brief formatRate
  * @param count
  * @param totalTime
