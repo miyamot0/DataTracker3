@@ -26,6 +26,7 @@
 
 #include "directorysearcher.h"
 #include "filetools.h"
+#include "reliabilityparse.h"
 
 #include <QObject>
 #include <QDebug>
@@ -159,20 +160,70 @@ void ReliabilityDialog::on_comboEvaluation_currentIndexChanged(int index)
     mCurrentDirectory.CurrentCondition = "";
     mCurrentDirectory.CurrentKeySet = "";
 
-    /*
-    worker = new DirectorySearcher(mCurrentDirectory);
+    QString mFilePath = FileTools::pathAppend(mWorkingDirectory, ui->comboGroup->currentText());
+    mFilePath = FileTools::pathAppend(mFilePath, ui->comboIndividual->currentText());
+    mFilePath = FileTools::pathAppend(mFilePath, ui->comboEvaluation->currentText());
 
-    worker->moveToThread(workerThread);
+    ReliabilityObjects.clear();
 
-    connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
-    connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
-    connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
-    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
-    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
+    QDirIterator iterator(mFilePath,
+                          QStringList() << "*.json",
+                          QDir::Files,
+                          QDirIterator::Subdirectories);
 
-    workerThread->wait();
-    worker->startWork();
-    */
+    while (iterator.hasNext())
+    {
+        QString mFileName = iterator.next();
+
+        if (mFileName.contains(".json", Qt::CaseInsensitive))
+        {
+            qDebug() << mFileName;
+
+            QFile mSession(mFileName);
+
+            if (mSession.exists())
+            {
+                if (mSession.open(QIODevice::ReadOnly | QIODevice::Text))
+                {
+                    QString sessionData = mSession.readAll();
+                    mSession.close();
+
+                    QJsonDocument loadSession = QJsonDocument::fromJson(sessionData.toUtf8());
+                    QJsonObject sessionObject = loadSession.object();
+
+                    ReliabilityParse mReliObj;
+
+                    mReliObj.SessionNumber = sessionObject["Session"].toInt();
+                    mReliObj.Collector = sessionObject["Collector"].toString();
+                    mReliObj.Condition = sessionObject["Condition"].toString();
+                    mReliObj.Reli = !(sessionObject["Role"].toString().contains("Primary", Qt::CaseInsensitive));
+
+                    ReliabilityObjects.append(mReliObj);
+                }
+            }
+        }
+    }
+
+    ui->tableWidgetReli->setRowCount(0);
+
+    QString mPrimary, mReli;
+
+    for (int i(0); i<ReliabilityObjects.count(); i++)
+    {
+        if (!ReliabilityObjects.at(i).Reli)
+        {
+            ui->tableWidgetReli->insertRow(ui->tableWidgetReli->rowCount());
+
+            ui->tableWidgetReli->setItem(ui->tableWidgetReli->rowCount() - 1, 0, new QTableWidgetItem(QString::number(ReliabilityObjects.at(i).SessionNumber)));
+            ui->tableWidgetReli->setItem(ui->tableWidgetReli->rowCount() - 1, 1, new QTableWidgetItem(ReliabilityObjects.at(i).Condition));
+            ui->tableWidgetReli->setItem(ui->tableWidgetReli->rowCount() - 1, 2, new QTableWidgetItem(ReliabilityObjects.at(i).Collector));
+            ui->tableWidgetReli->setItem(ui->tableWidgetReli->rowCount() - 1, 3, new QTableWidgetItem("---"));
+
+            //ui->tableWidgetReli->setItem(ui->tableWidgetReli->rowCount() - 1, 2, new QTableWidgetItem(ReliabilityObjects.at(i).Collector));
+            //ui->tableWidgetReli->setItem(ui->tableWidgetReli->rowCount() - 1, 3, new QTableWidgetItem(formatPercentage(DurationThree.at(i).second, TimeThree)));
+
+        }
+    }
 }
 
 void ReliabilityDialog::WorkUpdate(QString update)

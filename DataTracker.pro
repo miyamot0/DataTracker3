@@ -80,7 +80,8 @@ HEADERS  += startwindow.h \
     licensedialog.h \
     reliabilitydialog.h \
     settingsdialog.h \
-    sessiondurationdialog.h
+    sessiondurationdialog.h \
+    reliabilityparse.h
 
 FORMS    += startwindow.ui \
     sessionwindow.ui \

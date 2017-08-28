@@ -26,6 +26,7 @@
 
 #include <QDialog>
 #include "directorysearcher.h"
+#include "reliabilityparse.h"
 
 namespace Ui {
 class ReliabilityDialog;
@@ -57,6 +58,8 @@ private:
     QString mWorkingDirectory;
     QThread *workerThread;
     DirectorySearcher *worker;
+
+    QList<ReliabilityParse> ReliabilityObjects;
 };
 
 #endif // RELIABILITYDIALOG_H
