@@ -83,6 +83,8 @@ void ReliabilityDialog::on_comboGroup_currentIndexChanged(int index)
             ui->comboEvaluation->removeItem(1);
         }
 
+        ui->tableWidgetReli->setRowCount(0);
+
         return;
     }
 
@@ -118,6 +120,8 @@ void ReliabilityDialog::on_comboIndividual_currentIndexChanged(int index)
             ui->comboEvaluation->removeItem(1);
         }
 
+        ui->tableWidgetReli->setRowCount(0);
+
         return;
     }
 
@@ -148,6 +152,8 @@ void ReliabilityDialog::on_comboEvaluation_currentIndexChanged(int index)
 {
     if (index == 0)
     {
+        ui->tableWidgetReli->setRowCount(0);
+
         return;
     }
 
@@ -164,7 +170,8 @@ void ReliabilityDialog::on_comboEvaluation_currentIndexChanged(int index)
     mFilePath = FileTools::pathAppend(mFilePath, ui->comboIndividual->currentText());
     mFilePath = FileTools::pathAppend(mFilePath, ui->comboEvaluation->currentText());
 
-    ReliabilityObjects.clear();
+    PrimaryReliabilityObjects.clear();
+    SecondaryReliabilityObjects.clear();
 
     QDirIterator iterator(mFilePath,
                           QStringList() << "*.json",
@@ -191,38 +198,54 @@ void ReliabilityDialog::on_comboEvaluation_currentIndexChanged(int index)
                     QJsonDocument loadSession = QJsonDocument::fromJson(sessionData.toUtf8());
                     QJsonObject sessionObject = loadSession.object();
 
-                    ReliabilityParse mReliObj;
+                    if((sessionObject["Role"].toString().contains("Primary", Qt::CaseInsensitive)))
+                    {
+                        ReliabilityParse mReliObj;
+                        mReliObj.SessionNumber = sessionObject["Session"].toInt();
+                        mReliObj.Collector = sessionObject["Collector"].toString();
+                        mReliObj.Condition = sessionObject["Condition"].toString();
+                        mReliObj.SecondaryObserver = QString("---");
+                        mReliObj.Reli = false;
 
-                    mReliObj.SessionNumber = sessionObject["Session"].toInt();
-                    mReliObj.Collector = sessionObject["Collector"].toString();
-                    mReliObj.Condition = sessionObject["Condition"].toString();
-                    mReliObj.Reli = !(sessionObject["Role"].toString().contains("Primary", Qt::CaseInsensitive));
+                        PrimaryReliabilityObjects.append(mReliObj);
+                    }
+                    else
+                    {
+                        ReliabilityParse mReliObj;
+                        mReliObj.SessionNumber = sessionObject["Session"].toInt();
+                        mReliObj.Collector = sessionObject["Collector"].toString();
+                        mReliObj.Condition = sessionObject["Condition"].toString();
+                        mReliObj.Reli = true;
 
-                    ReliabilityObjects.append(mReliObj);
+                        SecondaryReliabilityObjects.append(mReliObj);
+                    }
                 }
+            }
+        }
+    }
+
+    for (int i(0); i < PrimaryReliabilityObjects.count(); i++)
+    {
+        for (int j(0); j < SecondaryReliabilityObjects.count(); j++)
+        {
+            if (PrimaryReliabilityObjects[i].SessionNumber == SecondaryReliabilityObjects[j].SessionNumber &&
+                    PrimaryReliabilityObjects[i].Condition == SecondaryReliabilityObjects[j].Condition)
+            {
+                PrimaryReliabilityObjects[i].SecondaryObserver = SecondaryReliabilityObjects[j].Collector;
             }
         }
     }
 
     ui->tableWidgetReli->setRowCount(0);
 
-    QString mPrimary, mReli;
-
-    for (int i(0); i<ReliabilityObjects.count(); i++)
+    for (int i(0); i<PrimaryReliabilityObjects.count(); i++)
     {
-        if (!ReliabilityObjects.at(i).Reli)
-        {
-            ui->tableWidgetReli->insertRow(ui->tableWidgetReli->rowCount());
+        ui->tableWidgetReli->insertRow(ui->tableWidgetReli->rowCount());
 
-            ui->tableWidgetReli->setItem(ui->tableWidgetReli->rowCount() - 1, 0, new QTableWidgetItem(QString::number(ReliabilityObjects.at(i).SessionNumber)));
-            ui->tableWidgetReli->setItem(ui->tableWidgetReli->rowCount() - 1, 1, new QTableWidgetItem(ReliabilityObjects.at(i).Condition));
-            ui->tableWidgetReli->setItem(ui->tableWidgetReli->rowCount() - 1, 2, new QTableWidgetItem(ReliabilityObjects.at(i).Collector));
-            ui->tableWidgetReli->setItem(ui->tableWidgetReli->rowCount() - 1, 3, new QTableWidgetItem("---"));
-
-            //ui->tableWidgetReli->setItem(ui->tableWidgetReli->rowCount() - 1, 2, new QTableWidgetItem(ReliabilityObjects.at(i).Collector));
-            //ui->tableWidgetReli->setItem(ui->tableWidgetReli->rowCount() - 1, 3, new QTableWidgetItem(formatPercentage(DurationThree.at(i).second, TimeThree)));
-
-        }
+        ui->tableWidgetReli->setItem(ui->tableWidgetReli->rowCount() - 1, 0, new QTableWidgetItem(QString::number(PrimaryReliabilityObjects.at(i).SessionNumber)));
+        ui->tableWidgetReli->setItem(ui->tableWidgetReli->rowCount() - 1, 1, new QTableWidgetItem(PrimaryReliabilityObjects.at(i).Condition));
+        ui->tableWidgetReli->setItem(ui->tableWidgetReli->rowCount() - 1, 2, new QTableWidgetItem(PrimaryReliabilityObjects.at(i).Collector));
+        ui->tableWidgetReli->setItem(ui->tableWidgetReli->rowCount() - 1, 3, new QTableWidgetItem(PrimaryReliabilityObjects.at(i).SecondaryObserver));
     }
 }
 
@@ -248,6 +271,8 @@ void ReliabilityDialog::WorkFinished(DirectoryParse finalResult, ParseTypes::Par
             ui->comboEvaluation->removeItem(1);
         }
 
+        ui->tableWidgetReli->setRowCount(0);
+
         for (int i(0); i<finalResult.Groups.count(); i++)
         {
             ui->comboGroup->addItem(finalResult.Groups.at(i));
@@ -264,6 +289,8 @@ void ReliabilityDialog::WorkFinished(DirectoryParse finalResult, ParseTypes::Par
             ui->comboEvaluation->removeItem(1);
         }
 
+        ui->tableWidgetReli->setRowCount(0);
+
         for (int i(0); i<finalResult.Individuals.count(); i++)
         {
             ui->comboIndividual->addItem(finalResult.Individuals.at(i));
@@ -275,6 +302,8 @@ void ReliabilityDialog::WorkFinished(DirectoryParse finalResult, ParseTypes::Par
         {
             ui->comboEvaluation->removeItem(1);
         }
+
+        ui->tableWidgetReli->setRowCount(0);
 
         for (int i(0); i<finalResult.Evaluations.count(); i++)
         {

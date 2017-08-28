@@ -59,7 +59,8 @@ private:
     QThread *workerThread;
     DirectorySearcher *worker;
 
-    QList<ReliabilityParse> ReliabilityObjects;
+    QList<ReliabilityParse> PrimaryReliabilityObjects;
+    QList<ReliabilityParse> SecondaryReliabilityObjects;
 };
 
 #endif // RELIABILITYDIALOG_H

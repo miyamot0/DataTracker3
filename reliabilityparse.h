@@ -11,8 +11,11 @@ public:
 
     QString Condition;
     QString Collector;
+    QString SecondaryObserver;
 
     bool Reli;
+
+    int Row;
 
 };
 
