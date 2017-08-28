@@ -380,7 +380,7 @@ static QString formatPercentage(double percent, qint64 totalTime)
 static void WriteSessionJSON(QString mWorkingDirectory, KeySet CurrentKeySet, QString Group, QString Individual,
                              QString Evaluation, QString Condition, QString Therapist,
                              QString KeySetName, QString Collector, QString Role,
-                             QString StartTime, qint64 TimeOverall, qint64 TimeOne,
+                             QString StartTime, QString EndTime, qint64 TimeOverall, qint64 TimeOne,
                              qint64 TimeTwo, qint64 TimeThree, QList<SessionEvent> *PressedKeys,
                              QList<QPair<QString,double>> * FrequencyKeysOverall, QList<QPair<QString,double>> * DurationKeysOverall,
                              QList<QPair<QString,double>> * FrequencyKeysOne, QList<QPair<QString,double>> * DurationKeysOne,
@@ -400,6 +400,7 @@ static void WriteSessionJSON(QString mWorkingDirectory, KeySet CurrentKeySet, QS
     json["Collector"] = Collector;
     json["Role"] = Role;
     json["StartTime"] = StartTime;
+    json["EndTime"] = EndTime;
     json["SessionDuration"] = TimeOverall;
     json["ScheduleOneDuration"] = TimeOne;
     json["ScheduleTwoDuration"] = TimeTwo;

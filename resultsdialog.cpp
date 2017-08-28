@@ -71,6 +71,11 @@ void ResultsDialog::SetParameters(QString group, QString individual, QString eva
                             .arg(CurrentKeySet.Session));
 }
 
+/**
+ * @brief ResultsDialog::SetTabEnabled
+ * @param index
+ * @param value
+ */
 void ResultsDialog::SetTabEnabled(int index, bool value)
 {
     ui->tabWidget_2->setTabEnabled(index, value);
@@ -188,6 +193,10 @@ void ResultsDialog::BuildTables()
  */
 void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKeys, QDateTime * startTime, QDateTime * endTime)
 {
+    //test
+
+    //
+
     qint64 totalSecs = startTime->secsTo(*endTime);
 
     int bins = totalSecs / 10;
