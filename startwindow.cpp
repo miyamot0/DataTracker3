@@ -95,7 +95,7 @@ StartWindow::~StartWindow()
 /** Save Settings
  * @brief StartWindow::SaveSettings
  */
-void StartWindow::SaveSettings(QString savedLocation, bool plots, bool dark, bool sheets, bool reli)
+void StartWindow::SaveSettings(QString savedLocation, bool plots, bool dark, bool sheets, bool reli, bool migrate)
 {
     QSettings settings;
 
@@ -105,6 +105,7 @@ void StartWindow::SaveSettings(QString savedLocation, bool plots, bool dark, boo
         settings.setValue(QLatin1String("displayDark"), dark);
         settings.setValue(QLatin1String("outputSheets"), sheets);
         settings.setValue(QLatin1String("autoReli"), reli);
+        settings.setValue(QLatin1String("autoMigrate"), migrate);
     settings.endGroup();
 }
 
@@ -118,7 +119,8 @@ void StartWindow::closeEvent(QCloseEvent *)
                  displayPlots,
                  displayDark,
                  outputSheets,
-                 autoReli);
+                 autoReli,
+                 autoMigrate);
 }
 
 /** Load Settings
@@ -134,6 +136,7 @@ void StartWindow::LoadSettings()
     displayDark = settings.value(QLatin1String("displayDark"), false).toBool();
     outputSheets = settings.value(QLatin1String("outputSheets"), true).toBool();
     autoReli = settings.value(QLatin1String("autoReli"), true).toBool();
+    autoMigrate = settings.value(QLatin1String("autoMigrate"), false).toBool();
 
     settings.endGroup();
 }
@@ -165,6 +168,7 @@ void StartWindow::on_actionSettings_2_triggered()
     settingsDialog.SetDisplayOption(displayPlots);
     settingsDialog.SetThemeDark(displayDark);
     settingsDialog.SetAutoReli(autoReli);
+    settingsDialog.SetAutoMigrate(autoMigrate);
 
     settingsDialog.exec();
 
@@ -181,12 +185,14 @@ void StartWindow::on_actionSettings_2_triggered()
     displayPlots = settingsDialog.GetDisplayOption();
     displayDark = settingsDialog.GetThemeDark();
     autoReli = settingsDialog.GetAutoReli();
+    autoMigrate = settingsDialog.GetAutoMigrate();
 
     SaveSettings(backupSaveLocation,
                  displayPlots,
                  displayDark,
                  outputSheets,
-                 autoReli);
+                 autoReli,
+                 autoMigrate);
 }
 
 /** Open License Window

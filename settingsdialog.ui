@@ -178,6 +178,20 @@
        </property>
       </widget>
      </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="labelAutoMigrate">
+       <property name="text">
+        <string>Automate File Migrations:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QCheckBox" name="checkBoxAutoMigrate">
+       <property name="text">
+        <string> </string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>

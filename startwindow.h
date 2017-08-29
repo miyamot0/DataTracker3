@@ -50,7 +50,7 @@ public:
     explicit StartWindow(QWidget *parent = 0);
     ~StartWindow();
 
-    void SaveSettings(QString savedLocation, bool plots, bool dark, bool sheets, bool reli);
+    void SaveSettings(QString savedLocation, bool plots, bool dark, bool sheets, bool reli, bool migrate);
     void LoadSettings();
 
 private slots:
@@ -92,6 +92,7 @@ private:
     bool displayDark;
     bool outputSheets;
     bool autoReli;
+    bool autoMigrate;
 
     QThread *migraterThread;
     FileMigrater *migrater;

@@ -42,18 +42,21 @@ public:
     bool displayPlots = false;
     bool displayDark = false;
     bool autoReli = false;
+    bool autoMigrate = false;
 
     void SetSaveLocation(QString location);
     void SetSpreadsheetOption(bool value);
     void SetDisplayOption(bool value);
     void SetThemeDark(bool value);
     void SetAutoReli(bool value);
+    void SetAutoMigrate(bool value);
 
     QString GetSaveLocation();
     bool GetSpreadsheetOption();
     bool GetDisplayOption();
     bool GetThemeDark();
     bool GetAutoReli();
+    bool GetAutoMigrate();
 
     ~SettingsDialog();
 
