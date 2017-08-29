@@ -25,7 +25,9 @@
 #include "ui_sessionwindow.h"
 
 #include "filetools.h"
+#include "windowtools.h"
 #include "scoringtools.h"
+
 #include "parsetypes.h"
 #include "keyseteditor.h"
 #include "keysetentry.h"
@@ -40,9 +42,11 @@ SessionWindow::SessionWindow(QString mCurrentWorkingDirectory, QWidget *parent) 
 {
     ui->setupUi(this);
 
-    mWorkingDirectory = mCurrentWorkingDirectory;
-
     setWindowTitle(tr("Session Designer"));
+
+    WindowTools::SetDialogFixedDisplay(this);
+
+    mWorkingDirectory = mCurrentWorkingDirectory;
 
     workerThread = new QThread();
 

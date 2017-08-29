@@ -58,7 +58,8 @@ SOURCES += main.cpp\
     licensedialog.cpp \
     reliabilitydialog.cpp \
     settingsdialog.cpp \
-    sessiondurationdialog.cpp
+    sessiondurationdialog.cpp \
+    faqdialog.cpp
 
 HEADERS  += startwindow.h \
     sessionwindow.h \
@@ -84,7 +85,8 @@ HEADERS  += startwindow.h \
     reliabilityparse.h \
     reliabilityscoring.h \
     reliabilitymeasure.h \
-    windowtools.h
+    windowtools.h \
+    faqdialog.h
 
 FORMS    += startwindow.ui \
     sessionwindow.ui \
@@ -97,7 +99,8 @@ FORMS    += startwindow.ui \
     licensedialog.ui \
     reliabilitydialog.ui \
     settingsdialog.ui \
-    sessiondurationdialog.ui
+    sessiondurationdialog.ui \
+    faqdialog.ui
 
 RESOURCES += \
     resourcefile.qrc \

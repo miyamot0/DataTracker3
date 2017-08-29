@@ -37,6 +37,24 @@ void static SetDialogFixed(QDialog * window)
     #endif
 }
 
+void static SetDialogFixedDisplay(QDialog * window)
+{
+    #ifdef _WIN32
+
+    window->setWindowFlags(Qt::Window |
+                           Qt::MSWindowsFixedSizeDialogHint |
+                           Qt::WindowTitleHint |
+                           Qt::WindowSystemMenuHint |
+                           Qt::CustomizeWindowHint |
+                           Qt::WindowCloseButtonHint);
+
+    #elif TARGET_OS_MAC
+
+
+
+    #endif
+}
+
 };
 
 #endif // WINDOWTOOLS_H

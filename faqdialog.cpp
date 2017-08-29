@@ -21,23 +21,23 @@
 
   */
 
-#include "aboutdialog.h"
-#include "ui_aboutdialog.h"
+#include "faqdialog.h"
+#include "ui_faqdialog.h"
 
 #include "windowtools.h"
 
-AboutDialog::AboutDialog(QWidget *parent) :
+FAQDialog::FAQDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::AboutDialog)
+    ui(new Ui::FAQDialog)
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("About"));
+    setWindowTitle(tr("Frequently Asked Questions"));
 
     WindowTools::SetDialogFixedDisplay(this);
 }
 
-AboutDialog::~AboutDialog()
+FAQDialog::~FAQDialog()
 {
     delete ui;
 }

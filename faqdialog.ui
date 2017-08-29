@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>FAQDialog</class>
+ <widget class="QDialog" name="FAQDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>350</width>
+    <height>500</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>313</width>
+        <height>1369</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="resourcefile.qrc">:/images/SNS.png</pixmap>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Frequently Asked Questions&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Where do I get started?&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Before you can run any sessions (e.g., record behavior), you have to define a &amp;quot;Group&amp;quot; in the Session Designer. A group could easily be either a classroom (e.g., &amp;quot;Class A&amp;quot;), clinic (e.g., &amp;quot;XXX Clinic&amp;quot;), or a research group (e.g., &amp;quot;Control&amp;quot;, &amp;quot;Intervention&amp;quot;).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;What do I do after I add a group?&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;After a group is added, you need to &lt;span style=&quot; text-decoration: underline;&quot;&gt;select that group&lt;/span&gt; and then press the button in the Session Designer named &amp;quot;Add New Individual&amp;quot;. In the window that follows, enter either the name of the individual or their initials, whichever you prefer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;How do I start recording data for someone?&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Once you have an individual entered in the system, you need to describe what you are planning to do (or evaluate). You will need to define an &lt;span style=&quot; text-decoration: underline;&quot;&gt;Evaluation&lt;/span&gt;. That is, if you are performing a functional analysis your Evaluation would be &amp;quot;Functional Analysis&amp;quot;. Likewise, if you treating an escape from demands function, your Evaluation would be &amp;quot;Demands Treatment&amp;quot;. &lt;span style=&quot; font-weight:600;&quot;&gt;To enter a new evaluation&lt;/span&gt;, select the &lt;span style=&quot; text-decoration: underline;&quot;&gt;Group&lt;/span&gt; and &lt;span style=&quot; text-decoration: underline;&quot;&gt;Individual&lt;/span&gt; and then press the button named &lt;span style=&quot; text-decoration: underline;&quot;&gt;Add New Evaluation&lt;/span&gt;. In the window that follows, enter the name of the evaluation. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;What does Condition mean?&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_10">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Once you add an evaluation, you will need to add Conditions. That is, you will likely have a baseline condition and an intervention condition. You add Conditions as needed, as you may have multiple treatments being compared. &lt;span style=&quot; font-weight:600;&quot;&gt;To enter a new condition&lt;/span&gt;, select the &lt;span style=&quot; text-decoration: underline;&quot;&gt;Group&lt;/span&gt;, &lt;span style=&quot; text-decoration: underline;&quot;&gt;Individual&lt;/span&gt;, and &lt;span style=&quot; text-decoration: underline;&quot;&gt;Evaluation&lt;/span&gt; and press the button named &lt;span style=&quot; text-decoration: underline;&quot;&gt;Add New Condition&lt;/span&gt;. In the window that follows, enter the name for the condition.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;What is a Key Set?&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_12">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A Key Set refers to the keys (e.g., A, S, D, F) you will use to record behavior. This can vary from individual to individual, so Key Sets are defined individually and are often specific to Evaluations (e.g., Functional Analysis Evaluation vs. Demands Treatment Evaluation). &lt;span style=&quot; font-weight:600;&quot;&gt;To add a Key Set&lt;/span&gt;, be sure to select the relevant &lt;span style=&quot; text-decoration: underline;&quot;&gt;Group&lt;/span&gt;, &lt;span style=&quot; text-decoration: underline;&quot;&gt;Individual&lt;/span&gt;, and &lt;span style=&quot; text-decoration: underline;&quot;&gt;Evaluation&lt;/span&gt; and press the button named &lt;span style=&quot; text-decoration: underline;&quot;&gt;Add/Edit New Key Set&lt;/span&gt;. In the window that follows, name the Key Set and use the Key Set Editor the add or edit new keys as desired. &lt;span style=&quot; font-weight:600;&quot;&gt;To edit an existing Key Set&lt;/span&gt;, either select the current keyset and press the button &lt;span style=&quot; font-weight:600;&quot;&gt;Add/Edit New Key Set&lt;/span&gt; (selecting Edit) or double-click the keys currently displayed on the screen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_13">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Therapists and Data Collectors&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_14">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Individual session therapists and data collectors need to be added as necessary to both record who worked with the &lt;span style=&quot; text-decoration: underline;&quot;&gt;Individual&lt;/span&gt; as well as who recorded the data. The session therapist should be the person working with the &lt;span style=&quot; text-decoration: underline;&quot;&gt;Individual&lt;/span&gt; and the data collector should be the person who was operating the computer and recording the data. As people often work with the same individual across evaluations, the therapists and data collectors will only need to be input once for the individual regardless of the number of evaluations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_15">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Role: Primary vs. Reliability Data&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_16">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For each session, the data recorded should specify whether the person who observed behavior was the &lt;span style=&quot; font-weight:600;&quot;&gt;Primary&lt;/span&gt;, or main, data collector and who was the &lt;span style=&quot; font-weight:600;&quot;&gt;Reliability&lt;/span&gt;, or secondary, data collector. This distinction is key and required for calculations of interobserver agreement. There should &lt;span style=&quot; text-decoration: underline;&quot;&gt;always&lt;/span&gt; be a &lt;span style=&quot; font-weight:600;&quot;&gt;Primary&lt;/span&gt; data recorder, but there may or may not be a &lt;span style=&quot; font-weight:600;&quot;&gt;Reliability&lt;/span&gt; observer. If only one person is recording data, select &lt;span style=&quot; font-weight:600;&quot;&gt;Primary&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_17">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Session Duration&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_18">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Since most behavior measures involve behavior recorded as rate, it is important that session times remain as consistent as possible. Do keep observations consistent, session durations are pre-set. To set the session duration, either &lt;span style=&quot; font-weight:600;&quot;&gt;Select a Duration from the Session Duration box&lt;/span&gt; or &lt;span style=&quot; font-weight:600;&quot;&gt;Enter a custom duration&lt;/span&gt;. Custom durations can be set selecting the box next to the dropdown menu for Session Duration. In that window, set the # of seconds, minutes, or hours desired. Whatever is entered will be converted to seconds and then used for the session.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_19">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Session Numbering&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_20">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Individual sessions are always number so that they can be easily compared to earlier sessions and across observers. The session numbering should be automatically update every time you check or complete a session, but it can be updated manually as needed by entering some alternative number in the &lt;span style=&quot; font-weight:600;&quot;&gt;Session Number&lt;/span&gt; box.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="resourcefile.qrc"/>
+ </resources>
+ <connections/>
+</ui>

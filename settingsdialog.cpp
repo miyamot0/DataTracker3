@@ -38,7 +38,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
     setWindowTitle(tr("Program Settings"));
 
-    WindowTools::SetDialogFixed(this);
+    WindowTools::SetDialogFixedDisplay(this);
 }
 
 /**

@@ -24,6 +24,7 @@
 #include "keyseteditor.h"
 #include "ui_keyseteditor.h"
 #include "filetools.h"
+#include "windowtools.h"
 
 #include <QMessageBox>
 #include <QMenu>
@@ -41,6 +42,8 @@ KeySetEditor::KeySetEditor(QWidget *parent) :
     connect(ui->tableWidgetDuration, SIGNAL(customContextMenuRequested(QPoint)), SLOT(customDurationMenuRequested(QPoint)));
 
     setWindowTitle(tr("Key Set Editor"));
+
+    WindowTools::SetDialogFixedDisplay(this);
 }
 
 /**

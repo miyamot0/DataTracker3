@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>311</width>
-    <height>344</height>
+    <width>350</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,6 +16,9 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QScrollArea" name="scrollArea">
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
      <property name="widgetResizable">
       <bool>true</bool>
      </property>
@@ -23,9 +26,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
-        <width>277</width>
-        <height>336</height>
+        <y>-12</y>
+        <width>315</width>
+        <height>543</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -45,14 +48,17 @@
        <item>
         <widget class="QLabel" name="label_2">
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Data Tracker Data Collection System&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Data Tracker &lt;br/&gt;Data Collection System&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="label_3">
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The &lt;span style=&quot; font-weight:600;&quot;&gt;Data Tracker&lt;/span&gt; system was designed to assist with the measurement of behavior in clinical and research settings. The program allows for the recording of behavior in real-time, with multiple observers, and provides a number of supplemental statistics and measures of reliability.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The &lt;span style=&quot; font-weight:600;&quot;&gt;Data Tracker&lt;/span&gt; system was designed to assist with the measurement of behavior in clinical and research settings. The program allows for the recording of behavior in real-time, with multiple observers, and provides a number of supplemental statistics and measures of reliability.&lt;/p&gt;&lt;p&gt;The &lt;span style=&quot; font-weight:600;&quot;&gt;Data Tracker&lt;/span&gt; program is modeled from an existing work entitled &lt;span style=&quot; font-weight:600;&quot;&gt;BDataPro&lt;/span&gt;. Data Tracker was created to provide an alternative that was cross-platform and could accomodate automated updating. Links to Data Tracker and BDataPro are provided in the space below:&lt;/p&gt;&lt;p&gt;Data Tracker:&lt;/p&gt;&lt;p&gt;Source Code: &lt;a href=&quot;https://github.com/miyamot0&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;BDataPro:&lt;/p&gt;&lt;p&gt;Bullock, C.E., Fisher, W.W., &amp;amp; Hagopian, L.P. (2017). The Behavior Analyst, 40, 275. &lt;a href=&quot;https://doi.org/10.1007/s40614-016-0079-0&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://doi.org/10.1007/s40614-016-0079-0&lt;/span&gt;&lt;/a&gt; .&lt;/p&gt;&lt;p&gt;Download &lt;a href=&quot;https://www.kennedykrieger.org/patient-care/patient-care-programs/inpatient-programs/neurobehavioral-unit-nbu/bdatapro-software-for-real-time-behavior-data-collection&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;BDataPro&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>

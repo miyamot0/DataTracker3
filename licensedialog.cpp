@@ -43,7 +43,7 @@ LicenseDialog::LicenseDialog(QString fileName, QWidget *parent) :
         ui->textBrowser->setText(inputTextStream.readAll());
     }
 
-    WindowTools::SetDialogFixed(this);
+    WindowTools::SetDialogFixedDisplay(this);
 }
 
 LicenseDialog::~LicenseDialog()

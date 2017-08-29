@@ -28,7 +28,9 @@
 
 #include "sessionwindow.h"
 #include "reliabilitydialog.h"
+
 #include "settingsdialog.h"
+#include "faqdialog.h"
 #include "aboutdialog.h"
 #include "contactdialog.h"
 #include "licensedialog.h"
@@ -56,6 +58,7 @@ private slots:
     void on_actionQtXlsx_triggered();
     void on_actionTango_Icons_triggered();
     void on_actionQDarkStyleSheet_triggered();
+    void on_actionFrequently_Asked_Questions_triggered();
     void on_actionContact_triggered();
     void on_actionAbout_triggered();
     void on_buttonStart_clicked();
@@ -67,6 +70,7 @@ private:
     ContactDialog contactDialog;
     LicenseDialog *licenseDialog;
     SettingsDialog settingsDialog;
+    FAQDialog faqDialog;
 
     ReliabilityDialog * reliabilityDialog;
 
@@ -82,7 +86,6 @@ private:
     bool outputSheets;
 
     void closeEvent(QCloseEvent*);
-
 };
 
 #endif // STARTWINDOW_H

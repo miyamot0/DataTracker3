@@ -24,6 +24,8 @@
 #include "keysetcapture.h"
 #include "ui_keysetcapture.h"
 
+#include "windowtools.h"
+
 KeySetCapture::KeySetCapture(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::KeySetCapture)
@@ -35,6 +37,8 @@ KeySetCapture::KeySetCapture(QWidget *parent) :
     installEventFilter(this);
 
     setWindowTitle(tr("Capture Keys"));
+
+    WindowTools::SetDialogFixedDisplay(this);
 }
 
 KeySetCapture::~KeySetCapture()

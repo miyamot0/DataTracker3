@@ -24,6 +24,8 @@
 #include "sessiondurationdialog.h"
 #include "ui_sessiondurationdialog.h"
 
+#include "windowtools.h"
+
 SessionDurationDialog::SessionDurationDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SessionDurationDialog)
@@ -31,6 +33,8 @@ SessionDurationDialog::SessionDurationDialog(QWidget *parent) :
     ui->setupUi(this);
 
     setWindowTitle(tr("Set Session Duration"));
+
+    WindowTools::SetDialogFixedDisplay(this);
 }
 
 /** Pull out and augment result

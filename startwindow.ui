@@ -137,6 +137,7 @@
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="actionFrequently_Asked_Questions"/>
     <addaction name="actionContact"/>
     <addaction name="separator"/>
     <addaction name="actionAbout"/>
@@ -245,6 +246,15 @@
    </property>
    <property name="text">
     <string>QDarkStyleSheet</string>
+   </property>
+  </action>
+  <action name="actionFrequently_Asked_Questions">
+   <property name="icon">
+    <iconset resource="resourcefile.qrc">
+     <normaloff>:/images/format-justify-center.png</normaloff>:/images/format-justify-center.png</iconset>
+   </property>
+   <property name="text">
+    <string>Frequently Asked Questions</string>
    </property>
   </action>
  </widget>

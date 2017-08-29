@@ -34,7 +34,7 @@ ContactDialog::ContactDialog(QWidget *parent) :
 
     setWindowTitle(tr("Contact"));
 
-    WindowTools::SetDialogFixed(this);
+    WindowTools::SetDialogFixedDisplay(this);
 }
 
 ContactDialog::~ContactDialog()

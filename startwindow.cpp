@@ -121,9 +121,6 @@ void StartWindow::on_actionCalculate_Reliability_triggered()
 {
     reliabilityDialog = new ReliabilityDialog(workingDirectory, this);
     reliabilityDialog->exec();
-
-    //workingDirectory
-    //reliabilityDialog.exec();
 }
 
 /** Open Settings Window
@@ -255,6 +252,14 @@ void StartWindow::on_actionQDarkStyleSheet_triggered()
     licenseDialog->setWindowTitle(tr("QDarkStyleSheet License (MIT)"));
     licenseDialog->setModal(true);
     licenseDialog->exec();
+}
+
+/**
+ * @brief StartWindow::on_actionFrequently_Asked_Questions_triggered
+ */
+void StartWindow::on_actionFrequently_Asked_Questions_triggered()
+{
+    faqDialog.exec();
 }
 
 /** Open Contact Window

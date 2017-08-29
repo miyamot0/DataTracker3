@@ -28,6 +28,7 @@
 #include "filetools.h"
 #include "reliabilityparse.h"
 #include "keysetentry.h"
+#include "windowtools.h"
 
 #include "reliabilityscoring.h"
 #include "reliabilitymeasure.h"
@@ -46,13 +47,9 @@ ReliabilityDialog::ReliabilityDialog(QString mCurrentWorkingDirectory, QWidget *
     setWindowTitle(tr("Reliability Calculator"));
 
     workerThread = new QThread();
-
     mWorkingDirectory = mCurrentWorkingDirectory;
-
     mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
-
     worker = new DirectorySearcher(mCurrentDirectory);
-
     worker->moveToThread(workerThread);
 
     connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
@@ -342,6 +339,9 @@ void ReliabilityDialog::WorkFinished(DirectoryParse finalResult, ParseTypes::Par
     }
 }
 
+/**
+ * @brief ReliabilityDialog::on_pushButton_clicked
+ */
 void ReliabilityDialog::on_pushButton_clicked()
 {
     QJsonObject mPrimary, mReli;
