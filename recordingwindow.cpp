@@ -192,7 +192,7 @@ void RecordingWindow::reject()
     else
     {
         QMessageBox::StandardButton resBtn = QMessageBox::question( this, tr("Session Recording"),
-                                                                    tr("Are you sure?\n"),
+                                                                    tr("Are you sure you want to end session?"),
                                                                     QMessageBox::Cancel |
                                                                     QMessageBox::No |
                                                                     QMessageBox::Yes,
@@ -256,10 +256,6 @@ void RecordingWindow::reject()
 
                 KeepData = false;
             }
-        }
-        else
-        {
-            QDialog::reject();
         }
     }
 }
