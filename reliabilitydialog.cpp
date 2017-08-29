@@ -348,45 +348,4 @@ void ReliabilityDialog::on_pushButton_clicked()
                                                 ui->comboGroup->currentText(),
                                                 ui->comboIndividual->currentText(),
                                                 ui->comboEvaluation->currentText());
-
-    /*
-    QJsonObject mPrimary, mReli;
-
-    bool mPrimaryCheck = false,
-         mReliCheck = false;
-
-    QDateTime startTime, endTime;
-
-    ReliResults.clear();
-
-    for(int i(0); i<PrimaryReliabilityObjects.count(); i++)
-    {
-        if (PrimaryReliabilityObjects[i].CanScoreAsReli)
-        {
-            ReliabilityMeasure mMeasure;
-
-            mMeasure.Session = PrimaryReliabilityObjects[i].SessionNumber;
-            mMeasure.Group = ui->comboGroup->currentText();
-            mMeasure.Individual = ui->comboIndividual->currentText();
-            mMeasure.Evaluation = ui->comboEvaluation->currentText();
-            mMeasure.Condition = PrimaryReliabilityObjects[i].Condition;
-            mMeasure.Primary = PrimaryReliabilityObjects[i].Collector;
-            mMeasure.Reliability = PrimaryReliabilityObjects[i].SecondaryObserver;
-
-            mPrimaryCheck = FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects[i].PrimaryFilePath, &mPrimary);
-            mReliCheck = FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects[i].ReliFilePath, &mReli);
-
-            if (mPrimaryCheck && mReliCheck)
-            {
-                ReliabilityScoring::CompareObservers(mPrimary, mReli, &mMeasure);
-            }
-
-            ReliResults.append(mMeasure);
-        }
-    }
-
-    FileTools::WriteReliSpreadsheet(mWorkingDirectory, ui->comboGroup->currentText(),
-                                    ui->comboIndividual->currentText(), ui->comboEvaluation->currentText(),
-                                    &ReliResults, &PrimaryReliabilityObjects, &SecondaryReliabilityObjects);
-    */
 }

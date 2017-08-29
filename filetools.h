@@ -903,6 +903,7 @@ static void WriteReliSpreadsheet(QString mWorkingDirectory, QString Group, QStri
     xlsx.write(8, 1, "Session");
     xlsx.write(8, 2, "Primary");
     xlsx.write(8, 3, "Reliability");
+    xlsx.write(8, 4, "Condition");
 
     for (int row(0); row < ReliResults->count(); row++)
     {
@@ -911,8 +912,9 @@ static void WriteReliSpreadsheet(QString mWorkingDirectory, QString Group, QStri
         xlsx.write(topOffset + row, 1, temp.Session);
         xlsx.write(topOffset + row, 2, temp.Primary);
         xlsx.write(topOffset + row, 3, temp.Reliability);
+        xlsx.write(topOffset + row, 4, temp.Condition);
 
-        spacer = 4;
+        spacer = 5;
 
         if (row == 0) xlsx.write(topOffset - 3 + row, spacer, "Frequency Keys");
 
@@ -976,7 +978,7 @@ static void WriteReliSpreadsheet(QString mWorkingDirectory, QString Group, QStri
     }
 
 
-    int row = 9 + ReliResults->count();
+    int row = 10 + ReliResults->count();
 
     xlsx.write(row, 1, "Files Included:");
 
@@ -1008,7 +1010,7 @@ static void WriteReliSpreadsheet(QString mWorkingDirectory, QString Group, QStri
         dir.mkpath(mKeyPath);
     }
 
-    QString mFileName = QString("%1%2%3%4_%5.xlsx")
+    QString mFileName = QString("Reli_%1%2%3.xlsx")
             .arg(Group.mid(0, 3))
             .arg(Individual.mid(0, 3))
             .arg(Evaluation.mid(0, 3));
