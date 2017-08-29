@@ -69,32 +69,36 @@ static bool PerformReliabilityCheck(QString mWorkingDirectory, QString Group, QS
                     mSession.close();
 
                     QJsonDocument loadSession = QJsonDocument::fromJson(sessionData.toUtf8());
-                    QJsonObject sessionObject = loadSession.object();
 
-                    if((sessionObject["Role"].toString().contains("Primary", Qt::CaseInsensitive)))
+                    if (!loadSession.isNull())
                     {
-                        ReliabilityParse mReliObj;
-                        mReliObj.SessionNumber = sessionObject["Session"].toInt();
-                        mReliObj.Collector = sessionObject["Collector"].toString();
-                        mReliObj.Condition = sessionObject["Condition"].toString();
-                        mReliObj.SecondaryObserver = QString("---");
-                        mReliObj.PrimaryFilePath = mFileName;
-                        mReliObj.Reli = false;
-                        mReliObj.CanScoreAsReli = false;
+                        QJsonObject sessionObject = loadSession.object();
 
-                        PrimaryReliabilityObjects.append(mReliObj);
-                    }
-                    else
-                    {
-                        ReliabilityParse mReliObj;
-                        mReliObj.SessionNumber = sessionObject["Session"].toInt();
-                        mReliObj.Collector = sessionObject["Collector"].toString();
-                        mReliObj.Condition = sessionObject["Condition"].toString();
-                        mReliObj.PrimaryFilePath = mFileName;
-                        mReliObj.Reli = true;
-                        mReliObj.CanScoreAsReli = false;
+                        if((sessionObject["Role"].toString().contains("Primary", Qt::CaseInsensitive)))
+                        {
+                            ReliabilityParse mReliObj;
+                            mReliObj.SessionNumber = sessionObject["Session"].toInt();
+                            mReliObj.Collector = sessionObject["Collector"].toString();
+                            mReliObj.Condition = sessionObject["Condition"].toString();
+                            mReliObj.SecondaryObserver = QString("---");
+                            mReliObj.PrimaryFilePath = mFileName;
+                            mReliObj.Reli = false;
+                            mReliObj.CanScoreAsReli = false;
 
-                        SecondaryReliabilityObjects.append(mReliObj);
+                            PrimaryReliabilityObjects.append(mReliObj);
+                        }
+                        else
+                        {
+                            ReliabilityParse mReliObj;
+                            mReliObj.SessionNumber = sessionObject["Session"].toInt();
+                            mReliObj.Collector = sessionObject["Collector"].toString();
+                            mReliObj.Condition = sessionObject["Condition"].toString();
+                            mReliObj.PrimaryFilePath = mFileName;
+                            mReliObj.Reli = true;
+                            mReliObj.CanScoreAsReli = false;
+
+                            SecondaryReliabilityObjects.append(mReliObj);
+                        }
                     }
                 }
             }
