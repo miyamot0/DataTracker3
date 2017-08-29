@@ -52,7 +52,10 @@ public:
     bool KeepData = true;
 
     void init();
+
     void LoadKeys(KeySet mKeyset);
+    void StartTiming();
+
     void SetGroup(QString value);
     void SetIndividual(QString value);
     void SetEvaluation(QString value);
@@ -83,6 +86,7 @@ private:
     void DetectScheduleKey(QKeyEvent * mKey);
     void DetectFrequencyKey(QKeyEvent * mKey);
     void DetectDurationKey(QKeyEvent * mKey);
+    void DetectEndKey(QKeyEvent * mKey);
 
     void AddKey(SessionEvent pressedKey);
     void RemoveKey();

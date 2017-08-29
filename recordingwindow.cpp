@@ -40,6 +40,9 @@ RecordingWindow::RecordingWindow(QWidget *parent) : QDialog(parent), ui(new Ui::
     Started = false;
 }
 
+/**
+ * @brief RecordingWindow::init
+ */
 void RecordingWindow::init()
 {
     baseTimer.stop();
@@ -72,6 +75,10 @@ void RecordingWindow::init()
     KeepData = true;
 }
 
+/**
+ * @brief RecordingWindow::LoadKeys
+ * @param mKeyset
+ */
 void RecordingWindow::LoadKeys(KeySet mKeyset)
 {
     keySet = mKeyset;
@@ -104,36 +111,63 @@ void RecordingWindow::LoadKeys(KeySet mKeyset)
     ui->labelTitle->setText(QString("<html><head/><body><p align='center'><span style=' font-size:12pt;'>Recording: Session #%1</span></p></body></html>").arg(keySet.Session));
 }
 
+/**
+ * @brief RecordingWindow::SetGroup
+ * @param value
+ */
 void RecordingWindow::SetGroup(QString value)
 {
     ui->editGroup->setText(value);
 }
 
+/**
+ * @brief RecordingWindow::SetIndividual
+ * @param value
+ */
 void RecordingWindow::SetIndividual(QString value)
 {
     ui->editPatient->setText(value);
 }
 
+/**
+ * @brief RecordingWindow::SetEvaluation
+ * @param value
+ */
 void RecordingWindow::SetEvaluation(QString value)
 {
     ui->editEvaluation->setText(value);
 }
 
+/**
+ * @brief RecordingWindow::SetCondition
+ * @param value
+ */
 void RecordingWindow::SetCondition(QString value)
 {
     ui->editCondition->setText(value);
 }
 
+/**
+ * @brief RecordingWindow::SetCollector
+ * @param value
+ */
 void RecordingWindow::SetCollector(QString value)
 {
     ui->editCollector->setText(value);
 }
 
+/**
+ * @brief RecordingWindow::SetRole
+ * @param value
+ */
 void RecordingWindow::SetRole(QString value)
 {
     ui->editPrimary->setText(value);
 }
 
+/**
+ * @brief RecordingWindow::UpdateGUI
+ */
 void RecordingWindow::UpdateGUI()
 {
     endTime = QDateTime::currentDateTime();
@@ -178,6 +212,9 @@ void RecordingWindow::UpdateGUI()
     }
 }
 
+/**
+ * @brief RecordingWindow::reject
+ */
 void RecordingWindow::reject()
 {
     if (!Started)
@@ -260,71 +297,82 @@ void RecordingWindow::reject()
     }
 }
 
+/**
+ * @brief RecordingWindow::StartTiming
+ */
+void RecordingWindow::StartTiming()
+{
+    Started = true;
+
+    ScheduleFlags.append(true);
+    ScheduleFlags.append(false);
+    ScheduleFlags.append(false);
+
+    ScheduleDurationSums.append(0);
+    ScheduleDurationSums.append(0);
+    ScheduleDurationSums.append(0);
+
+    ScheduleDurationFlaggedTimes.append(QDateTime());
+    ScheduleDurationFlaggedTimes.append(QDateTime());
+    ScheduleDurationFlaggedTimes.append(QDateTime());
+
+    connect(&baseTimer, SIGNAL(timeout()), this, SLOT(UpdateGUI()));
+    baseTimer.start(50);
+
+    startTime = QDateTime::currentDateTime();
+
+    SessionEvent loggedKey;
+    loggedKey.TimePressed = startTime;
+    loggedKey.MeasurementType = Measurement::Schedule;
+    loggedKey.ScheduleType = Schedule::One;
+
+    KeySetEntry loggedKeySet;
+    loggedKeySet.KeyCode = Qt::Key_Z;
+    loggedKeySet.KeyName = "Schedule One Start";
+    loggedKeySet.KeyDescription = "Schedule One Start";
+
+    loggedKey.KeyEntered = loggedKeySet;
+
+    AddKey(loggedKey);
+
+    CurrentSchedule = Schedule::One;
+
+    ui->editTimerOne->setStyleSheet("background: green;");
+}
+
+/**
+ * @brief RecordingWindow::eventFilter
+ * @param e
+ * @return
+ */
 bool RecordingWindow::eventFilter(QObject *, QEvent *e)
 {
-    if (e->type() == QEvent::KeyRelease)
+    if (e->type() == QEvent::KeyRelease && !Started)
     {
         QKeyEvent * mKey = static_cast<QKeyEvent *>(e);
 
-        if (mKey->key() == Qt::Key_Tab && !Started)
+        if (mKey->key() == Qt::Key_Tab)
         {
-            Started = true;
-
-            ScheduleFlags.append(true);
-            ScheduleFlags.append(false);
-            ScheduleFlags.append(false);
-
-            ScheduleDurationSums.append(0);
-            ScheduleDurationSums.append(0);
-            ScheduleDurationSums.append(0);
-
-            ScheduleDurationFlaggedTimes.append(QDateTime());
-            ScheduleDurationFlaggedTimes.append(QDateTime());
-            ScheduleDurationFlaggedTimes.append(QDateTime());
-
-            connect(&baseTimer, SIGNAL(timeout()), this, SLOT(UpdateGUI()));
-            baseTimer.start(50);
-
-            startTime = QDateTime::currentDateTime();
-
-            SessionEvent loggedKey;
-            loggedKey.TimePressed = startTime;
-            loggedKey.MeasurementType = Measurement::Schedule;
-            loggedKey.ScheduleType = Schedule::One;
-
-            KeySetEntry loggedKeySet;
-            loggedKeySet.KeyCode = Qt::Key_Z;
-            loggedKeySet.KeyName = "Schedule One Start";
-            loggedKeySet.KeyDescription = "Schedule One Start";
-
-            loggedKey.KeyEntered = loggedKeySet;
-
-            AddKey(loggedKey);
-
-            CurrentSchedule = Schedule::One;
-
-            ui->editTimerOne->setStyleSheet("background: green;");
+            StartTiming();
         }
     }
-
-    if (e->type() == QEvent::KeyRelease && Started)
+    else if (e->type() == QEvent::KeyRelease && Started)
     {
         QKeyEvent * mKey = static_cast<QKeyEvent *>(e);
 
         DetectFrequencyKey(mKey);
         DetectDurationKey(mKey);
-
         DetectScheduleKey(mKey);
-
-        if (mKey->key() == Qt::Key_Backspace)
-        {
-            RemoveKey();
-        }
+        DetectEndKey(mKey);
     }
 
     return false;
 }
 
+/**
+ * @brief RecordingWindow::DetectScheduleKey
+ * @param mKey
+ */
 void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
 {
     if (mKey->key() == Qt::Key_Z)
@@ -499,6 +547,10 @@ void RecordingWindow::DetectScheduleKey(QKeyEvent * mKey)
     }
 }
 
+/**
+ * @brief RecordingWindow::DetectFrequencyKey
+ * @param mKey
+ */
 void RecordingWindow::DetectFrequencyKey(QKeyEvent * mKey)
 {
     for (int i=0; i<keySet.FrequencyKeys.count(); i++)
@@ -522,6 +574,10 @@ void RecordingWindow::DetectFrequencyKey(QKeyEvent * mKey)
     }
 }
 
+/**
+ * @brief RecordingWindow::DetectDurationKey
+ * @param mKey
+ */
 void RecordingWindow::DetectDurationKey(QKeyEvent * mKey)
 {
     for (int i=0; i<keySet.DurationKeys.count(); i++)
@@ -545,6 +601,22 @@ void RecordingWindow::DetectDurationKey(QKeyEvent * mKey)
     }
 }
 
+/**
+ * @brief RecordingWindow::DetectEndKey
+ * @param mKey
+ */
+void RecordingWindow::DetectEndKey(QKeyEvent * mKey)
+{
+    if (mKey->key() == Qt::Key_Backspace)
+    {
+        RemoveKey();
+    }
+}
+
+/**
+ * @brief RecordingWindow::AddKey
+ * @param pressedKey
+ */
 void RecordingWindow::AddKey(SessionEvent pressedKey)
 {
     PressedKeys.append(pressedKey);
@@ -563,6 +635,9 @@ void RecordingWindow::AddKey(SessionEvent pressedKey)
     UpdateTables();
 }
 
+/**
+ * @brief RecordingWindow::RemoveKey
+ */
 void RecordingWindow::RemoveKey()
 {
     if (PressedKeys.count() == 0)
@@ -577,6 +652,9 @@ void RecordingWindow::RemoveKey()
     UpdateTables();
 }
 
+/**
+ * @brief RecordingWindow::UpdateTables
+ */
 void RecordingWindow::UpdateTables()
 {
     for (int i=0; i<keySet.FrequencyKeys.count(); i++)
@@ -686,6 +764,9 @@ void RecordingWindow::UpdateTables()
 
 }
 
+/**
+ * @brief RecordingWindow::ParseTimes
+ */
 void RecordingWindow::ParseTimes()
 {
     for (int i=0; i<DurationSums.length(); i++)
@@ -730,6 +811,9 @@ void RecordingWindow::ParseTimes()
     }
 }
 
+/**
+ * @brief RecordingWindow::~RecordingWindow
+ */
 RecordingWindow::~RecordingWindow()
 {
     delete ui;
