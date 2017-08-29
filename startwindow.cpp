@@ -33,6 +33,8 @@
 #include <QTextStream>
 #include <QDir>
 
+
+
 StartWindow::StartWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::StartWindow)
@@ -47,15 +49,18 @@ StartWindow::StartWindow(QWidget *parent) :
     if (FileTools::CheckAndPrepDirectory(folderTitle))
     {
         workingDirectory = FileTools::pathAppend(QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)[0], folderTitle);
+
+        // TODO Auto and force refresh
     }
 
     LoadSettings();
 
+    //FileTools::WriteToRemote(workingDirectory, backupSaveLocation, folderTitle);
+    //FileTools::ReadToLocal(backupSaveLocation, workingDirectory, folderTitle);
+
     statusBar()->setSizeGripEnabled(false);
 
     WindowTools::SetWindowFixed(this);
-
-    // TODO network auto update
 }
 
 StartWindow::~StartWindow()

@@ -46,6 +46,78 @@ class FileTools
 {
 public:
 
+static void ReadToLocal(QString workingDirectory, QString backupSaveLocation, QString folderTitle)
+{
+    workingDirectory = pathAppend(workingDirectory, folderTitle);
+
+    QStringList mFiles;
+    QDirIterator iterator(workingDirectory,
+                          QStringList() << "*.json",
+                          QDir::Files,
+                          QDirIterator::Subdirectories);
+
+    while (iterator.hasNext())
+    {
+        mFiles << iterator.next();
+    }
+
+    QString repl = workingDirectory;
+    QString tempTest, base;
+
+    QFile *tempFile;
+    QFileInfo *tempFileInfo;
+
+    foreach (QString mRemote, mFiles)
+    {
+        base = QString(mRemote);
+        tempTest = mRemote.replace(workingDirectory, backupSaveLocation);
+
+        tempFileInfo = new QFileInfo(tempTest);
+        tempFile = new QFile(tempTest);
+
+        if (!tempFile->exists())
+        {
+            QDir().mkpath(tempFileInfo->absolutePath());
+            QFile::copy(base, tempTest);
+        }
+    }
+}
+
+static void WriteToRemote(QString workingDirectory, QString backupSaveLocation, QString folderTitle)
+{
+    QStringList mFiles;
+    QDirIterator iterator(workingDirectory,
+                          QStringList() << "*.json",
+                          QDir::Files,
+                          QDirIterator::Subdirectories);
+
+    while (iterator.hasNext())
+    {
+        mFiles << iterator.next();
+    }
+
+    QString repl = FileTools::pathAppend(backupSaveLocation, folderTitle);
+    QString tempTest, base;
+
+    QFile *tempFile;
+    QFileInfo *tempFileInfo;
+
+    foreach (QString mLocal, mFiles)
+    {
+        base = QString(mLocal);
+        tempTest = mLocal.replace(workingDirectory, repl);
+
+        tempFileInfo = new QFileInfo(tempTest);
+        tempFile = new QFile(tempTest);
+
+        if (!tempFile->exists())
+        {
+            QDir().mkpath(tempFileInfo->absolutePath());
+            QFile::copy(base, tempTest);
+        }
+    }
+}
+
 /** Read keys in from file
  * @brief ReadKeySet
  * @param path
