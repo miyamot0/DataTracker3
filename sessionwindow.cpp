@@ -27,7 +27,7 @@
 #include "filetools.h"
 #include "windowtools.h"
 #include "scoringtools.h"
-
+#include "reliabilityscoring.h"
 #include "parsetypes.h"
 #include "keyseteditor.h"
 #include "keysetentry.h"
@@ -77,6 +77,7 @@ SessionWindow::SessionWindow(QString mCurrentWorkingDirectory, QWidget *parent) 
 
     showPlots = settings.value(QLatin1String("displayPlots"), false).toBool();
     outputSheets = settings.value(QLatin1String("outputSheets"), true).toBool();
+    autoReli = settings.value(QLatin1String("autoReli"), false).toBool();
 
     settings.endGroup();
 
@@ -1030,6 +1031,14 @@ void SessionWindow::WriteOutput()
                                         &mResults.FrequencyTwo, &mResults.DurationTwo,
                                         &mResults.FrequencyThree, &mResults.DurationThree);
         }
+    }
+
+    if (autoReli)
+    {
+        ReliabilityScoring::PerformReliabilityCheck(mWorkingDirectory,
+                                                    ui->comboGroup->currentText(),
+                                                    ui->comboIndividual->currentText(),
+                                                    ui->comboEvaluation->currentText());
     }
 
     if (showPlots)

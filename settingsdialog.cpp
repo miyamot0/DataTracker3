@@ -135,6 +135,17 @@ void SettingsDialog::SetThemeDark(bool value)
 }
 
 /**
+ * @brief SettingsDialog::SetAutoReli
+ * @param value
+ * @return
+ */
+void SettingsDialog::SetAutoReli(bool value)
+{
+    autoReli = value;
+    ui->checkBoxReli->setChecked(value);
+}
+
+/**
  * @brief SettingsDialog::GetSaveLocation
  * @return
  */
@@ -170,6 +181,15 @@ bool SettingsDialog::GetThemeDark()
     return (ui->comboTheme->currentIndex() == 1);
 }
 
+/**
+ * @brief SettingsDialog::GetAutoReli
+ * @return
+ */
+bool SettingsDialog::GetAutoReli()
+{
+    return (ui->checkBoxReli->isChecked());
+}
+
 SettingsDialog::~SettingsDialog()
 {
     delete ui;
@@ -180,10 +200,11 @@ SettingsDialog::~SettingsDialog()
  */
 void SettingsDialog::on_pushButton_clicked()
 {
-    alternateSaveLocation = ui->editSaveLocation->text();
-    spreadsheetOutput = ui->checkBoxSheets->isChecked();
-    displayPlots = ui->checkBoxGraphs->isChecked();
-    displayDark = (ui->comboTheme->currentIndex() == 1);
+    alternateSaveLocation = GetSaveLocation();
+    spreadsheetOutput = GetSpreadsheetOption();
+    displayPlots = GetDisplayOption();
+    displayDark = GetDisplayOption();
+    autoReli = GetAutoReli();
 
     QDir mDir(alternateSaveLocation);
 

@@ -41,16 +41,19 @@ public:
     bool spreadsheetOutput = true;
     bool displayPlots = false;
     bool displayDark = false;
+    bool autoReli = false;
 
     void SetSaveLocation(QString location);
     void SetSpreadsheetOption(bool value);
     void SetDisplayOption(bool value);
     void SetThemeDark(bool value);
+    void SetAutoReli(bool value);
 
     QString GetSaveLocation();
     bool GetSpreadsheetOption();
     bool GetDisplayOption();
     bool GetThemeDark();
+    bool GetAutoReli();
 
     ~SettingsDialog();
 

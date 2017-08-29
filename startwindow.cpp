@@ -66,7 +66,7 @@ StartWindow::~StartWindow()
 /** Save Settings
  * @brief StartWindow::SaveSettings
  */
-void StartWindow::SaveSettings(QString savedLocation, bool plots, bool dark, bool sheets)
+void StartWindow::SaveSettings(QString savedLocation, bool plots, bool dark, bool sheets, bool reli)
 {
     QSettings settings;
 
@@ -75,6 +75,7 @@ void StartWindow::SaveSettings(QString savedLocation, bool plots, bool dark, boo
         settings.setValue(QLatin1String("displayPlots"), plots);
         settings.setValue(QLatin1String("displayDark"), dark);
         settings.setValue(QLatin1String("outputSheets"), sheets);
+        settings.setValue(QLatin1String("autoReli"), reli);
     settings.endGroup();
 }
 
@@ -87,7 +88,8 @@ void StartWindow::closeEvent(QCloseEvent *)
     SaveSettings(backupSaveLocation,
                  displayPlots,
                  displayDark,
-                 outputSheets);
+                 outputSheets,
+                 autoReli);
 }
 
 /** Load Settings
@@ -102,6 +104,7 @@ void StartWindow::LoadSettings()
     displayPlots = settings.value(QLatin1String("displayPlots"), false).toBool();
     displayDark = settings.value(QLatin1String("displayDark"), false).toBool();
     outputSheets = settings.value(QLatin1String("outputSheets"), true).toBool();
+    autoReli = settings.value(QLatin1String("autoReli"), true).toBool();
 
     settings.endGroup();
 }
@@ -132,10 +135,11 @@ void StartWindow::on_actionSettings_2_triggered()
     settingsDialog.SetSpreadsheetOption(outputSheets);
     settingsDialog.SetDisplayOption(displayPlots);
     settingsDialog.SetThemeDark(displayDark);
+    settingsDialog.SetAutoReli(autoReli);
 
     settingsDialog.exec();
 
-    if (displayDark != settingsDialog.displayDark)
+    if (displayDark != settingsDialog.GetThemeDark())
     {
         QMessageBox::information(NULL,
                                  tr("Theme Updated"),
@@ -147,11 +151,13 @@ void StartWindow::on_actionSettings_2_triggered()
     outputSheets = settingsDialog.GetSpreadsheetOption();
     displayPlots = settingsDialog.GetDisplayOption();
     displayDark = settingsDialog.GetThemeDark();
+    autoReli = settingsDialog.GetAutoReli();
 
     SaveSettings(backupSaveLocation,
                  displayPlots,
                  displayDark,
-                 outputSheets);
+                 outputSheets,
+                 autoReli);
 }
 
 /** Open License Window
