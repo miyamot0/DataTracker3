@@ -7,8 +7,9 @@
 
 #include "directoryparse.h"
 #include "directorysearcher.h"
-
 #include "reliabilityparse.h"
+#include "keysetentry.h"
+#include "sessionevent.h"
 
 namespace Ui {
 class SessionViewerDialog;
@@ -64,6 +65,39 @@ private:
 
     QList<int> dKeySet;
     QList<double> dKeySum;
+
+    ReliabilityParse temp;
+    bool result;
+
+    QDateTime startTime, endTime;
+
+    int totalSecs;
+
+    QList<KeySetEntry> FrequencyKeys;
+    QJsonArray frequencyArray;
+
+    QList<KeySetEntry> DurationKeys;
+    QJsonArray durationArray;
+
+    QList<SessionEvent> PressedKeys;
+    QJsonArray pressedKeysJson;
+
+    int max = 0,
+        secs,
+        fIndex,
+        dIndex;
+
+    QDateTime prev, after;
+
+    bool waitingForNext;
+
+    double runningSum,
+           startSecs,
+           endSecs;
+
+    int tempKeyCode;
+
+
 
     QString formatReli(bool value)
     {

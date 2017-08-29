@@ -377,9 +377,9 @@ void SessionViewerDialog::on_tableWidget_currentCellChanged(int currentRow, int,
         return;
     }
 
-    ReliabilityParse temp = PrimaryReliabilityObjects.at(currentRow);
+    temp = PrimaryReliabilityObjects.at(currentRow);
 
-    bool result = FileTools::ReadSessionFromJSON(temp.PrimaryFilePath, &json);
+    result = FileTools::ReadSessionFromJSON(temp.PrimaryFilePath, &json);
 
     if (result)
     {
@@ -395,13 +395,12 @@ void SessionViewerDialog::on_tableWidget_currentCellChanged(int currentRow, int,
         dKeySet.clear();
         fKeySum.clear();
 
-        QDateTime startTime = QDateTime(QDateTime::fromString(json["StartTime"].toString()));
-        QDateTime endTime = QDateTime(QDateTime::fromString(json["EndTime"].toString()));
+        startTime = QDateTime(QDateTime::fromString(json["StartTime"].toString()));
+        endTime = QDateTime(QDateTime::fromString(json["EndTime"].toString()));
+        totalSecs = (int)((double) json["SessionDuration"].toInt() / 1000);
 
-        int totalSecs = (int)((double) json["SessionDuration"].toInt() / 1000);
-
-        QList<KeySetEntry> FrequencyKeys;
-        QJsonArray frequencyArray = json["FrequencyKeys"].toArray();
+        FrequencyKeys.clear();
+        frequencyArray = json["FrequencyKeys"].toArray();
         foreach (const QJsonValue collector, frequencyArray) {
             QJsonObject mObj = collector.toObject();
 
@@ -430,8 +429,8 @@ void SessionViewerDialog::on_tableWidget_currentCellChanged(int currentRow, int,
             *lineSeries[lineSeries.count() - 1] << QPointF(0, 0);
         }
 
-        QList<KeySetEntry> DurationKeys;
-        QJsonArray durationArray = json["DurationKeys"].toArray();
+        DurationKeys.clear();
+        durationArray = json["DurationKeys"].toArray();
         foreach (const QJsonValue collector, durationArray) {
             QJsonObject mObj = collector.toObject();
 
@@ -460,8 +459,8 @@ void SessionViewerDialog::on_tableWidget_currentCellChanged(int currentRow, int,
             *lineSeries2[lineSeries2.count() - 1] << QPointF(0, 0);
         }
 
-        QList<SessionEvent> PressedKeys;
-        QJsonArray pressedKeysJson = json["PressedKeys"].toArray();
+        PressedKeys.clear();
+        pressedKeysJson = json["PressedKeys"].toArray();
         foreach (const QJsonValue collector, pressedKeysJson) {
             QJsonObject mObj = collector.toObject();
 
@@ -476,15 +475,15 @@ void SessionViewerDialog::on_tableWidget_currentCellChanged(int currentRow, int,
             PressedKeys.append(mEntry);
         }
 
-        int max = 0;
+        max = 0;
 
         foreach (const SessionEvent event, PressedKeys)
         {
-            int fIndex = fKeySet.indexOf(event.KeyEntered.KeyCode);
+            fIndex = fKeySet.indexOf(event.KeyEntered.KeyCode);
 
             if (fIndex != -1)
             {
-                int secs = startTime.secsTo(event.TimePressed);
+                secs = startTime.secsTo(event.TimePressed);
 
                 fKeySum[fIndex] = fKeySum[fIndex] + 1;
 
@@ -502,30 +501,25 @@ void SessionViewerDialog::on_tableWidget_currentCellChanged(int currentRow, int,
 
         // duration
 
-        QDateTime prev, after;
-        bool waitingForNext;
-        double runningSum;
-        int temp;
-
         max = 0;
 
         for (int i(0); i<dKeySet.count(); i++)
         {
-            temp = dKeySet.at(i);
+            tempKeyCode = dKeySet.at(i);
             waitingForNext = false;
             runningSum = 0;
             //runs.clear();
 
             foreach(SessionEvent event, PressedKeys)
             {
-                if (event.KeyEntered.KeyCode == temp)
+                if (event.KeyEntered.KeyCode == tempKeyCode)
                 {
                     if (waitingForNext)
                     {
                         after = event.TimePressed;
 
-                        double startSecs = ((double) startTime.msecsTo(prev)) / 1000;
-                        double endSecs = ((double) startTime.msecsTo(after)) / 1000;
+                        startSecs = ((double) startTime.msecsTo(prev)) / 1000;
+                        endSecs = ((double) startTime.msecsTo(after)) / 1000;
 
                         *lineSeries2[i] << QPointF(startSecs, runningSum);
 
@@ -534,8 +528,6 @@ void SessionViewerDialog::on_tableWidget_currentCellChanged(int currentRow, int,
                         *lineSeries2[i] << QPointF(endSecs, runningSum);
 
                         waitingForNext = false;
-
-                        qDebug() << "Key code: " << temp << " run completed";
                     }
                     else
                     {
@@ -549,8 +541,8 @@ void SessionViewerDialog::on_tableWidget_currentCellChanged(int currentRow, int,
 
             if (waitingForNext)
             {
-                double startSecs = ((double) startTime.msecsTo(prev)) / 1000;
-                double endSecs = ((double) startTime.msecsTo(endTime)) / 1000;
+                startSecs = ((double) startTime.msecsTo(prev)) / 1000;
+                endSecs = ((double) startTime.msecsTo(endTime)) / 1000;
 
                 *lineSeries2[i] << QPointF(startSecs, runningSum);
 
