@@ -38,6 +38,12 @@ ResultsDialog::ResultsDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    Qt::WindowFlags windowFlags = 0;
+    windowFlags |= Qt::WindowMaximizeButtonHint;
+    windowFlags |= Qt::WindowMinimizeButtonHint;
+    windowFlags |= Qt::WindowCloseButtonHint;
+
+    setWindowFlags(windowFlags);
     // TODO save images
 
     setWindowTitle(tr("Session Results"));
@@ -193,13 +199,8 @@ void ResultsDialog::BuildTables()
  */
 void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKeys, QDateTime * startTime, QDateTime * endTime)
 {
-    //test
-    chart = new QChart();
-    chart2 = new QChart();
-
     lineSeries.clear();
     lineSeries2.clear();
-    //
 
     qint64 totalSecs = startTime->secsTo(*endTime);
 
@@ -245,7 +246,6 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
             if (event.KeyEntered.KeyCode == temp.KeyCode)
             {
                 timeHolder = startTime->secsTo(event.TimePressed) / 10;
-                //mFrequencyBins[i][timeHolder] = mFrequencyBins[i][timeHolder] + 1;
                 mFrequencyBins[timeHolder][i] = mFrequencyBins[timeHolder][i] + 1;
             }
         }
@@ -302,64 +302,62 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
 
             if (index1 == index2)
             {
-                //mDurationBins[i][index1] = mDurationBins[i][index1] + ((double)(stop - start))/1000;
                 mDurationBins[index1][i] = mDurationBins[index1][i] + ((double)(stop - start))/1000;
             }
             else if ((index2 - index1) == 1)
             {
-                //mDurationBins[i][index1] = mDurationBins[i][index1] + ((double)(10000 - (start % 10000)))/1000;
-                //mDurationBins[i][index2] = mDurationBins[i][index2] + ((double)(stop % 10000))/1000;
                 mDurationBins[index1][i] = mDurationBins[index1][i] + ((double)(10000 - (start % 10000)))/1000;
                 mDurationBins[index2][i] = mDurationBins[index2][i] + ((double)(stop % 10000))/1000;
             }
             else
             {
-                //mDurationBins[i][index1] = mDurationBins[i][index1] + ((double)(10000 - (start % 10000)))/1000;
                 mDurationBins[index1][i] = mDurationBins[index1][i] + ((double)(10000 - (start % 10000)))/1000;
 
                 for (int k(index1 + 1); k < index2; k++)
                 {
-                    //mDurationBins[i][k] = mDurationBins[i][k] + 10;
                     mDurationBins[k][i] = mDurationBins[k][i] + 10;
                 }
 
-                //mDurationBins[i][index2] = mDurationBins[i][index2] + ((double)(stop % 10000))/1000;
                 mDurationBins[index2][i] = mDurationBins[index2][i] + ((double)(stop % 10000))/1000;
             }
         }
     }
 
+    chart = new QChart();
     chart->setTitle("Cumulative Target Counts");
     chart->setTitleFont(QFont("Serif", 10, -1, false));
     chart->setTitleBrush(Qt::black);
 
-    axisX.applyNiceNumbers();
-    axisX.setGridLineColor(Qt::transparent);
-    axisX.setTitleText(tr("10s Bins"));
-    axisX.setTitleFont(QFont("Serif", 10, -1, false));
-    axisX.setTitleBrush(Qt::black);
-    //axisX.setMin(0);
-    //axisX.setMin(10);
-    axisX.setLabelsFont(QFont("Serif", 10, -1, false));
-    axisX.setLabelFormat(QString("%.0f"));
-    axisX.setLabelsBrush(Qt::black);
-    axisX.setLabelsColor(Qt::black);
-    axisX.setLinePenColor(Qt::black);
-    axisX.setLinePen(QPen(Qt::black));
+    axisX = new QValueAxis;
+    axisX->applyNiceNumbers();
+    axisX->setGridLineColor(Qt::transparent);
+    axisX->setTitleText(tr("10s Bins"));
+    axisX->setTitleFont(QFont("Serif", 10, -1, false));
+    axisX->setTitleBrush(Qt::black);
+    axisX->setMin(0);
+    axisX->setLabelsFont(QFont("Serif", 10, -1, false));
+    axisX->setLabelFormat(QString("%.0f"));
+    axisX->setLabelsBrush(Qt::black);
+    axisX->setLabelsColor(Qt::black);
+    axisX->setLinePenColor(Qt::black);
+    axisX->setLinePen(QPen(Qt::black));
+    axisX->setMax(bins);
+    //axisX->setTickCount(bins);
 
-    axisY.applyNiceNumbers();
-    axisY.setGridLineColor(Qt::transparent);
-    axisY.setTitleText(tr("Frequency"));
-    axisY.setTitleFont(QFont("Serif", 10, -1, false));
-    axisY.setTitleBrush(Qt::black);
-    //axisY.setTickCount(5);
-    axisY.setLabelsFont(QFont("Serif", 10, -1, false));
-    axisY.setLabelsBrush(Qt::black);
-    axisY.setLabelsColor(Qt::black);
-    axisY.setMin(0);
-    axisY.setMax(100);
-    axisY.setLinePenColor(Qt::black);
-    axisY.setLinePen(QPen(Qt::black));
+    axisY = new QValueAxis;
+    axisY->applyNiceNumbers();
+    axisY->setGridLineColor(Qt::transparent);
+    axisY->setTitleText(tr("Frequency"));
+    axisY->setTitleFont(QFont("Serif", 10, -1, false));
+    axisY->setTitleBrush(Qt::black);
+    //axisY->setTickCount(5);
+    axisY->setLabelsFont(QFont("Serif", 10, -1, false));
+    axisY->setLabelsBrush(Qt::black);
+    axisY->setLabelsColor(Qt::black);
+    axisY->setMin(0);
+    axisY->setMax(100);
+    axisY->setLinePenColor(Qt::black);
+    axisY->setLinePen(QPen(Qt::black));
 
     int runTotal = 0;
 
@@ -374,8 +372,8 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
 
         chart->addSeries(lineSeries[i]);
 
-        chart->setAxisX(&axisX, lineSeries[i]);
-        chart->setAxisY(&axisY, lineSeries[i]);
+        chart->setAxisX(axisX, lineSeries[i]);
+        chart->setAxisY(axisY, lineSeries[i]);
 
         runTotal = 0;
     }
@@ -383,7 +381,10 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
     chartView = new QChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
 
-    ui->plotLayout->addWidget(chartView);
+    if (!Drawn)
+    {
+        ui->plotLayout->addWidget(chartView);
+    }
 
     int max = 0;
 
@@ -404,45 +405,45 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
         }
     }
 
-    axisY.setMin(0);
-    axisY.setMax(max + 1);
-
-    axisX.setMin(0);
-    axisX.setMax(mFrequencyBins.length() + 1);
+    axisY->setMin(0);
+    axisY->setMax(max + 1);
 
     // dur
-
+    chart2 = new QChart();
     chart2->setTitle("Cumulative Time Counts");
     chart2->setTitleFont(QFont("Serif", 10, -1, false));
     chart2->setTitleBrush(Qt::black);
 
-    axisX2.applyNiceNumbers();
-    axisX2.setGridLineColor(Qt::transparent);
-    axisX2.setTitleText(tr("10s Bins"));
-    axisX2.setTitleFont(QFont("Serif", 10, -1, false));
-    axisX2.setTitleBrush(Qt::black);
-    //axisX2.setMin(0);
-    //axisX2.setMin(10);
-    axisX2.setLabelsFont(QFont("Serif", 10, -1, false));
-    axisX2.setLabelFormat(QString("%.0f"));
-    axisX2.setLabelsBrush(Qt::black);
-    axisX2.setLabelsColor(Qt::black);
-    axisX2.setLinePenColor(Qt::black);
-    axisX2.setLinePen(QPen(Qt::black));
+    axisX2 = new QValueAxis;
+    axisX2->applyNiceNumbers();
+    axisX2->setGridLineColor(Qt::transparent);
+    axisX2->setTitleText(tr("10s Bins"));
+    axisX2->setTitleFont(QFont("Serif", 10, -1, false));
+    axisX2->setTitleBrush(Qt::black);
+    axisX2->setMin(0);
+    axisX2->setLabelsFont(QFont("Serif", 10, -1, false));
+    axisX2->setLabelFormat(QString("%.0f"));
+    axisX2->setLabelsBrush(Qt::black);
+    axisX2->setLabelsColor(Qt::black);
+    axisX2->setLinePenColor(Qt::black);
+    axisX2->setLinePen(QPen(Qt::black));
+    axisX2->setMax(bins);
+    //axisX2->setTickCount(bins);
 
-    axisY2.applyNiceNumbers();
-    axisY2.setGridLineColor(Qt::transparent);
-    axisY2.setTitleText(tr("Time (s)"));
-    axisY2.setTitleFont(QFont("Serif", 10, -1, false));
-    axisY2.setTitleBrush(Qt::black);
-    //axisY2.setTickCount(5);
-    axisY2.setLabelsFont(QFont("Serif", 10, -1, false));
-    axisY2.setLabelsBrush(Qt::black);
-    axisY2.setLabelsColor(Qt::black);
-    axisY2.setMin(0);
-    axisY2.setMax(100);
-    axisY2.setLinePenColor(Qt::black);
-    axisY2.setLinePen(QPen(Qt::black));
+    axisY2 = new QValueAxis;
+    axisY2->applyNiceNumbers();
+    axisY2->setGridLineColor(Qt::transparent);
+    axisY2->setTitleText(tr("Time (s)"));
+    axisY2->setTitleFont(QFont("Serif", 10, -1, false));
+    axisY2->setTitleBrush(Qt::black);
+    //axisY2->setTickCount(5);
+    axisY2->setLabelsFont(QFont("Serif", 10, -1, false));
+    axisY2->setLabelsBrush(Qt::black);
+    axisY2->setLabelsColor(Qt::black);
+    axisY2->setMin(0);
+    axisY2->setMax(100);
+    axisY2->setLinePenColor(Qt::black);
+    axisY2->setLinePen(QPen(Qt::black));
 
     runTotal = 0;
 
@@ -457,16 +458,19 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
 
         chart2->addSeries(lineSeries2[i]);
 
-        chart2->setAxisX(&axisX2, lineSeries2[i]);
-        chart2->setAxisY(&axisY2, lineSeries2[i]);
+        chart2->setAxisX(axisX2, lineSeries2[i]);
+        chart2->setAxisY(axisY2, lineSeries2[i]);
 
         runTotal = 0;
     }
 
     chartView2 = new QChartView(chart2);
-    chartView2->setRenderHint(QPainter::Antialiasing);
+    chartView2->setRenderHint(QPainter::Antialiasing);  
 
-    ui->plotLayout2->addWidget(chartView2);
+    if (!Drawn)
+    {
+        ui->plotLayout2->addWidget(chartView2);
+    }
 
     for (int i(0); i<dKeys; i++)
     {
@@ -485,12 +489,10 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
         }
     }
 
-    axisY2.setMin(0);
-    axisY2.setMax(max + 1);
+    axisY2->setMin(0);
+    axisY2->setMax(max + 1);
 
-    axisX2.setMin(0);
-    axisX2.setMax(mDurationBins.length() + 1);
-
+    Drawn = true;
 }
 
 /** Build log output

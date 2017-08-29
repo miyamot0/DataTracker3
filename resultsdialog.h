@@ -66,21 +66,32 @@ public:
 private:
     Ui::ResultsDialog *ui;
 
-    QChart * chart, * chart2;
-    QChartView * chartView, * chartView2;
-    QValueAxis axisX, axisY, axisX2, axisY2;
-    QList<QLineSeries *> lineSeries, lineSeries2;
+    QChart * chart,
+           * chart2;
+
+    QChartView * chartView,
+               * chartView2;
+
+    QValueAxis * axisX,
+               * axisY,
+               * axisX2,
+               * axisY2;
+
+    QList<QLineSeries *> lineSeries,
+                         lineSeries2;
 
     KeySet CurrentKeySet;
 
-    QString Group;
-    QString Individual;
-    QString Evaluation;
-    QString Condition;
-    QString Therapist;
-    QString KeySetName;
-    QString Collector;
-    QString Role;
+    QString Group,
+            Individual,
+            Evaluation,
+            Condition,
+            Therapist,
+            KeySetName,
+            Collector,
+            Role;
+
+    bool Drawn = false;
 
     QString formatTimeLabel(int msecs)
     {
@@ -120,8 +131,6 @@ private:
             return QString(QString::number((percent / ((double) totalTime)) * 100, 'f', 2) + "%");
         }
     }
-
-
 };
 
 #endif // RESULTSDIALOG_H
