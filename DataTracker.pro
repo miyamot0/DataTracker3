@@ -63,7 +63,8 @@ SOURCES += main.cpp\
     faqdialog.cpp \
     filewriter.cpp \
     keyset.cpp \
-    sessionviewerdialog.cpp
+    sessionviewerdialog.cpp \
+    filemigrater.cpp
 
 HEADERS  += startwindow.h \
     sessionwindow.h \
@@ -92,7 +93,8 @@ HEADERS  += startwindow.h \
     windowtools.h \
     faqdialog.h \
     filewriter.h \
-    sessionviewerdialog.h
+    sessionviewerdialog.h \
+    filemigrater.h
 
 FORMS    += startwindow.ui \
     sessionwindow.ui \

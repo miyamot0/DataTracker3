@@ -25,9 +25,11 @@
 #define STARTWINDOW_H
 
 #include <QMainWindow>
+#include <QThread>
 
 #include "sessionwindow.h"
 #include "reliabilitydialog.h"
+#include "filemigrater.h"
 
 #include "settingsdialog.h"
 #include "faqdialog.h"
@@ -65,6 +67,8 @@ private slots:
     void on_actionAbout_triggered();
     void on_buttonStart_clicked();
 
+    void WorkFinished(QString value);
+
 private:
     Ui::StartWindow *ui;
 
@@ -88,6 +92,9 @@ private:
     bool displayDark;
     bool outputSheets;
     bool autoReli;
+
+    QThread *migraterThread;
+    FileMigrater *migrater;
 
     void closeEvent(QCloseEvent*);
 };

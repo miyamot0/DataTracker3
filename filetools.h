@@ -46,8 +46,10 @@ class FileTools
 {
 public:
 
-static void ReadToLocal(QString workingDirectory, QString backupSaveLocation, QString folderTitle)
+static bool ReadToLocal(QString workingDirectory, QString backupSaveLocation, QString folderTitle)
 {
+    bool value = true;
+
     workingDirectory = pathAppend(workingDirectory, folderTitle);
 
     QStringList mFiles;
@@ -78,13 +80,22 @@ static void ReadToLocal(QString workingDirectory, QString backupSaveLocation, QS
         if (!tempFile->exists())
         {
             QDir().mkpath(tempFileInfo->absolutePath());
-            QFile::copy(base, tempTest);
+            value = QFile::copy(base, tempTest);
+
+            if (!value)
+            {
+                return false;
+            }
         }
     }
+
+    return true;
 }
 
-static void WriteToRemote(QString workingDirectory, QString backupSaveLocation, QString folderTitle)
+static bool WriteToRemote(QString workingDirectory, QString backupSaveLocation, QString folderTitle)
 {
+    bool value = true;
+
     QStringList mFiles;
     QDirIterator iterator(workingDirectory,
                           QStringList() << "*.json",
@@ -113,9 +124,16 @@ static void WriteToRemote(QString workingDirectory, QString backupSaveLocation, 
         if (!tempFile->exists())
         {
             QDir().mkpath(tempFileInfo->absolutePath());
-            QFile::copy(base, tempTest);
+            value = QFile::copy(base, tempTest);
+
+            if (!value)
+            {
+                return false;
+            }
         }
     }
+
+    return true;
 }
 
 /** Read keys in from file

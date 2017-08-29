@@ -55,14 +55,38 @@ StartWindow::StartWindow(QWidget *parent) :
 
     LoadSettings();
 
-    //FileTools::WriteToRemote(workingDirectory, backupSaveLocation, folderTitle);
-    //FileTools::ReadToLocal(backupSaveLocation, workingDirectory, folderTitle);
+    if (QDir(backupSaveLocation).exists())
+    {
+        migraterThread = new QThread();
+        migrater = new FileMigrater(workingDirectory, backupSaveLocation, folderTitle);
+        migrater->moveToThread(migraterThread);
+
+        connect(migrater, SIGNAL(workStarted()), migraterThread, SLOT(start()));
+        connect(migraterThread, SIGNAL(started()), migrater, SLOT(working()));
+        connect(migrater, SIGNAL(workFinished(QString)), migraterThread, SLOT(quit()), Qt::DirectConnection);
+        connect(migrater, SIGNAL(workFinished(QString)), this, SLOT(WorkFinished(QString)));
+
+        migraterThread->wait();
+        migrater->startWork();
+    }
 
     statusBar()->setSizeGripEnabled(false);
 
     WindowTools::SetWindowFixed(this);
 }
 
+/**
+ * @brief StartWindow::WorkFinished
+ * @param value
+ */
+void StartWindow::WorkFinished(QString value)
+{
+    statusBar()->showMessage(value, 3000);
+}
+
+/**
+ * @brief StartWindow::~StartWindow
+ */
 StartWindow::~StartWindow()
 {
     delete ui;
