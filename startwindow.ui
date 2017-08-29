@@ -130,7 +130,6 @@
     <property name="title">
      <string>Settings</string>
     </property>
-    <addaction name="actionCalculate_Reliability"/>
     <addaction name="actionSettings_2"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -151,7 +150,14 @@
     <addaction name="actionTango_Icons"/>
     <addaction name="actionQDarkStyleSheet"/>
    </widget>
+   <widget class="QMenu" name="menuAnalyses">
+    <property name="title">
+     <string>Analyses</string>
+    </property>
+    <addaction name="actionCalculate_Reliability"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuAnalyses"/>
    <addaction name="menuOptions"/>
    <addaction name="menuLicenses"/>
    <addaction name="menuHelp"/>
