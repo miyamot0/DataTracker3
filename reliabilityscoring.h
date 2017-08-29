@@ -2,15 +2,146 @@
 #define RELIABILITYSCORING_H
 
 #include <QObject>
+#include <QDir>
 
 #include "keysetentry.h"
 #include "sessionevent.h"
 #include "reliabilitymeasure.h"
+#include "reliabilityparse.h"
+#include "filetools.h"
 
 class ReliabilityScoring
 {
 public:
 
+static void PerformReliabilityCheck(QString mWorkingDirectory, QString Group, QString Individual, QString Evaluation)
+{
+    QString mFilePath = FileTools::pathAppend(mWorkingDirectory, Group);
+    mFilePath = FileTools::pathAppend(mFilePath, Individual);
+    mFilePath = FileTools::pathAppend(mFilePath, Evaluation);
+
+    QList<ReliabilityParse> PrimaryReliabilityObjects;
+    QList<ReliabilityParse> SecondaryReliabilityObjects;
+
+    QList<ReliabilityMeasure> ReliResults;
+
+    QDirIterator iterator(mFilePath,
+                          QStringList() << "*.json",
+                          QDir::Files,
+                          QDirIterator::Subdirectories);
+
+    while (iterator.hasNext())
+    {
+        QString mFileName = iterator.next();
+
+        if (mFileName.contains(".json", Qt::CaseInsensitive))
+        {
+            QFile mSession(mFileName);
+
+            if (mSession.exists())
+            {
+                if (mSession.open(QIODevice::ReadOnly | QIODevice::Text))
+                {
+                    QString sessionData = mSession.readAll();
+                    mSession.close();
+
+                    QJsonDocument loadSession = QJsonDocument::fromJson(sessionData.toUtf8());
+                    QJsonObject sessionObject = loadSession.object();
+
+                    if((sessionObject["Role"].toString().contains("Primary", Qt::CaseInsensitive)))
+                    {
+                        ReliabilityParse mReliObj;
+                        mReliObj.SessionNumber = sessionObject["Session"].toInt();
+                        mReliObj.Collector = sessionObject["Collector"].toString();
+                        mReliObj.Condition = sessionObject["Condition"].toString();
+                        mReliObj.SecondaryObserver = QString("---");
+                        mReliObj.PrimaryFilePath = mFileName;
+                        mReliObj.Reli = false;
+                        mReliObj.CanScoreAsReli = false;
+
+                        PrimaryReliabilityObjects.append(mReliObj);
+                    }
+                    else
+                    {
+                        ReliabilityParse mReliObj;
+                        mReliObj.SessionNumber = sessionObject["Session"].toInt();
+                        mReliObj.Collector = sessionObject["Collector"].toString();
+                        mReliObj.Condition = sessionObject["Condition"].toString();
+                        mReliObj.PrimaryFilePath = mFileName;
+                        mReliObj.Reli = true;
+                        mReliObj.CanScoreAsReli = false;
+
+                        SecondaryReliabilityObjects.append(mReliObj);
+                    }
+                }
+            }
+        }
+    }
+
+    for (int i(0); i < PrimaryReliabilityObjects.count(); i++)
+    {
+        for (int j(0); j < SecondaryReliabilityObjects.count(); j++)
+        {
+            if (PrimaryReliabilityObjects[i].SessionNumber == SecondaryReliabilityObjects[j].SessionNumber &&
+                    PrimaryReliabilityObjects[i].Condition == SecondaryReliabilityObjects[j].Condition)
+            {
+                PrimaryReliabilityObjects[i].SecondaryObserver = SecondaryReliabilityObjects[j].Collector;
+                PrimaryReliabilityObjects[i].ReliFilePath = SecondaryReliabilityObjects[j].PrimaryFilePath;
+                PrimaryReliabilityObjects[i].CanScoreAsReli = true;
+            }
+        }
+    }
+
+    QJsonObject mPrimary, mReli;
+
+    bool mPrimaryCheck = false,
+         mReliCheck = false;
+
+    QDateTime startTime, endTime;
+
+    ReliResults.clear();
+
+    for(int i(0); i<PrimaryReliabilityObjects.count(); i++)
+    {
+        if (PrimaryReliabilityObjects[i].CanScoreAsReli)
+        {
+            ReliabilityMeasure mMeasure;
+
+            mMeasure.Session = PrimaryReliabilityObjects[i].SessionNumber;
+            mMeasure.Group = Group;
+            mMeasure.Individual = Individual;
+            mMeasure.Evaluation = Evaluation;
+            mMeasure.Condition = PrimaryReliabilityObjects[i].Condition;
+            mMeasure.Primary = PrimaryReliabilityObjects[i].Collector;
+            mMeasure.Reliability = PrimaryReliabilityObjects[i].SecondaryObserver;
+
+            mPrimaryCheck = FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects[i].PrimaryFilePath, &mPrimary);
+            mReliCheck = FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects[i].ReliFilePath, &mReli);
+
+            if (mPrimaryCheck && mReliCheck)
+            {
+                ReliabilityScoring::CompareObservers(mPrimary, mReli, &mMeasure);
+            }
+
+            ReliResults.append(mMeasure);
+        }
+    }
+
+    FileTools::WriteReliSpreadsheet(mWorkingDirectory,
+                                    Group,
+                                    Individual,
+                                    Evaluation,
+                                    &ReliResults,
+                                    &PrimaryReliabilityObjects,
+                                    &SecondaryReliabilityObjects);
+}
+
+/**
+ * @brief CompareObservers
+ * @param mPrimary
+ * @param mSecondary
+ * @param mMeasure
+ */
 static void CompareObservers(QJsonObject mPrimary, QJsonObject mSecondary, ReliabilityMeasure * mMeasure)
 {
     QDateTime startTime = QDateTime(QDateTime::fromString(mPrimary["StartTime"].toString()));
@@ -139,6 +270,14 @@ static void CompareObservers(QJsonObject mPrimary, QJsonObject mSecondary, Relia
     }
 }
 
+/**
+ * @brief GetFrequencyBins
+ * @param bins
+ * @param FrequencyKeys
+ * @param startTime
+ * @param PressedKeys
+ * @return
+ */
 static QList<QList<int>> GetFrequencyBins(int bins, QList<KeySetEntry> FrequencyKeys, QDateTime startTime, QList<SessionEvent> PressedKeys)
 {
     QList<QList<int>> mFrequencyBins;
@@ -178,6 +317,15 @@ static QList<QList<int>> GetFrequencyBins(int bins, QList<KeySetEntry> Frequency
     return mFrequencyBins;
 }
 
+/**
+ * @brief GetDurationBins
+ * @param bins
+ * @param DurationKeys
+ * @param startTime
+ * @param endTime
+ * @param PressedKeys
+ * @return
+ */
 static QList<QList<double>> GetDurationBins(int bins, QList<KeySetEntry> DurationKeys, QDateTime startTime, QDateTime endTime, QList<SessionEvent> PressedKeys)
 {
     QList<QList<double>> mDurationBins;

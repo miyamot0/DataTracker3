@@ -344,6 +344,12 @@ void ReliabilityDialog::WorkFinished(DirectoryParse finalResult, ParseTypes::Par
  */
 void ReliabilityDialog::on_pushButton_clicked()
 {
+    ReliabilityScoring::PerformReliabilityCheck(mWorkingDirectory,
+                                                ui->comboGroup->currentText(),
+                                                ui->comboIndividual->currentText(),
+                                                ui->comboEvaluation->currentText());
+
+    /*
     QJsonObject mPrimary, mReli;
 
     bool mPrimaryCheck = false,
@@ -382,4 +388,5 @@ void ReliabilityDialog::on_pushButton_clicked()
     FileTools::WriteReliSpreadsheet(mWorkingDirectory, ui->comboGroup->currentText(),
                                     ui->comboIndividual->currentText(), ui->comboEvaluation->currentText(),
                                     &ReliResults, &PrimaryReliabilityObjects, &SecondaryReliabilityObjects);
+    */
 }
