@@ -51,6 +51,15 @@ public:
     QDateTime TimePressed;
     Schedule ScheduleType;
     Measurement MeasurementType;
+
+    SessionEvent& SessionEvent::operator=( const SessionEvent& other ) {
+        KeyEntered = other.KeyEntered;
+        TimePressed = other.TimePressed;
+        ScheduleType = other.ScheduleType;
+        MeasurementType = other.MeasurementType;
+
+        return *this;
+    }
 };
 
 #endif // SESSIONEVENT_H

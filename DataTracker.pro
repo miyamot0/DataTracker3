@@ -59,7 +59,9 @@ SOURCES += main.cpp\
     reliabilitydialog.cpp \
     settingsdialog.cpp \
     sessiondurationdialog.cpp \
-    faqdialog.cpp
+    faqdialog.cpp \
+    filewriter.cpp \
+    keyset.cpp
 
 HEADERS  += startwindow.h \
     sessionwindow.h \
@@ -86,7 +88,8 @@ HEADERS  += startwindow.h \
     reliabilityscoring.h \
     reliabilitymeasure.h \
     windowtools.h \
-    faqdialog.h
+    faqdialog.h \
+    filewriter.h
 
 FORMS    += startwindow.ui \
     sessionwindow.ui \

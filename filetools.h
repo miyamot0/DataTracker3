@@ -379,7 +379,7 @@ static QString formatPercentage(double percent, qint64 totalTime)
  * @param TimeThree
  * @param PressedKeys
  */
-static void WriteSessionJSON(QString mWorkingDirectory, KeySet CurrentKeySet, QString Group, QString Individual,
+static bool WriteSessionJSON(QString mWorkingDirectory, KeySet CurrentKeySet, QString Group, QString Individual,
                              QString Evaluation, QString Condition, QString Therapist,
                              QString KeySetName, QString Collector, QString Role,
                              QString StartTime, QString EndTime, qint64 TimeOverall, qint64 TimeOne,
@@ -580,10 +580,17 @@ static void WriteSessionJSON(QString mWorkingDirectory, KeySet CurrentKeySet, QS
 
     if (!saveFile.open(QIODevice::WriteOnly)) {
         // TODO error handling
-        return;
+        return false;
     }
 
-    saveFile.write(jsonDoc.toJson());
+    if (saveFile.write(jsonDoc.toJson()) > -1)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 /**
@@ -613,7 +620,7 @@ static void WriteSessionJSON(QString mWorkingDirectory, KeySet CurrentKeySet, QS
  * @param FrequencyKeysThree
  * @param DurationKeysThree
  */
-static void WriteSessionSpreadsheet(QString mWorkingDirectory, KeySet CurrentKeySet, QString Group, QString Individual,
+static bool WriteSessionSpreadsheet(QString mWorkingDirectory, KeySet CurrentKeySet, QString Group, QString Individual,
                                     QString Evaluation, QString Condition, QString Therapist,
                                     QString KeySetName, QString Collector, QString Role,
                                     QString StartTime, qint64 TimeOverall, qint64 TimeOne,
@@ -876,10 +883,10 @@ static void WriteSessionSpreadsheet(QString mWorkingDirectory, KeySet CurrentKey
 
     QString path = FileTools::pathAppend(mKeyPath, mFileName);
 
-    xlsx.saveAs(path);
+    return xlsx.saveAs(path);
 }
 
-static void WriteReliSpreadsheet(QString mWorkingDirectory, QString Group, QString Individual, QString Evaluation, QList<ReliabilityMeasure> * ReliResults,
+static bool WriteReliSpreadsheet(QString mWorkingDirectory, QString Group, QString Individual, QString Evaluation, QList<ReliabilityMeasure> * ReliResults,
                                  QList<ReliabilityParse> * PrimaryReliabilityObjects, QList<ReliabilityParse> * SecondaryReliabilityObjects)
 {
     QXlsx::Document xlsx;
@@ -1017,8 +1024,7 @@ static void WriteReliSpreadsheet(QString mWorkingDirectory, QString Group, QStri
 
     QString path = FileTools::pathAppend(mKeyPath, mFileName);
 
-    xlsx.saveAs(path);
-
+    return xlsx.saveAs(path);
 }
 
 /**

@@ -21,38 +21,10 @@
 
   */
 
-#ifndef KEYSET_H
-#define KEYSET_H
+#include "keyset.h"
 
-#include <QObject>
-
-#include "keysetentry.h"
-
-/** Class for holding information related to key pairs
- * @brief The KeySet class
- */
-class KeySet
+KeySet::KeySet()
 {
-public:
-    QString KeySetName;
 
-    QList<KeySetEntry> FrequencyKeys;
-    QList<KeySetEntry> DurationKeys;
 
-    int TotalSeconds;
-    int Session;
-
-    KeySet();
-
-    KeySet& KeySet::operator=( const KeySet& other ) {
-        KeySetName = other.KeySetName;
-        FrequencyKeys = other.FrequencyKeys;
-        DurationKeys = other.DurationKeys;
-        TotalSeconds = other.TotalSeconds;
-        Session = other.Session;
-
-        return *this;
-    }
-};
-
-#endif // KEYSET_H
+}

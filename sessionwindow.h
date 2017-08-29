@@ -32,6 +32,7 @@
 #include "resultsdialog.h"
 #include "sessiondurationdialog.h"
 
+#include "filewriter.h"
 #include "sessioncounter.h"
 #include "directoryparse.h"
 #include "directorysearcher.h"
@@ -59,6 +60,8 @@ private slots:
 
     void WorkUpdate(QString results);
     void WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAction action);
+
+    void FileWriteFinished(QString result);
 
     void UpdateSessionCount(int session);
 
@@ -95,10 +98,13 @@ private:
     QThread *counterThread;
     SessionCounter *counter;
 
+    QThread *fileWriteThread;
+    FileWriter *fileWriter;
+
     DirectoryParse mCurrentDirectory;
 
     SessionDurationDialog sessionDurationDialog;
-    RecordingWindow * r;
+    RecordingWindow * recordingWindow;
     ResultsDialog mResults;
 
     QString alternativeSaveLocation = "";

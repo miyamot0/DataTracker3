@@ -31,6 +31,7 @@
 #include "parsetypes.h"
 #include "keyseteditor.h"
 #include "keysetentry.h"
+#include "filewriter.h"
 
 #include <QtWidgets>
 #include <QDebug>
@@ -672,6 +673,18 @@ void SessionWindow::WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAc
 }
 
 /**
+ * @brief SessionWindow::FileWriteFinished
+ * @param result
+ */
+void SessionWindow::FileWriteFinished(QString result)
+{
+    if (mResults.isVisible())
+    {
+        mResults.SetTitle(result);
+    }
+}
+
+/**
  * @brief SessionWindow::UpdateSessionCount
  * @param session
  */
@@ -935,23 +948,23 @@ int SessionWindow::GetSessionNumber()
  */
 void SessionWindow::ScoreAvailableKeys()
 {
-    ScoringTools::ScoreOverallSchedule(&r->PressedKeys, &CurrentKeySet,
-                                       &r->startTime, &r->endTime,
+    ScoringTools::ScoreOverallSchedule(&recordingWindow->PressedKeys, &CurrentKeySet,
+                                       &recordingWindow->startTime, &recordingWindow->endTime,
                                        &mResults.FrequencyOverall, &mResults.DurationOverall,
                                        &mResults.TimeOverall);
 
-    ScoringTools::ScoreSpecificSchedule(&r->PressedKeys, &CurrentKeySet,
-                                        &r->endTime, Schedule::One,
+    ScoringTools::ScoreSpecificSchedule(&recordingWindow->PressedKeys, &CurrentKeySet,
+                                        &recordingWindow->endTime, Schedule::One,
                                         &mResults.FrequencyOne, &mResults.DurationOne,
                                         &mResults.TimeOne);
 
-    ScoringTools::ScoreSpecificSchedule(&r->PressedKeys, &CurrentKeySet,
-                                        &r->endTime, Schedule::Two,
+    ScoringTools::ScoreSpecificSchedule(&recordingWindow->PressedKeys, &CurrentKeySet,
+                                        &recordingWindow->endTime, Schedule::Two,
                                         &mResults.FrequencyTwo, &mResults.DurationTwo,
                                         &mResults.TimeTwo);
 
-    ScoringTools::ScoreSpecificSchedule(&r->PressedKeys, &CurrentKeySet,
-                                        &r->endTime, Schedule::Three,
+    ScoringTools::ScoreSpecificSchedule(&recordingWindow->PressedKeys, &CurrentKeySet,
+                                        &recordingWindow->endTime, Schedule::Three,
                                         &mResults.FrequencyThree, &mResults.DurationThree,
                                         &mResults.TimeThree);
 }
@@ -963,7 +976,7 @@ void SessionWindow::BuildResults()
 {
     mResults.SetKeySet(CurrentKeySet);
     mResults.BuildTables();
-    mResults.BuildNarrative(&r->PressedKeys, &r->startTime);
+    mResults.BuildNarrative(&recordingWindow->PressedKeys, &recordingWindow->startTime);
     mResults.SetParameters(ui->comboGroup->currentText(),
                            ui->comboIndividual->currentText(),
                            ui->comboEvaluation->currentText(),
@@ -979,13 +992,56 @@ void SessionWindow::BuildResults()
  */
 void SessionWindow::WriteOutput()
 {
+    fileWriteThread = new QThread();
+
+    fileWriter = new FileWriter(mWorkingDirectory,
+                                CurrentKeySet,
+                                ui->comboGroup->currentText(),
+                                ui->comboIndividual->currentText(),
+                                ui->comboEvaluation->currentText(),
+                                ui->comboCondition->currentText(),
+                                ui->comboTherapist->currentText(),
+                                ui->comboKeySet->currentText(),
+                                ui->comboCollector->currentText(),
+                                ui->comboRole->currentText(),
+                                recordingWindow->startTime.toString(),
+                                recordingWindow->endTime.toString(),
+                                mResults.TimeOverall,
+                                mResults.TimeOne,
+                                mResults.TimeTwo,
+                                mResults.TimeThree,
+                                recordingWindow->PressedKeys,
+                                &mResults.FrequencyOverall,
+                                &mResults.DurationOverall,
+                                &mResults.FrequencyOne,
+                                &mResults.DurationOne,
+                                &mResults.FrequencyTwo,
+                                &mResults.DurationTwo,
+                                &mResults.FrequencyThree,
+                                &mResults.DurationThree,
+                                outputSheets,
+                                autoReli,
+                                alternativeSaveLocation);
+
+    fileWriter->moveToThread(fileWriteThread);
+
+    connect(fileWriter, SIGNAL(workStarted()), fileWriteThread, SLOT(start()));
+    connect(fileWriteThread, SIGNAL(started()), fileWriter, SLOT(working()));
+    connect(fileWriter, SIGNAL(workFinished(QString)), fileWriteThread, SLOT(quit()), Qt::DirectConnection);
+    connect(fileWriter, SIGNAL(workFinished(QString)), this, SLOT(FileWriteFinished(QString)));
+
+    fileWriteThread->wait();
+    fileWriter->startWork();
+
+/*
+
     FileTools::WriteSessionJSON(mWorkingDirectory,CurrentKeySet,ui->comboGroup->currentText(),
                                 ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
                                 ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
                                 ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
-                                ui->comboRole->currentText(),r->startTime.toString(),r->endTime.toString(),
+                                ui->comboRole->currentText(),recordingWindow->startTime.toString(),recordingWindow->endTime.toString(),
                                 mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree,
-                                &r->PressedKeys, &mResults.FrequencyOverall, &mResults.DurationOverall,
+                                &recordingWindow->PressedKeys, &mResults.FrequencyOverall, &mResults.DurationOverall,
                                 &mResults.FrequencyOne, &mResults.DurationOne,
                                 &mResults.FrequencyTwo, &mResults.DurationTwo,
                                 &mResults.FrequencyThree, &mResults.DurationThree);
@@ -996,8 +1052,8 @@ void SessionWindow::WriteOutput()
                                     ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
                                     ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
                                     ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
-                                    ui->comboRole->currentText(),r->startTime.toString(),
-                                    mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree, &r->PressedKeys,
+                                    ui->comboRole->currentText(),recordingWindow->startTime.toString(),
+                                    mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree, &recordingWindow->PressedKeys,
                                     &mResults.FrequencyOverall, &mResults.DurationOverall,
                                     &mResults.FrequencyOne, &mResults.DurationOne,
                                     &mResults.FrequencyTwo, &mResults.DurationTwo,
@@ -1011,9 +1067,9 @@ void SessionWindow::WriteOutput()
                                     ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
                                     ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
                                     ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
-                                    ui->comboRole->currentText(),r->startTime.toString(),r->endTime.toString(),
+                                    ui->comboRole->currentText(),recordingWindow->startTime.toString(),recordingWindow->endTime.toString(),
                                     mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree,
-                                    &r->PressedKeys, &mResults.FrequencyOverall, &mResults.DurationOverall,
+                                    &recordingWindow->PressedKeys, &mResults.FrequencyOverall, &mResults.DurationOverall,
                                     &mResults.FrequencyOne, &mResults.DurationOne,
                                     &mResults.FrequencyTwo, &mResults.DurationTwo,
                                     &mResults.FrequencyThree, &mResults.DurationThree);
@@ -1024,8 +1080,8 @@ void SessionWindow::WriteOutput()
                                         ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
                                         ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
                                         ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
-                                        ui->comboRole->currentText(),r->startTime.toString(),
-                                        mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree, &r->PressedKeys,
+                                        ui->comboRole->currentText(),recordingWindow->startTime.toString(),
+                                        mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree, &recordingWindow->PressedKeys,
                                         &mResults.FrequencyOverall, &mResults.DurationOverall,
                                         &mResults.FrequencyOne, &mResults.DurationOne,
                                         &mResults.FrequencyTwo, &mResults.DurationTwo,
@@ -1041,12 +1097,14 @@ void SessionWindow::WriteOutput()
                                                     ui->comboEvaluation->currentText());
     }
 
+*/
+
     if (showPlots)
     {
         mResults.SetTabEnabled(1, true);
         mResults.SetTabEnabled(2, true);
 
-        mResults.BuildPlot(CurrentKeySet, &r->PressedKeys, &r->startTime, &r->endTime);
+        mResults.BuildPlot(CurrentKeySet, &recordingWindow->PressedKeys, &recordingWindow->startTime, &recordingWindow->endTime);
     }
     else
     {
@@ -1071,18 +1129,18 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
             return;
         }
 
-        r = new RecordingWindow();
-        r->LoadKeys(CurrentKeySet);
-        r->SetGroup(ui->comboGroup->currentText());
-        r->SetIndividual(ui->comboIndividual->currentText());
-        r->SetEvaluation(ui->comboEvaluation->currentText());
-        r->SetCondition(ui->comboCondition->currentText());
-        r->SetCollector(ui->comboCollector->currentText());
-        r->SetRole(ui->comboRole->currentText());
+        recordingWindow = new RecordingWindow();
+        recordingWindow->LoadKeys(CurrentKeySet);
+        recordingWindow->SetGroup(ui->comboGroup->currentText());
+        recordingWindow->SetIndividual(ui->comboIndividual->currentText());
+        recordingWindow->SetEvaluation(ui->comboEvaluation->currentText());
+        recordingWindow->SetCondition(ui->comboCondition->currentText());
+        recordingWindow->SetCollector(ui->comboCollector->currentText());
+        recordingWindow->SetRole(ui->comboRole->currentText());
 
-        r->setWindowState(r->windowState() | Qt::WindowMaximized);
+        recordingWindow->setWindowState(recordingWindow->windowState() | Qt::WindowMaximized);
 
-        if (r->exec() == QDialog::Rejected)
+        if (recordingWindow->exec() == QDialog::Rejected)
         {
             return;
         }

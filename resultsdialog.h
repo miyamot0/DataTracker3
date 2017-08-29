@@ -60,6 +60,7 @@ public:
                        QString condition, QString therapist, QString keySet,
                        QString collector, QString role);
     void SetKeySet(KeySet currKeySet);
+    void SetTitle(QString title);
 
     ~ResultsDialog();
 

@@ -96,6 +96,16 @@ void ResultsDialog::SetKeySet(KeySet currKeySet)
     CurrentKeySet = currKeySet;
 }
 
+/**
+ * @brief ResultsDialog::SetTitle
+ * @param title
+ */
+void ResultsDialog::SetTitle(QString title)
+{
+    ui->labelTitle->setText(QString("<html><head/><body><p align='center'><span style=' font-size:12pt;'>#%1</span></p></body></html>")
+                            .arg(title));
+}
+
 /** Build display tables
  * @brief ResultsDialog::BuildTables
  */
