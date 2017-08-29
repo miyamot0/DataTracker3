@@ -602,10 +602,10 @@
             </sizepolicy>
            </property>
            <property name="mouseTracking">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::TabFocus</enum>
+            <enum>Qt::StrongFocus</enum>
            </property>
            <property name="styleSheet">
             <string notr="true"/>

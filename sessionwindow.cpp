@@ -496,7 +496,6 @@ void SessionWindow::on_buttonKeySet_clicked()
             }
         }
     }
-
 }
 
 /** Fire when keyboard changes
@@ -773,6 +772,51 @@ void SessionWindow::SetConditions(QStringList Conditions)
 {
     DefaultComboBox(ui->comboCondition);
         ui->comboCondition->addItems(Conditions);
+}
+
+/**
+ * @brief SessionWindow::EditCurrentKeySet
+ */
+void SessionWindow::EditCurrentKeySet()
+{
+    KeySetEditor mKeySetEntry;
+    mKeySetEntry.KeySetName = ui->comboKeySet->currentText();
+
+    mKeySetEntry.loadExistingKeys(mWorkingDirectory, ui->comboGroup->currentText(), ui->comboIndividual->currentText());
+
+    mKeySetEntry.exec();
+
+    QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, ui->comboGroup->currentText());
+    mKeyPath = FileTools::pathAppend(mKeyPath, ui->comboIndividual->currentText());
+
+    FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(ui->comboKeySet->currentText())), mKeySetEntry.keySet);
+
+    ui->tableFrequency->setRowCount(0);
+    ui->tableDuration->setRowCount(0);
+
+    CurrentKeySet.KeySetName = "";
+    CurrentKeySet.DurationKeys.clear();
+    CurrentKeySet.FrequencyKeys.clear();
+
+    FileTools::ReadKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(ui->comboKeySet->currentText())), &CurrentKeySet);
+
+    ui->tableFrequency->setRowCount(0);
+
+    for (KeySetEntry mKey : CurrentKeySet.FrequencyKeys)
+    {
+        ui->tableFrequency->insertRow(ui->tableFrequency->rowCount());
+        ui->tableFrequency->setItem(ui->tableFrequency->rowCount() - 1, 0, new QTableWidgetItem(mKey.KeyName));
+        ui->tableFrequency->setItem(ui->tableFrequency->rowCount() - 1, 1, new QTableWidgetItem(mKey.KeyDescription));
+    }
+
+    ui->tableDuration->setRowCount(0);
+
+    for (KeySetEntry mKey : CurrentKeySet.DurationKeys)
+    {
+        ui->tableDuration->insertRow(ui->tableDuration->rowCount());
+        ui->tableDuration->setItem(ui->tableDuration->rowCount() - 1, 0, new QTableWidgetItem(mKey.KeyName));
+        ui->tableDuration->setItem(ui->tableDuration->rowCount() - 1, 1, new QTableWidgetItem(mKey.KeyDescription));
+    }
 }
 
 SessionWindow::~SessionWindow()
@@ -1056,4 +1100,36 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
         counterThread->wait();
         counter->startWork();
     }
+}
+
+/**
+ * @brief SessionWindow::on_tableFrequency_doubleClicked
+ */
+void SessionWindow::on_tableFrequency_doubleClicked(const QModelIndex)
+{
+    if (ui->comboGroup->currentIndex() == 0 ||
+        ui->comboIndividual->currentIndex() == 0 ||
+        ui->comboEvaluation->currentIndex() == 0 ||
+        ui->comboKeySet->currentIndex() == 0)
+    {
+        return;
+    }
+
+    EditCurrentKeySet();
+}
+
+/**
+ * @brief SessionWindow::on_tableDuration_doubleClicked
+ */
+void SessionWindow::on_tableDuration_doubleClicked(const QModelIndex)
+{
+    if (ui->comboGroup->currentIndex() == 0 ||
+        ui->comboIndividual->currentIndex() == 0 ||
+        ui->comboEvaluation->currentIndex() == 0 ||
+        ui->comboKeySet->currentIndex() == 0)
+    {
+        return;
+    }
+
+    EditCurrentKeySet();
 }

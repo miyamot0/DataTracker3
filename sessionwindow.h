@@ -73,10 +73,15 @@ private slots:
     void SetIndividuals(QStringList Individuals);
     void SetEvaluations(QStringList Evaluations, QStringList KeySets, QStringList Therapists, QStringList Collectors);
     void SetConditions(QStringList Conditions);
+    void EditCurrentKeySet();
 
     void DefaultComboBox(QComboBox *mSelectedBox);
 
     void on_comboSessionDuration_currentIndexChanged(int index);
+
+    void on_tableFrequency_doubleClicked(const QModelIndex);
+
+    void on_tableDuration_doubleClicked(const QModelIndex);
 
 private:
     Ui::SessionWindow *ui;
