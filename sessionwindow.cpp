@@ -1067,6 +1067,8 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
         r->SetCollector(ui->comboCollector->currentText());
         r->SetRole(ui->comboRole->currentText());
 
+        r->setWindowState(r->windowState() | Qt::WindowMaximized);
+
         if (r->exec() == QDialog::Rejected)
         {
             return;
