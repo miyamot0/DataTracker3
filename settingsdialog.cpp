@@ -27,6 +27,7 @@
 #include "settingsdialog.h"
 #include "ui_settingsdialog.h"
 #include "filetools.h"
+#include "windowtools.h"
 
 SettingsDialog::SettingsDialog(QWidget *parent) :
     QDialog(parent),
@@ -36,6 +37,8 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui->editSaveLocation->installEventFilter(this);
 
     setWindowTitle(tr("Program Settings"));
+
+    WindowTools::SetDialogFixed(this);
 }
 
 /**

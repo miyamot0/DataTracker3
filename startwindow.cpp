@@ -25,6 +25,7 @@
 #include "ui_startwindow.h"
 
 #include "sessionwindow.h"
+#include "windowtools.h"
 #include "filetools.h"
 
 #include <QStandardPaths>
@@ -49,6 +50,10 @@ StartWindow::StartWindow(QWidget *parent) :
     }
 
     LoadSettings();
+
+    statusBar()->setSizeGripEnabled(false);
+
+    WindowTools::SetWindowFixed(this);
 
     // TODO network auto update
 }

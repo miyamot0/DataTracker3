@@ -32,8 +32,17 @@
    </item>
    <item>
     <layout class="QFormLayout" name="formLayout">
+     <property name="verticalSpacing">
+      <number>11</number>
+     </property>
      <item row="0" column="0">
       <widget class="QLabel" name="labelAlternate">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Backup Save Location:</string>
        </property>
@@ -41,6 +50,12 @@
      </item>
      <item row="0" column="1">
       <widget class="QLineEdit" name="editSaveLocation">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="focusPolicy">
         <enum>Qt::ClickFocus</enum>
        </property>
@@ -48,6 +63,12 @@
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="labelTheme">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Application Theme:</string>
        </property>
@@ -55,6 +76,12 @@
      </item>
      <item row="1" column="1">
       <widget class="QComboBox" name="comboTheme">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="focusPolicy">
         <enum>Qt::StrongFocus</enum>
        </property>
@@ -72,6 +99,12 @@
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="labelSpreadsheets">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Save Spreadsheets:</string>
        </property>
@@ -79,6 +112,12 @@
      </item>
      <item row="2" column="1">
       <widget class="QCheckBox" name="checkBoxSheets">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -86,6 +125,12 @@
      </item>
      <item row="3" column="0">
       <widget class="QLabel" name="labelGraphs">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Show Graphs:</string>
        </property>
@@ -95,6 +140,12 @@
       <widget class="QCheckBox" name="checkBoxGraphs">
        <property name="enabled">
         <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
        <property name="text">
         <string/>

@@ -24,6 +24,8 @@
 #include "contactdialog.h"
 #include "ui_contactdialog.h"
 
+#include "windowtools.h"
+
 ContactDialog::ContactDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ContactDialog)
@@ -31,6 +33,8 @@ ContactDialog::ContactDialog(QWidget *parent) :
     ui->setupUi(this);
 
     setWindowTitle(tr("Contact"));
+
+    WindowTools::SetDialogFixed(this);
 }
 
 ContactDialog::~ContactDialog()

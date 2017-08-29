@@ -23,6 +23,7 @@
 
 #include "licensedialog.h"
 #include "ui_licensedialog.h"
+#include "windowtools.h"
 
 #include <QFile>
 #include <QTextStream>
@@ -41,6 +42,8 @@ LicenseDialog::LicenseDialog(QString fileName, QWidget *parent) :
 
         ui->textBrowser->setText(inputTextStream.readAll());
     }
+
+    WindowTools::SetDialogFixed(this);
 }
 
 LicenseDialog::~LicenseDialog()

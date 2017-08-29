@@ -24,6 +24,8 @@
 #include "aboutdialog.h"
 #include "ui_aboutdialog.h"
 
+#include "windowtools.h"
+
 AboutDialog::AboutDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AboutDialog)
@@ -31,6 +33,8 @@ AboutDialog::AboutDialog(QWidget *parent) :
     ui->setupUi(this);
 
     setWindowTitle(tr("About"));
+
+    WindowTools::SetDialogFixed(this);
 }
 
 AboutDialog::~AboutDialog()

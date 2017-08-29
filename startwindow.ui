@@ -15,6 +15,9 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
+    <property name="sizeConstraint">
+     <enum>QLayout::SetDefaultConstraint</enum>
+    </property>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
@@ -27,6 +30,22 @@
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="mouseTracking">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Data Tracker is a behavioral data collection tool, modeled from BDataPro, with the aim to port this tool to multiple platforms. It is part of the Small n Stats project, which aims to expand access to evidence-based technologies to multiple platforms and a range of audiences, free of charge, using open source technology.&lt;/p&gt;&lt;p&gt;This program (Data Tracker) is designed to allow researchers and clinicians to easily measure behavior, in real-time, while permitting a range of helpful information and opportunities for inter-observer agreement. This tool is released under the General Public License-Version 3 by Shawn Gilroy. The source code necessary to replicate, reverse-engineer, or expand this software can be found at the source author's git repository at https://github.com/miyamot0.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+        <property name="margin">
+         <number>20</number>
         </property>
        </widget>
       </item>
@@ -98,7 +117,7 @@
      <x>0</x>
      <y>0</y>
      <width>534</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -109,7 +128,7 @@
    </widget>
    <widget class="QMenu" name="menuOptions">
     <property name="title">
-     <string>Options</string>
+     <string>Settings</string>
     </property>
     <addaction name="actionCalculate_Reliability"/>
     <addaction name="actionSettings_2"/>
@@ -166,7 +185,7 @@
      <normaloff>:/images/applications-system.png</normaloff>:/images/applications-system.png</iconset>
    </property>
    <property name="text">
-    <string>Settings</string>
+    <string>Output Settings</string>
    </property>
   </action>
   <action name="actionContact">
