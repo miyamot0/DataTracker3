@@ -65,6 +65,8 @@ ReliabilityDialog::ReliabilityDialog(QString mCurrentWorkingDirectory, QWidget *
     ui->comboEvaluation->addItem("Select Evaluation");
 
     worker->startWork();
+
+    WindowTools::SetDialogFixedMaximize(this);
 }
 
 ReliabilityDialog::~ReliabilityDialog()

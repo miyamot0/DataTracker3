@@ -17,8 +17,9 @@
 #-------------------------------------------------
 
 TEST_FEATURES = 1
-VERSION_MAJOR = 1
-VERSION_MINOR = 0
+
+VERSION_MAJOR = 0
+VERSION_MINOR = 1
 VERSION_BUILD = 0
 
 DEFINES += "VERSION_MAJOR=$$VERSION_MAJOR"\

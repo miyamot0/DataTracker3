@@ -260,7 +260,7 @@ void StartWindow::on_actionQDarkStyleSheet_triggered()
     licenseDialog->exec();
 }
 
-/**
+/** Open Visual Analysis Window
  * @brief StartWindow::on_actionSession_Visual_Analysis_triggered
  */
 void StartWindow::on_actionSession_Visual_Analysis_triggered()
@@ -269,7 +269,7 @@ void StartWindow::on_actionSession_Visual_Analysis_triggered()
     sessionViewerDialog->exec();
 }
 
-/**
+/** Open FAQ Window
  * @brief StartWindow::on_actionFrequently_Asked_Questions_triggered
  */
 void StartWindow::on_actionFrequently_Asked_Questions_triggered()

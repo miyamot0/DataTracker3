@@ -9,6 +9,7 @@
 #include "ui_sessionviewerdialog.h"
 
 #include "filetools.h"
+#include "windowtools.h"
 #include "reliabilityparse.h"
 
 SessionViewerDialog::SessionViewerDialog(QString mCurrentWorkingDirectory, QWidget *parent) :
@@ -128,6 +129,8 @@ SessionViewerDialog::SessionViewerDialog(QString mCurrentWorkingDirectory, QWidg
     ui->plotLayout2->addWidget(chartView2);
 
     axisY2->setMin(0);
+
+    WindowTools::SetDialogFixedMaximize(this);
 }
 
 SessionViewerDialog::~SessionViewerDialog()
@@ -508,7 +511,6 @@ void SessionViewerDialog::on_tableWidget_currentCellChanged(int currentRow, int,
             tempKeyCode = dKeySet.at(i);
             waitingForNext = false;
             runningSum = 0;
-            //runs.clear();
 
             foreach(SessionEvent event, PressedKeys)
             {
