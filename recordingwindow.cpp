@@ -333,9 +333,9 @@ void RecordingWindow::StartTiming()
 
     loggedKey.KeyEntered = loggedKeySet;
 
-    AddKey(loggedKey);
-
     CurrentSchedule = Schedule::One;
+
+    AddKey(loggedKey);
 
     ui->editTimerOne->setStyleSheet("background: green;");
 }

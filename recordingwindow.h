@@ -109,9 +109,13 @@ private:
         {
             return QString("Schedule 2");
         }
-        else
+        else if (schedule == Schedule::Three)
         {
             return QString("Schedule 3");
+        }
+        else
+        {
+            return QString("---");
         }
     }
 
