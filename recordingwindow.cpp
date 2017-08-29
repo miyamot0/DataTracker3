@@ -32,10 +32,15 @@
 RecordingWindow::RecordingWindow(QWidget *parent) : QDialog(parent), ui(new Ui::RecordingWindow)
 {
     ui->setupUi(this);
-
     installEventFilter(this);
-
     setWindowTitle(tr("Session Recording Window"));
+
+    Qt::WindowFlags windowFlags = 0;
+    windowFlags |= Qt::WindowMaximizeButtonHint;
+    windowFlags |= Qt::WindowMinimizeButtonHint;
+    windowFlags |= Qt::WindowCloseButtonHint;
+
+    setWindowFlags(windowFlags);
 
     Started = false;
 }
