@@ -93,6 +93,11 @@ private:
 
     bool Drawn = false;
 
+    /**
+     * @brief formatTimeLabel
+     * @param msecs
+     * @return
+     */
     QString formatTimeLabel(int msecs)
     {
         int msecMod = msecs % 1000;
@@ -108,6 +113,12 @@ private:
         .arg(msecMod, 2, 10, QLatin1Char('0'));
     }
 
+    /**
+     * @brief formatRate
+     * @param count
+     * @param totalTime
+     * @return
+     */
     QString formatRate(double count, qint64 totalTime)
     {
         if (totalTime == 0)
@@ -120,6 +131,12 @@ private:
         }
     }
 
+    /**
+     * @brief formatPercentage
+     * @param percent
+     * @param totalTime
+     * @return
+     */
     QString formatPercentage(double percent, qint64 totalTime)
     {
         if (totalTime == 0)
