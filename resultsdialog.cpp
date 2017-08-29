@@ -31,6 +31,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QFile>
+#include <QPixmap>
 
 ResultsDialog::ResultsDialog(QWidget *parent) :
     QDialog(parent),
@@ -44,7 +45,6 @@ ResultsDialog::ResultsDialog(QWidget *parent) :
     windowFlags |= Qt::WindowCloseButtonHint;
 
     setWindowFlags(windowFlags);
-    // TODO save images
 
     setWindowTitle(tr("Session Results"));
 }
@@ -324,6 +324,8 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
     }
 
     chart = new QChart();
+    chart->layout()->setContentsMargins(0, 0, 0, 0);
+    chart->setBackgroundRoundness(0);
     chart->setTitle("Cumulative Target Counts");
     chart->setTitleFont(QFont("Serif", 10, -1, false));
     chart->setTitleBrush(Qt::black);
@@ -410,6 +412,8 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
 
     // dur
     chart2 = new QChart();
+    chart2->layout()->setContentsMargins(0, 0, 0, 0);
+    chart2->setBackgroundRoundness(0);
     chart2->setTitle("Cumulative Time Counts");
     chart2->setTitleFont(QFont("Serif", 10, -1, false));
     chart2->setTitleBrush(Qt::black);
@@ -465,7 +469,7 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
     }
 
     chartView2 = new QChartView(chart2);
-    chartView2->setRenderHint(QPainter::Antialiasing);  
+    chartView2->setRenderHint(QPainter::Antialiasing);
 
     if (!Drawn)
     {
