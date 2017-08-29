@@ -17,9 +17,9 @@
 #-------------------------------------------------
 
 TEST_FEATURES = 1
-VERSION_MAJOR = 0
+VERSION_MAJOR = 1
 VERSION_MINOR = 0
-VERSION_BUILD = 1
+VERSION_BUILD = 0
 
 DEFINES += "VERSION_MAJOR=$$VERSION_MAJOR"\
        "VERSION_MINOR=$$VERSION_MINOR"\
@@ -61,7 +61,8 @@ SOURCES += main.cpp\
     sessiondurationdialog.cpp \
     faqdialog.cpp \
     filewriter.cpp \
-    keyset.cpp
+    keyset.cpp \
+    sessionviewerdialog.cpp
 
 HEADERS  += startwindow.h \
     sessionwindow.h \
@@ -89,7 +90,8 @@ HEADERS  += startwindow.h \
     reliabilitymeasure.h \
     windowtools.h \
     faqdialog.h \
-    filewriter.h
+    filewriter.h \
+    sessionviewerdialog.h
 
 FORMS    += startwindow.ui \
     sessionwindow.ui \
@@ -103,7 +105,8 @@ FORMS    += startwindow.ui \
     reliabilitydialog.ui \
     settingsdialog.ui \
     sessiondurationdialog.ui \
-    faqdialog.ui
+    faqdialog.ui \
+    sessionviewerdialog.ui
 
 RESOURCES += \
     resourcefile.qrc \

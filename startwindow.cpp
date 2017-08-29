@@ -261,6 +261,15 @@ void StartWindow::on_actionQDarkStyleSheet_triggered()
 }
 
 /**
+ * @brief StartWindow::on_actionSession_Visual_Analysis_triggered
+ */
+void StartWindow::on_actionSession_Visual_Analysis_triggered()
+{
+    sessionViewerDialog = new SessionViewerDialog(workingDirectory, this);
+    sessionViewerDialog->exec();
+}
+
+/**
  * @brief StartWindow::on_actionFrequently_Asked_Questions_triggered
  */
 void StartWindow::on_actionFrequently_Asked_Questions_triggered()

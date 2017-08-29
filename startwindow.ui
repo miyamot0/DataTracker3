@@ -155,6 +155,7 @@
      <string>Analyses</string>
     </property>
     <addaction name="actionCalculate_Reliability"/>
+    <addaction name="actionSession_Visual_Analysis"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuAnalyses"/>
@@ -261,6 +262,15 @@
    </property>
    <property name="text">
     <string>Frequently Asked Questions</string>
+   </property>
+  </action>
+  <action name="actionSession_Visual_Analysis">
+   <property name="icon">
+    <iconset resource="resourcefile.qrc">
+     <normaloff>:/images/applications-system.png</normaloff>:/images/applications-system.png</iconset>
+   </property>
+   <property name="text">
+    <string>Session Visual Analysis</string>
    </property>
   </action>
  </widget>

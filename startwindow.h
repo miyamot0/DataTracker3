@@ -34,6 +34,7 @@
 #include "aboutdialog.h"
 #include "contactdialog.h"
 #include "licensedialog.h"
+#include "sessionviewerdialog.h"
 
 namespace Ui {
 class StartWindow;
@@ -58,6 +59,7 @@ private slots:
     void on_actionQtXlsx_triggered();
     void on_actionTango_Icons_triggered();
     void on_actionQDarkStyleSheet_triggered();
+    void on_actionSession_Visual_Analysis_triggered();
     void on_actionFrequently_Asked_Questions_triggered();
     void on_actionContact_triggered();
     void on_actionAbout_triggered();
@@ -70,6 +72,7 @@ private:
     ContactDialog contactDialog;
     LicenseDialog *licenseDialog;
     SettingsDialog settingsDialog;
+    SessionViewerDialog * sessionViewerDialog;
     FAQDialog faqDialog;
 
     ReliabilityDialog * reliabilityDialog;
