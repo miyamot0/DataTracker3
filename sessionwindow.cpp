@@ -73,12 +73,14 @@ SessionWindow::SessionWindow(QString mCurrentWorkingDirectory, QWidget *parent) 
 
     if (!alternativeSaveLocation.isEmpty())
     {
+        alternativeSaveLocationUnmod = QString(alternativeSaveLocation);
         alternativeSaveLocation = FileTools::pathAppend(alternativeSaveLocation, "DataTracker3");
     }
 
     showPlots = settings.value(QLatin1String("displayPlots"), false).toBool();
     outputSheets = settings.value(QLatin1String("outputSheets"), true).toBool();
     autoReli = settings.value(QLatin1String("autoReli"), false).toBool();
+    autoMigrate = settings.value(QLatin1String("autoMigrate"), false).toBool();
 
     settings.endGroup();
 
@@ -86,6 +88,35 @@ SessionWindow::SessionWindow(QString mCurrentWorkingDirectory, QWidget *parent) 
     ui->editAlternativeSaveLocation->setText(alternativeSaveLocation);
 
     ui->editSessionDuration->installEventFilter(this);
+
+    connect(&delayTimer, SIGNAL(timeout()), this, SLOT(ForceMigration()));
+}
+
+/**
+ * @brief SessionWindow::ForceMigration
+ */
+void SessionWindow::ForceMigration()
+{
+    if (!alternativeSaveLocation.isEmpty() && QDir(alternativeSaveLocation).exists())
+    {
+        migraterThread = new QThread();
+
+        migrater = new FileMigrater(mWorkingDirectory, alternativeSaveLocationUnmod, "DataTracker3");
+        migrater->moveToThread(migraterThread);
+
+        connect(migrater, SIGNAL(workStarted()), migraterThread, SLOT(start()));
+        connect(migraterThread, SIGNAL(started()), migrater, SLOT(working()));
+        connect(migrater, SIGNAL(workFinished(QString)), migraterThread, SLOT(quit()), Qt::DirectConnection);
+        connect(migrater, SIGNAL(workFinished(QString)), this, SLOT(ForceMigrationFinished(QString)));
+
+        migraterThread->wait();
+        migrater->startWork();
+    }
+}
+
+void SessionWindow::ForceMigrationFinished(QString results)
+{
+    qDebug() << results;
 }
 
 /** Add a new group
@@ -128,6 +159,9 @@ void SessionWindow::on_buttonGroup_clicked()
 
             workerThread->wait();
             worker->startWork();
+
+            delayTimer.setSingleShot(true);
+            delayTimer.start(2000);
         }
     }
 }
@@ -207,6 +241,9 @@ void SessionWindow::on_buttonIndividual_clicked()
 
             workerThread->wait();
             worker->startWork();
+
+            delayTimer.setSingleShot(true);
+            delayTimer.start(2000);
         }
     }
 }
@@ -286,6 +323,9 @@ void SessionWindow::on_buttonEvaluation_clicked()
 
             workerThread->wait();
             worker->startWork();
+
+            delayTimer.setSingleShot(true);
+            delayTimer.start(2000);
         }
     }
 }
@@ -391,6 +431,9 @@ void SessionWindow::on_buttonCondition_clicked()
 
             workerThread->wait();
             worker->startWork();
+
+            delayTimer.setSingleShot(true);
+            delayTimer.start(2000);
         }
     }
 }
@@ -428,6 +471,8 @@ void SessionWindow::on_buttonKeySet_clicked()
 
             FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(keySetName)), mKeySetEntry.keySet);
 
+            delayTimer.setSingleShot(true);
+            delayTimer.start(2000);
         }
     }
     else
@@ -456,6 +501,8 @@ void SessionWindow::on_buttonKeySet_clicked()
 
                     FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(keySetName)), mKeySetEntry.keySet);
 
+                    delayTimer.setSingleShot(true);
+                    delayTimer.start(2000);
                 }
             }
             else if (mSelection == 1)
@@ -499,6 +546,8 @@ void SessionWindow::on_buttonKeySet_clicked()
                     ui->tableDuration->setItem(ui->tableDuration->rowCount() - 1, 1, new QTableWidgetItem(mKey.KeyDescription));
                 }
 
+                delayTimer.setSingleShot(true);
+                delayTimer.start(2000);
             }
         }
     }
@@ -581,6 +630,9 @@ void SessionWindow::on_buttonTherapist_clicked()
         mTherapistPath = FileTools::pathAppend(mTherapistPath, "Therapists.json");
 
         FileTools::WriteTherapists(mTherapistPath, therapistList);
+
+        delayTimer.setSingleShot(true);
+        delayTimer.start(2000);
     }
 }
 
@@ -617,6 +669,9 @@ void SessionWindow::on_buttonCollector_clicked()
         mCollectorPath = FileTools::pathAppend(mCollectorPath, "Collectors.json");
 
         FileTools::WriteCollectors(mCollectorPath, collectorList);
+
+        delayTimer.setSingleShot(true);
+        delayTimer.start(2000);
     }
 }
 
@@ -629,12 +684,10 @@ void SessionWindow::on_comboSessionDuration_currentIndexChanged(int index)
     if (index == ui->comboSessionDuration->count() - 1)
     {
         ui->editSessionDuration->setReadOnly(false);
-        //ui->editSessionDuration->setEnabled(true);
     }
     else
     {
         ui->editSessionDuration->setReadOnly(true);
-        //ui->editSessionDuration->setEnabled(false);
     }
 }
 
@@ -682,6 +735,9 @@ void SessionWindow::FileWriteFinished(QString result)
     {
         mResults.SetTitle(result);
     }
+
+    delayTimer.setSingleShot(true);
+    delayTimer.start(2000);
 }
 
 /**
@@ -835,6 +891,8 @@ void SessionWindow::EditCurrentKeySet()
         ui->tableDuration->setItem(ui->tableDuration->rowCount() - 1, 0, new QTableWidgetItem(mKey.KeyName));
         ui->tableDuration->setItem(ui->tableDuration->rowCount() - 1, 1, new QTableWidgetItem(mKey.KeyDescription));
     }
+
+    if (autoMigrate) { ForceMigration(); }
 }
 
 SessionWindow::~SessionWindow()
@@ -1033,72 +1091,6 @@ void SessionWindow::WriteOutput()
     fileWriteThread->wait();
     fileWriter->startWork();
 
-/*
-
-    FileTools::WriteSessionJSON(mWorkingDirectory,CurrentKeySet,ui->comboGroup->currentText(),
-                                ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
-                                ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
-                                ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
-                                ui->comboRole->currentText(),recordingWindow->startTime.toString(),recordingWindow->endTime.toString(),
-                                mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree,
-                                &recordingWindow->PressedKeys, &mResults.FrequencyOverall, &mResults.DurationOverall,
-                                &mResults.FrequencyOne, &mResults.DurationOne,
-                                &mResults.FrequencyTwo, &mResults.DurationTwo,
-                                &mResults.FrequencyThree, &mResults.DurationThree);
-
-    if (outputSheets)
-    {
-        FileTools::WriteSessionSpreadsheet(mWorkingDirectory,CurrentKeySet,ui->comboGroup->currentText(),
-                                    ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
-                                    ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
-                                    ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
-                                    ui->comboRole->currentText(),recordingWindow->startTime.toString(),
-                                    mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree, &recordingWindow->PressedKeys,
-                                    &mResults.FrequencyOverall, &mResults.DurationOverall,
-                                    &mResults.FrequencyOne, &mResults.DurationOne,
-                                    &mResults.FrequencyTwo, &mResults.DurationTwo,
-                                    &mResults.FrequencyThree, &mResults.DurationThree);
-    }
-
-
-    if (QDir(alternativeSaveLocation).exists())
-    {
-        FileTools::WriteSessionJSON(alternativeSaveLocation,CurrentKeySet,ui->comboGroup->currentText(),
-                                    ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
-                                    ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
-                                    ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
-                                    ui->comboRole->currentText(),recordingWindow->startTime.toString(),recordingWindow->endTime.toString(),
-                                    mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree,
-                                    &recordingWindow->PressedKeys, &mResults.FrequencyOverall, &mResults.DurationOverall,
-                                    &mResults.FrequencyOne, &mResults.DurationOne,
-                                    &mResults.FrequencyTwo, &mResults.DurationTwo,
-                                    &mResults.FrequencyThree, &mResults.DurationThree);
-
-        if (outputSheets)
-        {
-            FileTools::WriteSessionSpreadsheet(alternativeSaveLocation,CurrentKeySet,ui->comboGroup->currentText(),
-                                        ui->comboIndividual->currentText(),ui->comboEvaluation->currentText(),
-                                        ui->comboCondition->currentText(),ui->comboTherapist->currentText(),
-                                        ui->comboKeySet->currentText(),ui->comboCollector->currentText(),
-                                        ui->comboRole->currentText(),recordingWindow->startTime.toString(),
-                                        mResults.TimeOverall,mResults.TimeOne,mResults.TimeTwo,mResults.TimeThree, &recordingWindow->PressedKeys,
-                                        &mResults.FrequencyOverall, &mResults.DurationOverall,
-                                        &mResults.FrequencyOne, &mResults.DurationOne,
-                                        &mResults.FrequencyTwo, &mResults.DurationTwo,
-                                        &mResults.FrequencyThree, &mResults.DurationThree);
-        }
-    }
-
-    if (autoReli)
-    {
-        ReliabilityScoring::PerformReliabilityCheck(mWorkingDirectory,
-                                                    ui->comboGroup->currentText(),
-                                                    ui->comboIndividual->currentText(),
-                                                    ui->comboEvaluation->currentText());
-    }
-
-*/
-
     if (showPlots)
     {
         mResults.SetTabEnabled(1, true);
@@ -1172,6 +1164,9 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
 
         counterThread->wait();
         counter->startWork();
+
+        delayTimer.setSingleShot(true);
+        delayTimer.start(2000);
     }
 }
 

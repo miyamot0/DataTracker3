@@ -33,6 +33,7 @@
 #include "sessiondurationdialog.h"
 
 #include "filewriter.h"
+#include "filemigrater.h"
 #include "sessioncounter.h"
 #include "directoryparse.h"
 #include "directorysearcher.h"
@@ -61,6 +62,8 @@ private slots:
     void WorkUpdate(QString results);
     void WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAction action);
 
+    void ForceMigrationFinished(QString results);
+
     void FileWriteFinished(QString result);
 
     void UpdateSessionCount(int session);
@@ -83,8 +86,9 @@ private slots:
     void on_comboSessionDuration_currentIndexChanged(int index);
 
     void on_tableFrequency_doubleClicked(const QModelIndex);
-
     void on_tableDuration_doubleClicked(const QModelIndex);
+
+    void ForceMigration();
 
 private:
     Ui::SessionWindow *ui;
@@ -101,16 +105,23 @@ private:
     QThread *fileWriteThread;
     FileWriter *fileWriter;
 
+    QThread *migraterThread;
+    FileMigrater *migrater;
+
     DirectoryParse mCurrentDirectory;
 
     SessionDurationDialog sessionDurationDialog;
     RecordingWindow * recordingWindow;
     ResultsDialog mResults;
 
+    QString alternativeSaveLocationUnmod = "";
     QString alternativeSaveLocation = "";
     bool showPlots;
     bool outputSheets;
     bool autoReli;
+    bool autoMigrate;
+
+    QTimer delayTimer;
 
     int GetSessionDuration();
     int GetSessionNumber();

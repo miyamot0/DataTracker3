@@ -33,8 +33,6 @@
 #include <QTextStream>
 #include <QDir>
 
-
-
 StartWindow::StartWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::StartWindow)

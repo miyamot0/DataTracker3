@@ -50,6 +50,24 @@ static bool ReadToLocal(QString workingDirectory, QString backupSaveLocation, QS
 {
     bool value = true;
 
+    QDirIterator iteratorD(workingDirectory,
+                          QStringList() << "*",
+                          QDir::Dirs | QDir::NoDotAndDotDot,
+                          QDirIterator::Subdirectories);
+
+    QString tempTest, base;
+
+    while (iteratorD.hasNext())
+    {
+        base = QString(iteratorD.next());
+        tempTest = base.replace(pathAppend(workingDirectory, folderTitle), backupSaveLocation);
+
+        if (!QDir(tempTest).exists())
+        {
+            QDir().mkpath(tempTest);
+        }
+    }
+
     workingDirectory = pathAppend(workingDirectory, folderTitle);
 
     QStringList mFiles;
@@ -64,7 +82,6 @@ static bool ReadToLocal(QString workingDirectory, QString backupSaveLocation, QS
     }
 
     QString repl = workingDirectory;
-    QString tempTest, base;
 
     QFile *tempFile;
     QFileInfo *tempFileInfo;
@@ -96,6 +113,25 @@ static bool WriteToRemote(QString workingDirectory, QString backupSaveLocation, 
 {
     bool value = true;
 
+    QDirIterator iteratorD(workingDirectory,
+                          QStringList() << "*",
+                          QDir::Dirs | QDir::NoDotAndDotDot,
+                          QDirIterator::Subdirectories);
+
+    QString tempTest, base;
+
+    while (iteratorD.hasNext())
+    {
+        QString mHolder = iteratorD.next();
+        base = QString(mHolder);
+        tempTest = base.replace(workingDirectory, FileTools::pathAppend(backupSaveLocation, folderTitle));
+
+        if (!QDir(tempTest).exists())
+        {
+            QDir().mkpath(tempTest);
+        }
+    }
+
     QStringList mFiles;
     QDirIterator iterator(workingDirectory,
                           QStringList() << "*.json",
@@ -108,7 +144,6 @@ static bool WriteToRemote(QString workingDirectory, QString backupSaveLocation, 
     }
 
     QString repl = FileTools::pathAppend(backupSaveLocation, folderTitle);
-    QString tempTest, base;
 
     QFile *tempFile;
     QFileInfo *tempFileInfo;
