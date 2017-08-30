@@ -76,7 +76,7 @@
           <string notr="true">padding: 10 20</string>
          </property>
          <property name="text">
-          <string>CLICK TO CAPTURE</string>
+          <string>Click to Capture a Key</string>
          </property>
         </widget>
        </item>
