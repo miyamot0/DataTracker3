@@ -180,7 +180,7 @@ static void CompareObservers(QJsonObject mPrimary, QJsonObject mSecondary, Relia
     int overflow = ((totalSecs % 10) > 0) ? 1 : 0;
         bins = bins + overflow;
 
-    QList<KeySetEntry> FrequencyKeys;
+    QList<KeySetEntry> PrimaryFrequencyKeys;
 
     QJsonArray frequencyArray = mPrimary["FrequencyKeys"].toArray();
     foreach (const QJsonValue collector, frequencyArray) {
@@ -191,10 +191,10 @@ static void CompareObservers(QJsonObject mPrimary, QJsonObject mSecondary, Relia
         mEntry.KeyDescription = mObj["Description"].toString();
         mEntry.KeyName = mObj["Name"].toString();
 
-        FrequencyKeys.append(mEntry);
+        PrimaryFrequencyKeys.append(mEntry);
     }
 
-    QList<KeySetEntry> DurationKeys;
+    QList<KeySetEntry> PrimaryDurationKeys;
 
     QJsonArray durationArray = mPrimary["DurationKeys"].toArray();
     foreach (const QJsonValue collector, durationArray) {
@@ -205,10 +205,10 @@ static void CompareObservers(QJsonObject mPrimary, QJsonObject mSecondary, Relia
         mEntry.KeyDescription = mObj["Description"].toString();
         mEntry.KeyName = mObj["Name"].toString();
 
-        DurationKeys.append(mEntry);
+        PrimaryDurationKeys.append(mEntry);
     }
 
-    QList<SessionEvent> PressedKeys;
+    QList<SessionEvent> PrimaryPressedKeys;
 
     QJsonArray pressedKeysJson = mPrimary["PressedKeys"].toArray();
     foreach (const QJsonValue collector, pressedKeysJson) {
@@ -222,13 +222,11 @@ static void CompareObservers(QJsonObject mPrimary, QJsonObject mSecondary, Relia
         //mEntry.ScheduleType = mObj["Schedule"].toString();
         mEntry.TimePressed = QDateTime(QDateTime::fromString(mObj["TimePressed"].toString()));
 
-        PressedKeys.append(mEntry);
+        PrimaryPressedKeys.append(mEntry);
     }
 
-    QList<QList<int>> mPrimaryFrequencyBins = ReliabilityScoring::GetFrequencyBins(bins, FrequencyKeys, startTime, PressedKeys);
-    QList<QList<double>> mPrimaryDurationBins = ReliabilityScoring::GetDurationBins(bins, DurationKeys, startTime, endTime, PressedKeys);
-
-    FrequencyKeys.clear();
+    // Reli
+    QList<KeySetEntry> ReliFrequencyKeys;
 
     frequencyArray = mSecondary["FrequencyKeys"].toArray();
     foreach (const QJsonValue collector, frequencyArray) {
@@ -239,10 +237,10 @@ static void CompareObservers(QJsonObject mPrimary, QJsonObject mSecondary, Relia
         mEntry.KeyDescription = mObj["Description"].toString();
         mEntry.KeyName = mObj["Name"].toString();
 
-        FrequencyKeys.append(mEntry);
+        ReliFrequencyKeys.append(mEntry);
     }
 
-    DurationKeys.clear();
+    QList<KeySetEntry> ReliDurationKeys;
 
     durationArray = mSecondary["DurationKeys"].toArray();
     foreach (const QJsonValue collector, durationArray) {
@@ -253,10 +251,10 @@ static void CompareObservers(QJsonObject mPrimary, QJsonObject mSecondary, Relia
         mEntry.KeyDescription = mObj["Description"].toString();
         mEntry.KeyName = mObj["Name"].toString();
 
-        DurationKeys.append(mEntry);
+        ReliDurationKeys.append(mEntry);
     }
 
-    PressedKeys.clear();
+    QList<SessionEvent> ReliPressedKeys;
 
     pressedKeysJson = mSecondary["PressedKeys"].toArray();
     foreach (const QJsonValue collector, pressedKeysJson) {
@@ -270,30 +268,59 @@ static void CompareObservers(QJsonObject mPrimary, QJsonObject mSecondary, Relia
         //mEntry.ScheduleType = mObj["Schedule"].toString();
         mEntry.TimePressed = QDateTime(QDateTime::fromString(mObj["TimePressed"].toString()));
 
-        PressedKeys.append(mEntry);
+        ReliPressedKeys.append(mEntry);
     }
 
-    QList<QList<int>> mSecondaryFrequencyBins   = ReliabilityScoring::GetFrequencyBins(bins, FrequencyKeys, startTime, PressedKeys);
-    QList<QList<double>> mSecondaryDurationBins = ReliabilityScoring::GetDurationBins(bins, DurationKeys, startTime, endTime, PressedKeys);
-
-    for (int i(0); i<FrequencyKeys.count(); i++)
+    QList<KeySetEntry> SharedParseFrequencyKeySet;
+    for (int i(0); i<PrimaryFrequencyKeys.count(); i++)
     {
-        mMeasure->fEIA.append(QPair<QString,QString>(FrequencyKeys[i].KeyName, getFrequencyEIA(&mPrimaryFrequencyBins[i], &mSecondaryFrequencyBins[i])));
-        mMeasure->fPIA.append(QPair<QString,QString>(FrequencyKeys[i].KeyName, getFrequencyPIA(&mPrimaryFrequencyBins[i], &mSecondaryFrequencyBins[i])));
-        mMeasure->fTIA.append(QPair<QString,QString>(FrequencyKeys[i].KeyName, getFrequencyTIA(&mPrimaryFrequencyBins[i], &mSecondaryFrequencyBins[i])));
-        mMeasure->fOIA.append(QPair<QString,QString>(FrequencyKeys[i].KeyName, getFrequencyOIA(&mPrimaryFrequencyBins[i], &mSecondaryFrequencyBins[i])));
-        mMeasure->fNIA.append(QPair<QString,QString>(FrequencyKeys[i].KeyName, getFrequencyNIA(&mPrimaryFrequencyBins[i], &mSecondaryFrequencyBins[i])));
-        mMeasure->fPMA.append(QPair<QString,QString>(FrequencyKeys[i].KeyName, getFrequencyPMA(&mPrimaryFrequencyBins[i], &mSecondaryFrequencyBins[i])));
+        for (int j(0); j<ReliFrequencyKeys.count(); j++)
+        {
+            if (PrimaryFrequencyKeys[i].KeyCode == ReliFrequencyKeys[i].KeyCode)
+            {
+                SharedParseFrequencyKeySet.append(PrimaryFrequencyKeys[i]);
+            }
+        }
     }
 
-    for (int i(0); i<DurationKeys.count(); i++)
+    QList<KeySetEntry> SharedParseDurationKeySet;
+    for (int i(0); i<PrimaryDurationKeys.count(); i++)
     {
-        mMeasure->dEIA.append(QPair<QString,QString>(DurationKeys[i].KeyName, getDurationEIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
-        mMeasure->dPIA.append(QPair<QString,QString>(DurationKeys[i].KeyName, getDurationPIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
-        mMeasure->dTIA.append(QPair<QString,QString>(DurationKeys[i].KeyName, getDurationTIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
-        mMeasure->dOIA.append(QPair<QString,QString>(DurationKeys[i].KeyName, getDurationOIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
-        mMeasure->dNIA.append(QPair<QString,QString>(DurationKeys[i].KeyName, getDurationNIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
-        mMeasure->dPMA.append(QPair<QString,QString>(DurationKeys[i].KeyName, getDurationPMA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
+        for (int j(0); j<ReliDurationKeys.count(); j++)
+        {
+            if (PrimaryDurationKeys[i].KeyCode == ReliDurationKeys[i].KeyCode)
+            {
+                SharedParseDurationKeySet.append(PrimaryDurationKeys[i]);
+            }
+        }
+    }
+
+    // Keys sorted
+
+    QList<QList<int>> mPrimaryFrequencyBins = ReliabilityScoring::GetFrequencyBins(bins, SharedParseFrequencyKeySet, startTime, PrimaryPressedKeys);
+    QList<QList<double>> mPrimaryDurationBins = ReliabilityScoring::GetDurationBins(bins, SharedParseDurationKeySet, startTime, endTime, PrimaryPressedKeys);
+
+    QList<QList<int>> mSecondaryFrequencyBins   = ReliabilityScoring::GetFrequencyBins(bins, SharedParseFrequencyKeySet, startTime, ReliPressedKeys);
+    QList<QList<double>> mSecondaryDurationBins = ReliabilityScoring::GetDurationBins(bins, SharedParseDurationKeySet, startTime, endTime, ReliPressedKeys);
+
+    for (int i(0); i<PrimaryFrequencyKeys.count(); i++)
+    {
+        mMeasure->fEIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getFrequencyEIA(&mPrimaryFrequencyBins[i], &mSecondaryFrequencyBins[i])));
+        mMeasure->fPIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getFrequencyPIA(&mPrimaryFrequencyBins[i], &mSecondaryFrequencyBins[i])));
+        mMeasure->fTIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getFrequencyTIA(&mPrimaryFrequencyBins[i], &mSecondaryFrequencyBins[i])));
+        mMeasure->fOIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getFrequencyOIA(&mPrimaryFrequencyBins[i], &mSecondaryFrequencyBins[i])));
+        mMeasure->fNIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getFrequencyNIA(&mPrimaryFrequencyBins[i], &mSecondaryFrequencyBins[i])));
+        mMeasure->fPMA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getFrequencyPMA(&mPrimaryFrequencyBins[i], &mSecondaryFrequencyBins[i])));
+    }
+
+    for (int i(0); i<PrimaryDurationKeys.count(); i++)
+    {
+        mMeasure->dEIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getDurationEIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
+        mMeasure->dPIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getDurationPIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
+        mMeasure->dTIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getDurationTIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
+        mMeasure->dOIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getDurationOIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
+        mMeasure->dNIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getDurationNIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
+        mMeasure->dPMA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getDurationPMA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
     }
 }
 
