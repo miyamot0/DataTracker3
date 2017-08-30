@@ -71,6 +71,61 @@ StartWindow::StartWindow(QWidget *parent) :
     statusBar()->setSizeGripEnabled(false);
 
     WindowTools::SetWindowFixed(this);
+
+    manager = new QNetworkAccessManager(this);
+    connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(downloadedFile(QNetworkReply*)) );
+
+    #ifdef _WIN32
+        manager->get(QNetworkRequest(QUrl("http://www.smallnstats.com/DataTrackerRepository/Updates.xml")));
+    #elif TARGET_OS_MAC
+        manager->get(QNetworkRequest(QUrl("http://www.smallnstats.com/DataTrackerRepositoryMac/Updates.xml")));
+    #endif
+}
+
+/**
+ * @brief SheetWidget::downloadedFile
+ * @param reply
+ */
+void StartWindow::downloadedFile(QNetworkReply *reply) {
+    QByteArray data = reply->readAll();
+
+    QDomDocument versionXML;
+
+    if(!versionXML.setContent(data))
+    {
+        return;
+    }
+
+    QDomElement root = versionXML.documentElement();
+    QDomElement mNode = root.namedItem("PackageUpdate").toElement();
+    QDomElement mNode2 = mNode.namedItem("Version").toElement();
+
+    QStringList mVersionList = mNode2.text().split('.');
+
+    if (mVersionList.count() != 3)
+    {
+        return;
+    }
+
+    bool hasUpdate = false;
+
+    QString mNetworkVersionString = QString("%1%2%3").arg(mVersionList[0]).arg(mVersionList[1]).arg(mVersionList[2]);
+
+    QString mLocalVersionString = QString("%1%2%3").arg(VERSION_MAJOR).arg(VERSION_MINOR).arg(VERSION_BUILD);
+
+    if (mNetworkVersionString.toInt() > mLocalVersionString.toInt())
+    {
+        hasUpdate = true;
+    }
+
+    if (hasUpdate)
+    {
+        QMessageBox *msgBox = new QMessageBox;
+        msgBox->setWindowTitle(tr("Updates"));
+        msgBox->setText(tr("There is an update available!"));
+        msgBox->setWindowModality(Qt::NonModal);
+        msgBox->show();
+    }
 }
 
 /**

@@ -27,7 +27,7 @@ DEFINES += "VERSION_MAJOR=$$VERSION_MAJOR"\
        "VERSION_BUILD=$$VERSION_BUILD"\
        "VERSION_TESTING=$$TEST_FEATURES"
 
-QT       += core gui xlsx charts widgets
+QT       += core gui widgets xlsx charts network xml
 
 TARGET = DataTracker
 
@@ -126,6 +126,7 @@ win32 {
     DT_FILES.files = License_Qt.txt \
                      License_Tango.txt \
                      License_QtXlsx.txt \
+                     License_QDarkStyleSheet.txt \
                      COPYING \
                      SNS.ico
 
@@ -151,6 +152,7 @@ macx {
     DT_FILES.files = License_Qt.txt \
                      License_Tango.txt \
                      License_QtXlsx.txt \
+                     License_QDarkStyleSheet.txt \
                      COPYING \
                      SNS.icns
 
@@ -165,5 +167,5 @@ DISTFILES += \
     License_Tango.txt \
     License_QtXlsx.txt \
     License_Qt.txt \
-    SNS.ico \
-    License_QDarkStyleSheet.txt
+    License_QDarkStyleSheet.txt \
+    SNS.ico

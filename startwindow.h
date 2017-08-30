@@ -25,6 +25,10 @@
 #define STARTWINDOW_H
 
 #include <QMainWindow>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QDomDocument>
 #include <QThread>
 
 #include "sessionwindow.h"
@@ -69,6 +73,8 @@ private slots:
 
     void WorkFinished(QString value);
 
+    void downloadedFile(QNetworkReply *reply);
+
 private:
     Ui::StartWindow *ui;
 
@@ -96,6 +102,8 @@ private:
 
     QThread *migraterThread;
     FileMigrater *migrater;
+
+    QNetworkAccessManager *manager;
 
     void closeEvent(QCloseEvent*);
 };
