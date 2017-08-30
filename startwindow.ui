@@ -151,6 +151,7 @@
     <addaction name="actionQtXlsx"/>
     <addaction name="actionTango_Icons"/>
     <addaction name="actionQDarkStyleSheet"/>
+    <addaction name="actionBDataPro"/>
    </widget>
    <widget class="QMenu" name="menuAnalyses">
     <property name="title">
@@ -282,6 +283,15 @@
    </property>
    <property name="text">
     <string>Launch Updater</string>
+   </property>
+  </action>
+  <action name="actionBDataPro">
+   <property name="icon">
+    <iconset resource="resourcefile.qrc">
+     <normaloff>:/images/format-justify-center.png</normaloff>:/images/format-justify-center.png</iconset>
+   </property>
+   <property name="text">
+    <string>BDataPro</string>
    </property>
   </action>
  </widget>

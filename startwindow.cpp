@@ -374,6 +374,28 @@ void StartWindow::on_actionQDarkStyleSheet_triggered()
     licenseDialog->exec();
 }
 
+void StartWindow::on_actionBDataPro_triggered()
+{
+    QString mFilePath = "";
+
+    #ifdef _WIN32
+            mFilePath = "License_BDataPro.txt";
+    #elif TARGET_OS_MAC
+            QDir runDirectory = QDir(QCoreApplication::applicationDirPath());
+            runDirectory.cdUp();
+            runDirectory.cd("Resources");
+            mFilePath = runDirectory.path() + "/";
+
+            mFilePath = mFilePath + "License_Tango.txt";
+
+    #endif
+
+    licenseDialog = new LicenseDialog(mFilePath, this);
+    licenseDialog->setWindowTitle(tr("BDataPro License (GPL-V3)"));
+    licenseDialog->setModal(true);
+    licenseDialog->exec();
+}
+
 /** Open Visual Analysis Window
  * @brief StartWindow::on_actionSession_Visual_Analysis_triggered
  */

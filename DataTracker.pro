@@ -123,12 +123,14 @@ RESOURCES += \
 win32 {
     win32:RC_ICONS += SNS.ico
 
-    DT_FILES.files = License_Qt.txt \
-                     License_Tango.txt \
+    DT_FILES.files = License_Tango.txt \
                      License_QtXlsx.txt \
+                     License_Qt.txt \
                      License_QDarkStyleSheet.txt \
+                     License_BDataPro.txt \
                      COPYING \
-                     SNS.ico
+                     SNS.ico \
+                     source/DataTracker.tar
 
     CONFIG(debug, debug|release) {
         DESTDIR = $$OUT_PWD/build/debug
@@ -149,12 +151,14 @@ win32 {
 macx {
     macx:ICON = $${PWD}/SNS.icns
 
-    DT_FILES.files = License_Qt.txt \
-                     License_Tango.txt \
+    DT_FILES.files = License_Tango.txt \
                      License_QtXlsx.txt \
+                     License_Qt.txt \
                      License_QDarkStyleSheet.txt \
+                     License_BDataPro.txt \
                      COPYING \
-                     SNS.icns
+                     SNS.icns \
+                     source/DataTracker.tar
 
     DT_FILES.path = Contents/Resources
 
@@ -168,4 +172,6 @@ DISTFILES += \
     License_QtXlsx.txt \
     License_Qt.txt \
     License_QDarkStyleSheet.txt \
-    SNS.ico
+    License_BDataPro.txt \
+    SNS.ico \
+    source/DataTracker.tar

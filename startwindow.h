@@ -65,6 +65,7 @@ private slots:
     void on_actionQtXlsx_triggered();
     void on_actionTango_Icons_triggered();
     void on_actionQDarkStyleSheet_triggered();
+    void on_actionBDataPro_triggered();
     void on_actionSession_Visual_Analysis_triggered();
     void on_actionFrequently_Asked_Questions_triggered();
     void on_actionContact_triggered();
