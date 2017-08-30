@@ -1052,7 +1052,11 @@ static bool WriteReliSpreadsheet(QString mWorkingDirectory, QString Group, QStri
 
         for (int j(0); j<temp.fEIA.count(); j++)
         {
-            if (row == 0) xlsx.write(topOffset - 2 + row, spacer, temp.fEIA.at(j).first);
+            if (row == 0) xlsx.write(topOffset - 2 + row, spacer, "Key");
+
+            xlsx.write(topOffset + row, spacer, temp.fEIA.at(j).first);
+            spacer++;
+
             if (row == 0) xlsx.write(topOffset - 1 + row, spacer, "EIA");
             xlsx.write(topOffset + row, spacer, temp.fEIA.at(j).second);
             spacer++;
@@ -1082,7 +1086,11 @@ static bool WriteReliSpreadsheet(QString mWorkingDirectory, QString Group, QStri
 
         for (int j(0); j<temp.dEIA.count(); j++)
         {
-            if (row == 0) xlsx.write(topOffset - 2 + row, spacer, temp.dEIA.at(j).first);
+            if (row == 0) xlsx.write(topOffset - 2 + row, spacer, "Key");
+
+            xlsx.write(topOffset + row, spacer, temp.dEIA.at(j).first);
+            spacer++;
+
             if (row == 0) xlsx.write(topOffset - 1 + row, spacer, "EIA");
             xlsx.write(topOffset + row, spacer, temp.dEIA.at(j).second);
             spacer++;
@@ -1108,7 +1116,6 @@ static bool WriteReliSpreadsheet(QString mWorkingDirectory, QString Group, QStri
             spacer++;
         }
     }
-
 
     int row = 10 + ReliResults->count();
 
