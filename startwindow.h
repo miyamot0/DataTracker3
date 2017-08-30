@@ -74,6 +74,7 @@ private slots:
     void WorkFinished(QString value);
 
     void downloadedFile(QNetworkReply *reply);
+    void on_actionLaunch_Updater_triggered();
 
 private:
     Ui::StartWindow *ui;

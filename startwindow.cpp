@@ -128,6 +128,32 @@ void StartWindow::downloadedFile(QNetworkReply *reply) {
     }
 }
 
+void StartWindow::on_actionLaunch_Updater_triggered()
+{
+    QString mCommand = "";
+
+#ifdef _WIN32
+    mCommand = "maintenancetool.exe";
+#elif TARGET_OS_MAC
+    QDir mDir = QDir(QCoreApplication::applicationDirPath());
+    mDir.cdUp();
+    mDir.cdUp();
+    mDir.cdUp();
+
+    mCommand = QDir::cleanPath(mDir.path() + QDir::separator() + "maintenancetool.app");
+#endif
+
+    if (QFile::exists(mCommand))
+    {
+        QProcess p;
+        QStringList args;
+        args << "--updater";
+        p.start(mCommand, args);
+        p.waitForStarted();
+        p.waitForFinished(-1);
+    }
+}
+
 /**
  * @brief StartWindow::WorkFinished
  * @param value

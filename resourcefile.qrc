@@ -4,5 +4,6 @@
         <file>images/applications-system.png</file>
         <file>images/format-justify-center.png</file>
         <file>images/system-log-out.png</file>
+        <file>images/view-refresh.png</file>
     </qresource>
 </RCC>

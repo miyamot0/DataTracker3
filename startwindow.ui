@@ -124,6 +124,8 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionLaunch_Updater"/>
+    <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
@@ -271,6 +273,15 @@
    </property>
    <property name="text">
     <string>Session Visual Analysis</string>
+   </property>
+  </action>
+  <action name="actionLaunch_Updater">
+   <property name="icon">
+    <iconset resource="resourcefile.qrc">
+     <normaloff>:/images/view-refresh.png</normaloff>:/images/view-refresh.png</iconset>
+   </property>
+   <property name="text">
+    <string>Launch Updater</string>
    </property>
   </action>
  </widget>
