@@ -47,11 +47,7 @@ int main(int argc, char *argv[])
     if (displayDark)
     {
         QFile f(":qdarkstyle/style.qss");
-        if (!f.exists())
-        {
-            printf("Unable to set stylesheet, file not found\n");
-        }
-        else
+        if (f.exists())
         {
             f.open(QFile::ReadOnly | QFile::Text);
             QTextStream ts(&f);
