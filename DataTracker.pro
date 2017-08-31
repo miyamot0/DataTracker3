@@ -64,7 +64,8 @@ SOURCES += main.cpp\
     filewriter.cpp \
     keyset.cpp \
     sessionviewerdialog.cpp \
-    filemigrater.cpp
+    filemigrater.cpp \
+    evaluationviewerdialog.cpp
 
 HEADERS  += startwindow.h \
     sessionwindow.h \
@@ -94,7 +95,8 @@ HEADERS  += startwindow.h \
     faqdialog.h \
     filewriter.h \
     sessionviewerdialog.h \
-    filemigrater.h
+    filemigrater.h \
+    evaluationviewerdialog.h
 
 FORMS    += startwindow.ui \
     sessionwindow.ui \
@@ -109,7 +111,8 @@ FORMS    += startwindow.ui \
     settingsdialog.ui \
     sessiondurationdialog.ui \
     faqdialog.ui \
-    sessionviewerdialog.ui
+    sessionviewerdialog.ui \
+    evaluationviewerdialog.ui
 
 RESOURCES += \
     resourcefile.qrc \

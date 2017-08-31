@@ -32,15 +32,16 @@
 #include <QThread>
 
 #include "sessionwindow.h"
-#include "reliabilitydialog.h"
 #include "filemigrater.h"
 
+#include "reliabilitydialog.h"
 #include "settingsdialog.h"
 #include "faqdialog.h"
 #include "aboutdialog.h"
 #include "contactdialog.h"
 #include "licensedialog.h"
 #include "sessionviewerdialog.h"
+#include "evaluationviewerdialog.h"
 
 namespace Ui {
 class StartWindow;
@@ -68,6 +69,7 @@ private slots:
     void on_actionBDataPro_triggered();
     void on_actionSession_Visual_Analysis_triggered();
     void on_actionFrequently_Asked_Questions_triggered();
+    void on_actionEvaluation_Visual_Analysis_triggered();
     void on_actionContact_triggered();
     void on_actionAbout_triggered();
     void on_buttonStart_clicked();
@@ -85,6 +87,7 @@ private:
     LicenseDialog *licenseDialog;
     SettingsDialog settingsDialog;
     SessionViewerDialog * sessionViewerDialog;
+    EvaluationViewerDialog * evaluationViewerDialog;
     FAQDialog faqDialog;
 
     ReliabilityDialog * reliabilityDialog;

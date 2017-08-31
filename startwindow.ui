@@ -159,6 +159,7 @@
     </property>
     <addaction name="actionCalculate_Reliability"/>
     <addaction name="actionSession_Visual_Analysis"/>
+    <addaction name="actionEvaluation_Visual_Analysis"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuAnalyses"/>
@@ -292,6 +293,15 @@
    </property>
    <property name="text">
     <string>BDataPro</string>
+   </property>
+  </action>
+  <action name="actionEvaluation_Visual_Analysis">
+   <property name="icon">
+    <iconset resource="resourcefile.qrc">
+     <normaloff>:/images/applications-system.png</normaloff>:/images/applications-system.png</iconset>
+   </property>
+   <property name="text">
+    <string>Evaluation Visual Analysis</string>
    </property>
   </action>
  </widget>

@@ -405,6 +405,12 @@ void StartWindow::on_actionSession_Visual_Analysis_triggered()
     sessionViewerDialog->exec();
 }
 
+void StartWindow::on_actionEvaluation_Visual_Analysis_triggered()
+{
+    evaluationViewerDialog = new EvaluationViewerDialog(workingDirectory, this);
+    evaluationViewerDialog->exec();
+}
+
 /** Open FAQ Window
  * @brief StartWindow::on_actionFrequently_Asked_Questions_triggered
  */
