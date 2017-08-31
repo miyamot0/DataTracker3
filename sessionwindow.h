@@ -88,7 +88,14 @@ private slots:
     void on_tableFrequency_doubleClicked(const QModelIndex);
     void on_tableDuration_doubleClicked(const QModelIndex);
 
+    void LoadSettings();
     void ForceMigration();
+
+    void PrepareSessionCounter();
+    void PrepareDirectory();
+    void PrepareGroup(int index);
+    void PrepareIndividual(int index);
+    void PrepareEvaluation(int index);
 
 private:
     Ui::SessionWindow *ui;

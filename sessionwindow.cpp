@@ -49,23 +49,23 @@ SessionWindow::SessionWindow(QString mCurrentWorkingDirectory, QWidget *parent) 
 
     mWorkingDirectory = mCurrentWorkingDirectory;
 
-    workerThread = new QThread();
+    PrepareDirectory();
 
-    mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
+    LoadSettings();
 
-    worker = new DirectorySearcher(mCurrentDirectory);
+    ui->editSaveLocation->setText(mWorkingDirectory);
+    ui->editAlternativeSaveLocation->setText(alternativeSaveLocation);
 
-    worker->moveToThread(workerThread);
+    ui->editSessionDuration->installEventFilter(this);
 
-    connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
-    connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
-    connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
-    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
-    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
+    connect(&delayTimer, SIGNAL(timeout()), this, SLOT(ForceMigration()));
+}
 
-    workerThread->wait();
-    worker->startWork();
-
+/**
+ * @brief SessionWindow::LoadSettings
+ */
+void SessionWindow::LoadSettings()
+{
     QSettings settings;
     settings.beginGroup(QLatin1String("DTProgramSettings"));
 
@@ -83,13 +83,6 @@ SessionWindow::SessionWindow(QString mCurrentWorkingDirectory, QWidget *parent) 
     autoMigrate = settings.value(QLatin1String("autoMigrate"), false).toBool();
 
     settings.endGroup();
-
-    ui->editSaveLocation->setText(mWorkingDirectory);
-    ui->editAlternativeSaveLocation->setText(alternativeSaveLocation);
-
-    ui->editSessionDuration->installEventFilter(this);
-
-    connect(&delayTimer, SIGNAL(timeout()), this, SLOT(ForceMigration()));
 }
 
 /**
@@ -138,30 +131,7 @@ void SessionWindow::on_buttonGroup_clicked()
                 mPresentDirectory.mkdir(".");
             }
 
-            workerThread = new QThread();
-
-            mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
-            mCurrentDirectory.CurrentGroup = "";
-            mCurrentDirectory.CurrentIndividual = "";
-            mCurrentDirectory.CurrentEvaluation = "";
-            mCurrentDirectory.CurrentCondition = "";
-            mCurrentDirectory.CurrentKeySet = "";
-
-            worker = new DirectorySearcher(mCurrentDirectory);
-
-            worker->moveToThread(workerThread);
-
-            connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
-            connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
-            connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
-            connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
-            connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
-
-            workerThread->wait();
-            worker->startWork();
-
-            delayTimer.setSingleShot(true);
-            delayTimer.start(2000);
+            PrepareDirectory();
         }
     }
 }
@@ -172,26 +142,7 @@ void SessionWindow::on_buttonGroup_clicked()
  */
 void SessionWindow::on_comboGroup_currentIndexChanged(int index)
 {
-    workerThread = new QThread();
-
-    mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
-    mCurrentDirectory.CurrentGroup = ui->comboGroup->itemText(index);
-    mCurrentDirectory.CurrentIndividual = "";
-    mCurrentDirectory.CurrentEvaluation = "";
-    mCurrentDirectory.CurrentKeySet = "";
-
-    worker = new DirectorySearcher(mCurrentDirectory);
-
-    worker->moveToThread(workerThread);
-
-    connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
-    connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
-    connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
-    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
-    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
-
-    workerThread->wait();
-    worker->startWork();
+    PrepareGroup(index);
 }
 
 /** Add a new individual
@@ -220,27 +171,7 @@ void SessionWindow::on_buttonIndividual_clicked()
                 mPresentDirectory.mkdir(".");
             }
 
-            workerThread = new QThread();
-
-            mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
-            mCurrentDirectory.CurrentGroup = ui->comboGroup->currentText();
-            mCurrentDirectory.CurrentIndividual = "";
-            mCurrentDirectory.CurrentEvaluation = "";
-            mCurrentDirectory.CurrentCondition = "";
-            mCurrentDirectory.CurrentKeySet = "";
-
-            worker = new DirectorySearcher(mCurrentDirectory);
-
-            worker->moveToThread(workerThread);
-
-            connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
-            connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
-            connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
-            connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
-            connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
-
-            workerThread->wait();
-            worker->startWork();
+            PrepareGroup(ui->comboGroup->currentIndex());
 
             delayTimer.setSingleShot(true);
             delayTimer.start(2000);
@@ -254,26 +185,7 @@ void SessionWindow::on_buttonIndividual_clicked()
  */
 void SessionWindow::on_comboIndividual_currentIndexChanged(int index)
 {
-    workerThread = new QThread();
-
-    mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
-    mCurrentDirectory.CurrentGroup = ui->comboGroup->currentText();
-    mCurrentDirectory.CurrentIndividual = ui->comboIndividual->itemText(index);
-    mCurrentDirectory.CurrentEvaluation = "";
-    mCurrentDirectory.CurrentKeySet = "";
-
-    worker = new DirectorySearcher(mCurrentDirectory);
-
-    worker->moveToThread(workerThread);
-
-    connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
-    connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
-    connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
-    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
-    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
-
-    workerThread->wait();
-    worker->startWork();
+    PrepareIndividual(index);
 }
 
 /** Add a new evaluation
@@ -303,26 +215,7 @@ void SessionWindow::on_buttonEvaluation_clicked()
                 mPresentDirectory.mkdir(".");
             }
 
-            workerThread = new QThread();
-
-            mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
-            mCurrentDirectory.CurrentGroup = ui->comboGroup->currentText();
-            mCurrentDirectory.CurrentIndividual = ui->comboIndividual->currentText();
-            mCurrentDirectory.CurrentEvaluation = "";
-            mCurrentDirectory.CurrentCondition = "";
-
-            worker = new DirectorySearcher(mCurrentDirectory);
-
-            worker->moveToThread(workerThread);
-
-            connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
-            connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
-            connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
-            connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
-            connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
-
-            workerThread->wait();
-            worker->startWork();
+            PrepareIndividual(ui->comboIndividual->currentIndex());
 
             delayTimer.setSingleShot(true);
             delayTimer.start(2000);
@@ -336,49 +229,9 @@ void SessionWindow::on_buttonEvaluation_clicked()
  */
 void SessionWindow::on_comboEvaluation_currentIndexChanged(int index)
 {
-    // Field populator
+    PrepareEvaluation(index);
 
-    workerThread = new QThread();
-
-    mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
-    mCurrentDirectory.CurrentGroup = ui->comboGroup->currentText();
-    mCurrentDirectory.CurrentIndividual = ui->comboIndividual->currentText();
-    mCurrentDirectory.CurrentEvaluation = ui->comboEvaluation->itemText(index);
-    mCurrentDirectory.CurrentCondition = "";
-
-    worker = new DirectorySearcher(mCurrentDirectory);
-
-    worker->moveToThread(workerThread);
-
-    connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
-    connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
-    connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
-    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
-    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
-
-    workerThread->wait();
-    worker->startWork();
-
-    // Session counter
-
-    counterThread = new QThread();
-
-    counter = new SessionCounter(mWorkingDirectory,
-                                 ui->comboGroup->currentText(),
-                                 ui->comboIndividual->currentText(),
-                                 ui->comboEvaluation->currentText());
-
-    counter->moveToThread(counterThread);
-
-    connect(counter, SIGNAL(workStarted()), counterThread, SLOT(start()));
-    connect(counterThread, SIGNAL(started()), counter, SLOT(working()));
-    connect(counter, SIGNAL(workFinished(int)), counterThread, SLOT(quit()), Qt::DirectConnection);
-    connect(counter, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
-    connect(counter, SIGNAL(workFinished(int)), this, SLOT(UpdateSessionCount(int)));
-
-    counterThread->wait();
-    counter->startWork();
-
+    PrepareSessionCounter();
 }
 
 /** Add a new condition
@@ -411,26 +264,7 @@ void SessionWindow::on_buttonCondition_clicked()
                 mPresentDirectory.mkdir(".");
             }
 
-            workerThread = new QThread();
-
-            mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
-            mCurrentDirectory.CurrentGroup = ui->comboGroup->currentText();
-            mCurrentDirectory.CurrentIndividual = ui->comboIndividual->currentText();
-            mCurrentDirectory.CurrentEvaluation = ui->comboEvaluation->currentText();
-            mCurrentDirectory.CurrentCondition = "";
-
-            worker = new DirectorySearcher(mCurrentDirectory);
-
-            worker->moveToThread(workerThread);
-
-            connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
-            connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
-            connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
-            connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
-            connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
-
-            workerThread->wait();
-            worker->startWork();
+            PrepareEvaluation(ui->comboEvaluation->currentIndex());
 
             delayTimer.setSingleShot(true);
             delayTimer.start(2000);
@@ -471,6 +305,14 @@ void SessionWindow::on_buttonKeySet_clicked()
 
             FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(keySetName)), mKeySetEntry.keySet);
 
+            if (!alternativeSaveLocation.isEmpty())
+            {
+                mKeyPath = FileTools::pathAppend(alternativeSaveLocation, ui->comboGroup->currentText());
+                mKeyPath = FileTools::pathAppend(mKeyPath, ui->comboIndividual->currentText());
+
+                FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(keySetName)), mKeySetEntry.keySet);
+            }
+
             delayTimer.setSingleShot(true);
             delayTimer.start(2000);
         }
@@ -501,6 +343,14 @@ void SessionWindow::on_buttonKeySet_clicked()
 
                     FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(keySetName)), mKeySetEntry.keySet);
 
+                    if (!alternativeSaveLocation.isEmpty())
+                    {
+                        mKeyPath = FileTools::pathAppend(alternativeSaveLocation, ui->comboGroup->currentText());
+                        mKeyPath = FileTools::pathAppend(mKeyPath, ui->comboIndividual->currentText());
+
+                        FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(keySetName)), mKeySetEntry.keySet);
+                    }
+
                     delayTimer.setSingleShot(true);
                     delayTimer.start(2000);
                 }
@@ -518,6 +368,14 @@ void SessionWindow::on_buttonKeySet_clicked()
                 mKeyPath = FileTools::pathAppend(mKeyPath, ui->comboIndividual->currentText());
 
                 FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(ui->comboKeySet->currentText())), mKeySetEntry.keySet);
+
+                if (!alternativeSaveLocation.isEmpty())
+                {
+                    QString mKeyPath = FileTools::pathAppend(alternativeSaveLocation, ui->comboGroup->currentText());
+                    mKeyPath = FileTools::pathAppend(mKeyPath, ui->comboIndividual->currentText());
+
+                    FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(ui->comboKeySet->currentText())), mKeySetEntry.keySet);
+                }
 
                 ui->tableFrequency->setRowCount(0);
                 ui->tableDuration->setRowCount(0);
@@ -631,6 +489,15 @@ void SessionWindow::on_buttonTherapist_clicked()
 
         FileTools::WriteTherapists(mTherapistPath, therapistList);
 
+        if (!alternativeSaveLocation.isEmpty())
+        {
+            mTherapistPath = FileTools::pathAppend(alternativeSaveLocation, ui->comboGroup->currentText());
+            mTherapistPath = FileTools::pathAppend(mTherapistPath, ui->comboIndividual->currentText());
+            mTherapistPath = FileTools::pathAppend(mTherapistPath, "Therapists.json");
+
+            FileTools::WriteTherapists(mTherapistPath, therapistList);
+        }
+
         delayTimer.setSingleShot(true);
         delayTimer.start(2000);
     }
@@ -670,6 +537,15 @@ void SessionWindow::on_buttonCollector_clicked()
 
         FileTools::WriteCollectors(mCollectorPath, collectorList);
 
+        if (!alternativeSaveLocation.isEmpty())
+        {
+            mCollectorPath = FileTools::pathAppend(alternativeSaveLocation, ui->comboGroup->currentText());
+            mCollectorPath = FileTools::pathAppend(mCollectorPath, ui->comboIndividual->currentText());
+            mCollectorPath = FileTools::pathAppend(mCollectorPath, "Collectors.json");
+
+            FileTools::WriteCollectors(mCollectorPath, collectorList);
+        }
+
         delayTimer.setSingleShot(true);
         delayTimer.start(2000);
     }
@@ -689,6 +565,145 @@ void SessionWindow::on_comboSessionDuration_currentIndexChanged(int index)
     {
         ui->editSessionDuration->setReadOnly(true);
     }
+}
+
+/**
+ * @brief SessionWindow::PrepareSessionCounter
+ */
+void SessionWindow::PrepareSessionCounter()
+{
+    counterThread = new QThread();
+
+    counter = new SessionCounter(mWorkingDirectory,
+                                 ui->comboGroup->currentText(),
+                                 ui->comboIndividual->currentText(),
+                                 ui->comboEvaluation->currentText());
+
+    counter->moveToThread(counterThread);
+
+    connect(counter, SIGNAL(workStarted()), counterThread, SLOT(start()));
+    connect(counterThread, SIGNAL(started()), counter, SLOT(working()));
+    connect(counter, SIGNAL(workFinished(int)), counterThread, SLOT(quit()), Qt::DirectConnection);
+    connect(counter, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
+    connect(counter, SIGNAL(workFinished(int)), this, SLOT(UpdateSessionCount(int)));
+
+    counterThread->wait();
+    counter->startWork();
+}
+
+/**
+ * @brief SessionWindow::PrepareDirectory
+ */
+void SessionWindow::PrepareDirectory()
+{
+    workerThread = new QThread();
+
+    mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
+    mCurrentDirectory.CurrentGroup = "";
+    mCurrentDirectory.CurrentIndividual = "";
+    mCurrentDirectory.CurrentEvaluation = "";
+    mCurrentDirectory.CurrentCondition = "";
+    mCurrentDirectory.CurrentKeySet = "";
+
+    worker = new DirectorySearcher(mCurrentDirectory);
+
+    worker->moveToThread(workerThread);
+
+    connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
+    connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
+    connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
+    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
+    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
+
+    workerThread->wait();
+    worker->startWork();
+
+    delayTimer.setSingleShot(true);
+    delayTimer.start(2000);
+}
+
+/**
+ * @brief SessionWindow::PrepareGroup
+ * @param index
+ */
+void SessionWindow::PrepareGroup(int index)
+{
+    workerThread = new QThread();
+
+    mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
+    mCurrentDirectory.CurrentGroup = ui->comboGroup->itemText(index);
+    mCurrentDirectory.CurrentIndividual = "";
+    mCurrentDirectory.CurrentEvaluation = "";
+    mCurrentDirectory.CurrentKeySet = "";
+
+    worker = new DirectorySearcher(mCurrentDirectory);
+
+    worker->moveToThread(workerThread);
+
+    connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
+    connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
+    connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
+    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
+    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
+
+    workerThread->wait();
+    worker->startWork();
+}
+
+/**
+ * @brief SessionWindow::PrepareIndividual
+ * @param index
+ */
+void SessionWindow::PrepareIndividual(int index)
+{
+    workerThread = new QThread();
+
+    mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
+    mCurrentDirectory.CurrentGroup = ui->comboGroup->currentText();
+    mCurrentDirectory.CurrentIndividual = ui->comboIndividual->itemText(index);
+    mCurrentDirectory.CurrentEvaluation = "";
+    mCurrentDirectory.CurrentKeySet = "";
+
+    worker = new DirectorySearcher(mCurrentDirectory);
+
+    worker->moveToThread(workerThread);
+
+    connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
+    connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
+    connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
+    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
+    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
+
+    workerThread->wait();
+    worker->startWork();
+}
+
+/**
+ * @brief SessionWindow::PrepareEvaluation
+ * @param index
+ */
+void SessionWindow::PrepareEvaluation(int index)
+{
+    workerThread = new QThread();
+
+    mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
+    mCurrentDirectory.CurrentGroup = ui->comboGroup->currentText();
+    mCurrentDirectory.CurrentIndividual = ui->comboIndividual->currentText();
+    mCurrentDirectory.CurrentEvaluation = ui->comboEvaluation->itemText(index);
+    mCurrentDirectory.CurrentCondition = "";
+
+    worker = new DirectorySearcher(mCurrentDirectory);
+
+    worker->moveToThread(workerThread);
+
+    connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
+    connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
+    connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
+    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
+    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
+
+    workerThread->wait();
+    worker->startWork();
 }
 
 /**
