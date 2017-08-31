@@ -1,3 +1,26 @@
+/**
+   Copyright 2017 Shawn Gilroy
+
+   This file is part of Data Tracker, Qt port.
+
+   Data Tracker is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, version 3.
+
+   Data Tracker is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Data Tracker.  If not, see http://www.gnu.org/licenses/.
+
+   The Data Tracker is a tool to assist researchers in behavior economics.
+
+   Email: shawn(dot)gilroy(at)temple.edu
+
+  */
+
 #include "evaluationviewerdialog.h"
 #include "ui_evaluationviewerdialog.h"
 
@@ -81,11 +104,20 @@ EvaluationViewerDialog::~EvaluationViewerDialog()
     delete ui;
 }
 
+/**
+ * @brief EvaluationViewerDialog::WorkUpdate
+ * @param update
+ */
 void EvaluationViewerDialog::WorkUpdate(QString update)
 {
     qDebug() << "WORK_UPDATE: " << update;
 }
 
+/**
+ * @brief EvaluationViewerDialog::WorkFinished
+ * @param finalResult
+ * @param action
+ */
 void EvaluationViewerDialog::WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAction action)
 {
     if (action == ParseTypes::ParseAction::Group)
@@ -109,6 +141,8 @@ void EvaluationViewerDialog::WorkFinished(DirectoryParse finalResult, ParseTypes
         {
             ui->comboBoxGroup->addItem(finalResult.Groups.at(i));
         }
+
+        ui->comboBoxDimension->setCurrentIndex(0);
     }
     else if (action == ParseTypes::ParseAction::Individual)
     {
@@ -127,6 +161,8 @@ void EvaluationViewerDialog::WorkFinished(DirectoryParse finalResult, ParseTypes
         {
             ui->comboBoxIndividual->addItem(finalResult.Individuals.at(i));
         }
+
+        ui->comboBoxDimension->setCurrentIndex(0);
     }
     else if (action == ParseTypes::ParseAction::Evaluation)
     {
@@ -141,9 +177,15 @@ void EvaluationViewerDialog::WorkFinished(DirectoryParse finalResult, ParseTypes
         {
             ui->comboBoxEvaluation->addItem(finalResult.Evaluations.at(i));
         }
+
+        ui->comboBoxDimension->setCurrentIndex(0);
     }
 }
 
+/**
+ * @brief EvaluationViewerDialog::on_comboBoxGroup_currentIndexChanged
+ * @param index
+ */
 void EvaluationViewerDialog::on_comboBoxGroup_currentIndexChanged(int index)
 {
     if (index == 0)
@@ -183,8 +225,14 @@ void EvaluationViewerDialog::on_comboBoxGroup_currentIndexChanged(int index)
 
     workerThread->wait();
     worker->startWork();
+
+    ui->comboBoxDimension->setCurrentIndex(0);
 }
 
+/**
+ * @brief EvaluationViewerDialog::on_comboBoxIndividual_currentIndexChanged
+ * @param index
+ */
 void EvaluationViewerDialog::on_comboBoxIndividual_currentIndexChanged(int index)
 {
     if (index == 0)
@@ -220,8 +268,14 @@ void EvaluationViewerDialog::on_comboBoxIndividual_currentIndexChanged(int index
 
     workerThread->wait();
     worker->startWork();
+
+    ui->comboBoxDimension->setCurrentIndex(0);
 }
 
+/**
+ * @brief EvaluationViewerDialog::on_comboBoxEvaluation_currentIndexChanged
+ * @param index
+ */
 void EvaluationViewerDialog::on_comboBoxEvaluation_currentIndexChanged(int index)
 {
     if (index == 0)
@@ -306,267 +360,314 @@ void EvaluationViewerDialog::on_comboBoxEvaluation_currentIndexChanged(int index
         ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 2, new QTableWidgetItem(PrimaryReliabilityObjects.at(i).Collector));
     }
 
-    DrawPlot();
+    ui->comboBoxDimension->setCurrentIndex(0);
 }
 
-void EvaluationViewerDialog::DrawPlot()
+/**
+ * @brief EvaluationViewerDialog::on_comboBoxDimension_currentIndexChanged
+ * @param index
+ */
+void EvaluationViewerDialog::on_comboBoxDimension_currentIndexChanged(int index)
 {
-    QDateTime startTime, endTime;
-    int totalSecs;
+    if (ui->tableWidget->rowCount() < 1)
+    {
+        return;
+    }
+
+    if (index == 1)
+    {
+        GetFrequencyKeySets();
+
+        QStringList mFrequencyKeys;
+
+        for (QString mKey : fKeyDesc)
+        {
+            mFrequencyKeys.append(mKey.split("-")[0]);
+        }
+
+        fKeyDesc = mFrequencyKeys.toSet().toList();
+
+        mSeriesSelect.AddOptions(fKeyDesc);
+        mSeriesSelect.exec();
+
+        fKeyShow = mSeriesSelect.GetBoolList();
+
+        DrawFrequencyPlot();
+    }
+    else if (index == 2)
+    {
+        GetDurationKeySets();
+
+        QStringList mDurationKeys;
+
+        for (QString mKey : dKeyDesc)
+        {
+            mDurationKeys.append(mKey.split("-")[0]);
+        }
+
+        dKeyDesc = mDurationKeys.toSet().toList();
+
+        mSeriesSelect.AddOptions(dKeyDesc);
+        mSeriesSelect.exec();
+
+        dKeyShow = mSeriesSelect.GetBoolList();
+
+        DrawDurationPlot();
+    }
+}
+
+/**
+ * @brief EvaluationViewerDialog::GetDurationKeySets
+ */
+void EvaluationViewerDialog::GetDurationKeySets()
+{
+    QJsonArray durationArray;
+
+    if (PrimaryReliabilityObjects.count() > 0 && FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(0).PrimaryFilePath, &json))
+    {
+        dKeyDesc.clear();
+
+        // Get keys, add lines
+        for (int i(0); i<PrimaryReliabilityObjects.count(); i++)
+        {
+            if (FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(i).PrimaryFilePath, &json))
+            {
+                durationArray = json["DurationKeys"].toArray();
+                foreach (const QJsonValue collector, durationArray) {
+                    QJsonObject mObj = collector.toObject();
+
+                    if (!dKeyDesc.contains((mObj["Description"].toString() + "-" + json["Condition"].toString())))
+                    {
+                        dKeyDesc.append((mObj["Description"].toString() + "-" + json["Condition"].toString()));
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * @brief EvaluationViewerDialog::GetFrequencyKeySets
+ */
+void EvaluationViewerDialog::GetFrequencyKeySets()
+{
+    QJsonArray frequencyArray;
+
+    if (PrimaryReliabilityObjects.count() > 0 && FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(0).PrimaryFilePath, &json))
+    {
+        fKeyDesc.clear();
+
+        // Get keys, add lines
+        for (int i(0); i<PrimaryReliabilityObjects.count(); i++)
+        {
+            if (FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(i).PrimaryFilePath, &json))
+            {
+                frequencyArray = json["FrequencyKeys"].toArray();
+                foreach (const QJsonValue collector, frequencyArray) {
+                    QJsonObject mObj = collector.toObject();
+
+                    if (!fKeyDesc.contains((mObj["Description"].toString() + "-" + json["Condition"].toString())))
+                    {
+                        fKeyDesc.append((mObj["Description"].toString() + "-" + json["Condition"].toString()));
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * @brief EvaluationViewerDialog::on_pushButton_clicked
+ */
+void EvaluationViewerDialog::on_pushButton_clicked()
+{
+    on_comboBoxDimension_currentIndexChanged(ui->comboBoxDimension->currentIndex());
+}
+
+/**
+ * @brief EvaluationViewerDialog::DrawDurationPlot
+ */
+void EvaluationViewerDialog::DrawDurationPlot()
+{
+    chart->removeAllSeries();
+    chart->removeAxis(axisX);
+    chart->removeAxis(axisY);
+
+    axisX->setTitleText("Session");
+    axisY->setTitleText("Total Seconds Recorded");
+
+    QJsonArray durationArray;
+
+    QString tempName;
+    QStringList dKeySeriesNames;
+
+    double max = 1;
+    int session = 1;
+
+    if (PrimaryReliabilityObjects.count() > 0 && FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(0).PrimaryFilePath, &json))
+    {
+        chart->removeAllSeries();
+        lineSeries.clear();
+
+        for (int i(0); i<PrimaryReliabilityObjects.count(); i++)
+        {
+            if (FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(i).PrimaryFilePath, &json))
+            {
+                durationArray = json["DurationKeys"].toArray();
+                foreach (const QJsonValue collector, durationArray) {
+                    QJsonObject mObj = collector.toObject();
+
+                    int dIndex = dKeyDesc.indexOf(mObj["Description"].toString());
+
+                    if (dIndex != 1 && dKeyShow[dIndex] == true)
+                    {
+                        tempName = (mObj["Description"].toString() + "-" + json["Condition"].toString());
+
+                        if (!dKeySeriesNames.contains(tempName))
+                        {
+                            dKeySeriesNames.append(tempName);
+
+                            lineSeries.append(new QLineSeries);
+
+                            lineSeries[dKeySeriesNames.indexOf(tempName)]->setUseOpenGL(true);
+                            lineSeries[dKeySeriesNames.indexOf(tempName)]->setName(tempName);
+                            lineSeries[dKeySeriesNames.indexOf(tempName)]->clear();
+                            lineSeries[dKeySeriesNames.indexOf(tempName)]->show();
+
+                            chart->addSeries(lineSeries[dKeySeriesNames.indexOf(tempName)]);
+
+                            chart->setAxisX(axisX, lineSeries[dKeySeriesNames.indexOf(tempName)]);
+                            chart->setAxisY(axisY, lineSeries[dKeySeriesNames.indexOf(tempName)]);
+                        }
+                    }
+                }
+
+                durationArray = json["DurationOverall"].toArray();
+                foreach (const QJsonValue collector, durationArray) {
+                    QJsonObject mObj = collector.toObject();
+
+                    int dIndex = dKeyDesc.indexOf(mObj["Key"].toString());
+
+                    if (dIndex != 1 && dKeyShow[dIndex] == true)
+                    {
+                        tempName = (mObj["Key"].toString() + "-" + json["Condition"].toString());
+
+                        *lineSeries[dKeySeriesNames.indexOf(tempName)] << QPointF(json["Session"].toInt(), ((double)json["Count"].toInt() / 1000));
+
+                        if (((double)json["Count"].toInt() / 1000) > max)
+                        {
+                            max = ((double)json["Count"].toInt() / 1000);
+                        }
+
+                        if (json["Session"].toInt() > session)
+                        {
+                            session = json["Session"].toInt();
+                        }
+                    }
+                }
+            }
+        }
+
+        axisX->setMin(0);
+        axisX->setMax(session);
+
+        axisY->setMin(0);
+        axisY->setMax(max);
+    }
+}
+
+/**
+ * @brief EvaluationViewerDialog::DrawFrequencyPlot
+ */
+void EvaluationViewerDialog::DrawFrequencyPlot()
+{
+    chart->removeAllSeries();
+    chart->removeAxis(axisX);
+    chart->removeAxis(axisY);
+
+    axisX->setTitleText("Session");
+    axisY->setTitleText("Rate/Minute");
 
     QList<KeySetEntry> FrequencyKeys;
     QJsonArray frequencyArray;
 
-    QList<KeySetEntry> DurationKeys;
-    QJsonArray durationArray;
+    QString tempName;
+    QStringList fKeySeriesNames;
 
-    QList<SessionEvent> PressedKeys;
-    QJsonArray pressedKeysJson;
+    double max = 1;
+    int session = 1;
 
-    QList<QString> fKeyDesc, dKeyDesc;
-
-    int max, fIndex, secs, session;
-    double minutes;
-
-    for (int i(0); i<PrimaryReliabilityObjects.count(); i++)
+    if (PrimaryReliabilityObjects.count() > 0 && FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(0).PrimaryFilePath, &json))
     {
-        if (FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(i).PrimaryFilePath, &json))
+        chart->removeAllSeries();
+        lineSeries.clear();
+
+        for (int i(0); i<PrimaryReliabilityObjects.count(); i++)
         {
-            chart->removeAllSeries();
-            lineSeries.clear();
+            if (FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(i).PrimaryFilePath, &json))
+            {
+                FrequencyKeys.clear();
 
-            fKeyDesc.clear();
-            //fKeySum.clear();
+                frequencyArray = json["FrequencyKeys"].toArray();
+                foreach (const QJsonValue collector, frequencyArray) {
+                    QJsonObject mObj = collector.toObject();
 
-            dKeyDesc.clear();
-            //fKeySum.clear();
+                    int fIndex = fKeyDesc.indexOf(mObj["Description"].toString());
 
-            startTime = QDateTime(QDateTime::fromString(json["StartTime"].toString()));
-            endTime = QDateTime(QDateTime::fromString(json["EndTime"].toString()));
-
-            session = json["Session"].toInt();
-
-            totalSecs = (int)((double) json["SessionDuration"].toInt() / 1000);
-
-            minutes = ((double) totalSecs) / 60;
-
-            FrequencyKeys.clear();
-            frequencyArray = json["FrequencyKeys"].toArray();
-            foreach (const QJsonValue collector, frequencyArray) {
-                QJsonObject mObj = collector.toObject();
-
-                KeySetEntry mEntry;
-                mEntry.KeyCode = mObj["Code"].toInt();
-                mEntry.KeyDescription = mObj["Description"].toString();
-                mEntry.KeyName = mObj["Name"].toString();
-
-                FrequencyKeys.append(mEntry);
-
-                fKeyDesc.append(mObj["Description"].toString());
-                //fKeySum.append(0);
-
-                lineSeries.append(new QLineSeries);
-
-                lineSeries[lineSeries.count() - 1]->setUseOpenGL(true);
-                lineSeries[lineSeries.count() - 1]->setName(mObj["Description"].toString());
-                lineSeries[lineSeries.count() - 1]->clear();
-                lineSeries[lineSeries.count() - 1]->show();
-
-                chart->addSeries(lineSeries[lineSeries.count() - 1]);
-
-                chart->setAxisX(axisX, lineSeries[lineSeries.count() - 1]);
-                chart->setAxisY(axisY, lineSeries[lineSeries.count() - 1]);
-
-                *lineSeries[lineSeries.count() - 1] << QPointF(0, 0);
-            }
-
-            int count;
-
-            frequencyArray = json["FrequencyOverall"].toArray();
-            foreach (const QJsonValue collector, frequencyArray) {
-                QJsonObject mObj = collector.toObject();
-
-                count = mObj["Count"].toInt();
-
-                fIndex = fKeyDesc.indexOf(mObj["Key"].toString());
-
-                if (fIndex != -1)
-                {
-                    *lineSeries[fIndex] << QPointF((double) session, ((double) count / minutes));
-
-                    qDebug() << " Session (" << session << " : " << fIndex <<
-                                ") bx: " << fKeyDesc[fIndex] <<
-                                " rate: "  << (double)count/minutes <<
-                                " min: " << minutes <<
-                                " count: " << count;
-
-                    //if (fKeySum[fIndex] > max)
-                    //{
-                    //    max = fKeySum[fIndex];
-                    //}
-
-                    if ((int) (count / minutes) > max)
+                    if (fIndex != 1 && fKeyShow[fIndex] == true)
                     {
-                        //max = (int)(count / minutes);
-                        max = 1;
+                        tempName = (mObj["Description"].toString() + "-" + json["Condition"].toString());
+
+                        if (!fKeySeriesNames.contains(tempName))
+                        {
+                            fKeySeriesNames.append(tempName);
+
+                            lineSeries.append(new QLineSeries);
+
+                            lineSeries[fKeySeriesNames.indexOf(tempName)]->setUseOpenGL(true);
+                            lineSeries[fKeySeriesNames.indexOf(tempName)]->setName(tempName);
+                            lineSeries[fKeySeriesNames.indexOf(tempName)]->clear();
+                            lineSeries[fKeySeriesNames.indexOf(tempName)]->show();
+
+                            chart->addSeries(lineSeries[fKeySeriesNames.indexOf(tempName)]);
+
+                            chart->setAxisX(axisX, lineSeries[fKeySeriesNames.indexOf(tempName)]);
+                            chart->setAxisY(axisY, lineSeries[fKeySeriesNames.indexOf(tempName)]);
+
+                        }
                     }
                 }
 
-            }
+                frequencyArray = json["FrequencyOverall"].toArray();
+                foreach (const QJsonValue collector, frequencyArray) {
+                    QJsonObject mObj = collector.toObject();
 
-            /*
+                    int fIndex = fKeyDesc.indexOf(mObj["Key"].toString());
 
-            DurationKeys.clear();
-            durationArray = json["DurationKeys"].toArray();
-            foreach (const QJsonValue collector, durationArray) {
-                QJsonObject mObj = collector.toObject();
-
-                KeySetEntry mEntry;
-                mEntry.KeyCode = mObj["Code"].toInt();
-                mEntry.KeyDescription = mObj["Description"].toString();
-                mEntry.KeyName = mObj["Name"].toString();
-
-                DurationKeys.append(mEntry);
-
-                dKeyDesc.append(mObj["Description"].toString());
-                //dKeySum.append(0.0);
-
-                lineSeries2.append(new QLineSeries);
-
-                lineSeries2[lineSeries2.count() - 1]->setUseOpenGL(true);
-                lineSeries2[lineSeries2.count() - 1]->setName(mObj["Description"].toString());
-                lineSeries2[lineSeries2.count() - 1]->clear();
-                lineSeries2[lineSeries2.count() - 1]->show();
-
-                chart2->addSeries(lineSeries2[lineSeries2.count() - 1]);
-
-                chart2->setAxisX(axisX2, lineSeries2[lineSeries2.count() - 1]);
-                chart2->setAxisY(axisY2, lineSeries2[lineSeries2.count() - 1]);
-
-                *lineSeries2[lineSeries2.count() - 1] << QPointF(0, 0);
-            }
-                */
-
-            /*
-            PressedKeys.clear();
-            pressedKeysJson = json["PressedKeys"].toArray();
-            foreach (const QJsonValue collector, pressedKeysJson) {
-                QJsonObject mObj = collector.toObject();
-
-                SessionEvent mEntry;
-                mEntry.KeyEntered.KeyCode = mObj["KeyCode"].toInt();
-                mEntry.KeyEntered.KeyDescription = mObj["KeyDescription"].toString();
-                mEntry.KeyEntered.KeyName = mObj["KeyName"].toString();
-                //mEntry.MeasurementType = mObj["Measurement"].toString();
-                //mEntry.ScheduleType = mObj["Schedule"].toString();
-                mEntry.TimePressed = QDateTime(QDateTime::fromString(mObj["TimePressed"].toString()));
-
-                PressedKeys.append(mEntry);
-            }
-
-            max = 0;
-
-            foreach (const SessionEvent event, PressedKeys)
-            {
-                fIndex = fKeySet.indexOf(event.KeyEntered.KeyCode);
-
-                if (fIndex != -1)
-                {
-                    //secs = startTime.secsTo(event.TimePressed);
-                    //fKeySum[fIndex] = fKeySum[fIndex] + 1;
-                    //*lineSeries[fIndex] << QPointF(secs, fKeySum[fIndex]);
-                    //if (fKeySum[fIndex] > max)
-                    //{
-                    //    max = fKeySum[fIndex];
-                    //}
-                }
-            }
-            */
-
-
-
-            // duration
-
-            /*
-            max = 0;
-
-            for (int i(0); i<dKeySet.count(); i++)
-            {
-                tempKeyCode = dKeySet.at(i);
-                waitingForNext = false;
-                runningSum = 0;
-
-                foreach(SessionEvent event, PressedKeys)
-                {
-                    if (event.KeyEntered.KeyCode == tempKeyCode)
+                    if (fIndex != 1 && fKeyShow[fIndex] == true)
                     {
-                        if (waitingForNext)
+                        tempName = (mObj["Key"].toString() + "-" + json["Condition"].toString());
+
+                        *lineSeries[fKeySeriesNames.indexOf(tempName)] << QPointF(json["Session"].toInt(), mObj["Rate"].toString().toDouble());
+
+                        if (mObj["Rate"].toString().toDouble() > max)
                         {
-                            after = event.TimePressed;
-
-                            startSecs = ((double) startTime.msecsTo(prev)) / 1000;
-                            endSecs = ((double) startTime.msecsTo(after)) / 1000;
-
-                            *lineSeries2[i] << QPointF(startSecs, runningSum);
-
-                            runningSum = runningSum + (startSecs + endSecs);
-
-                            *lineSeries2[i] << QPointF(endSecs, runningSum);
-
-                            waitingForNext = false;
-                        }
-                        else
-                        {
-                            prev = event.TimePressed;
-                            waitingForNext = true;
+                            max = mObj["Rate"].toString().toDouble();
                         }
 
-
+                        if (json["Session"].toInt() > session)
+                        {
+                            session = json["Session"].toInt();
+                        }
                     }
                 }
-
-                if (waitingForNext)
-                {
-                    startSecs = ((double) startTime.msecsTo(prev)) / 1000;
-                    endSecs = ((double) startTime.msecsTo(endTime)) / 1000;
-
-                    *lineSeries2[i] << QPointF(startSecs, runningSum);
-
-                    runningSum = runningSum + (startSecs + endSecs);
-
-                    *lineSeries2[i] << QPointF(endSecs, runningSum);
-                }
-
-                if ((int) runningSum > max)
-                {
-                    max = (int) runningSum;
-                }
             }
-
-            axisY2->setMax(max + 1);
-            axisX2->setMax(totalSecs);
-
-            */
         }
+
+        axisX->setMin(0);
+        axisX->setMax(session);
+
+        axisY->setMin(0);
+        axisY->setMax(max);
     }
-
-    axisY->setMax(2);
-    axisX->setMax(session + 1);
-
-    /*
-    temp = PrimaryReliabilityObjects.at(currentRow);
-
-    result = FileTools::ReadSessionFromJSON(temp.PrimaryFilePath, &json);
-
-    if (result)
-    {
-
-
-    }
-    */
-}
-
-void EvaluationViewerDialog::on_pushButton_clicked()
-{
-
 }

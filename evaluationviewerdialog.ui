@@ -134,6 +134,11 @@
              <widget class="QComboBox" name="comboBoxDimension">
               <item>
                <property name="text">
+                <string>Select Keys</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
                 <string>Frequency</string>
                </property>
               </item>
