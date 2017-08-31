@@ -221,7 +221,8 @@ void FileWriter::working()
         runStatus = ReliabilityScoring::PerformReliabilityCheck(WorkingDirectory,
                                                     Group,
                                                     Individual,
-                                                    Evaluation);
+                                                    Evaluation,
+                                                    NULL);
     }
 
     QString primary = (runStatus) ? "Primary save successful" : "Primary save failed";

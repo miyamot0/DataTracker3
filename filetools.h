@@ -1094,7 +1094,8 @@ static bool WriteSessionSpreadsheet(QString mWorkingDirectory, KeySet CurrentKey
 }
 
 static bool WriteReliSpreadsheet(QString mWorkingDirectory, QString Group, QString Individual, QString Evaluation, QList<ReliabilityMeasure> * ReliResults,
-                                 QList<ReliabilityParse> * PrimaryReliabilityObjects, QList<ReliabilityParse> * SecondaryReliabilityObjects)
+                                 QList<ReliabilityParse> * PrimaryReliabilityObjects, QList<ReliabilityParse> * SecondaryReliabilityObjects,
+                                 QList<QStringList> * outputDisplay)
 {
     QXlsx::Document xlsx;
 
@@ -1218,6 +1219,38 @@ static bool WriteReliSpreadsheet(QString mWorkingDirectory, QString Group, QStri
         xlsx.write(row, 1, SecondaryReliabilityObjects->at(i).PrimaryFilePath);
 
         row++;
+    }
+
+    if (outputDisplay != NULL)
+    {
+        QStringList mTempStringList;
+        QString holder;
+
+        for (int i(0); i < row; i++)
+        {
+            mTempStringList.clear();
+            for (int j(0); j < spacer; j++)
+            {
+                if (xlsx.cellAt(i, j) == NULL)
+                {
+                    holder = "";
+                }
+                else
+                {
+                    holder = xlsx.cellAt(i, j)->value().toString();
+                }
+
+                mTempStringList <<  holder;
+            }
+
+            outputDisplay->append(mTempStringList);
+        }
+
+        qDebug() << "output";
+    }
+    else
+    {
+        qDebug() << "no output";
     }
 
     QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, Group);

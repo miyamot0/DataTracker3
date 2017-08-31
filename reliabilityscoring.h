@@ -37,7 +37,7 @@ class ReliabilityScoring
 {
 public:
 
-static bool PerformReliabilityCheck(QString mWorkingDirectory, QString Group, QString Individual, QString Evaluation)
+static bool PerformReliabilityCheck(QString mWorkingDirectory, QString Group, QString Individual, QString Evaluation, QList<QStringList> * outputDisplay)
 {
     QString mFilePath = FileTools::pathAppend(mWorkingDirectory, Group);
     mFilePath = FileTools::pathAppend(mFilePath, Individual);
@@ -154,13 +154,16 @@ static bool PerformReliabilityCheck(QString mWorkingDirectory, QString Group, QS
         }
     }
 
-    return FileTools::WriteReliSpreadsheet(mWorkingDirectory,
-                                    Group,
-                                    Individual,
-                                    Evaluation,
-                                    &ReliResults,
-                                    &PrimaryReliabilityObjects,
-                                    &SecondaryReliabilityObjects);
+    bool success = FileTools::WriteReliSpreadsheet(mWorkingDirectory,
+                                                   Group,
+                                                   Individual,
+                                                   Evaluation,
+                                                   &ReliResults,
+                                                   &PrimaryReliabilityObjects,
+                                                   &SecondaryReliabilityObjects,
+                                                   outputDisplay);
+
+    return success;
 }
 
 /**

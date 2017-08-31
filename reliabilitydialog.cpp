@@ -346,8 +346,14 @@ void ReliabilityDialog::WorkFinished(DirectoryParse finalResult, ParseTypes::Par
  */
 void ReliabilityDialog::on_pushButton_clicked()
 {
+    mOutput.clear();
+
     ReliabilityScoring::PerformReliabilityCheck(mWorkingDirectory,
                                                 ui->comboGroup->currentText(),
                                                 ui->comboIndividual->currentText(),
-                                                ui->comboEvaluation->currentText());
+                                                ui->comboEvaluation->currentText(),
+                                                &mOutput);
+
+    tableDialog.InsertData(mOutput);
+    tableDialog.exec();
 }

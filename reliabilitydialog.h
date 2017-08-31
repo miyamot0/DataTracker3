@@ -29,6 +29,8 @@
 #include "reliabilityparse.h"
 #include "reliabilitymeasure.h"
 
+#include "displaytabledialog.h"
+
 namespace Ui {
 class ReliabilityDialog;
 }
@@ -57,6 +59,8 @@ private slots:
 private:
     Ui::ReliabilityDialog *ui;
 
+    DisplayTableDialog tableDialog;
+
     DirectoryParse mCurrentDirectory;
     QString mWorkingDirectory;
     QThread *workerThread;
@@ -66,6 +70,8 @@ private:
     QList<ReliabilityParse> SecondaryReliabilityObjects;
 
     QList<ReliabilityMeasure> ReliResults;
+
+    QList<QStringList> mOutput;
 };
 
 #endif // RELIABILITYDIALOG_H
