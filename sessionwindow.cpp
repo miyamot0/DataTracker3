@@ -339,6 +339,8 @@ void SessionWindow::on_buttonKeySet_clicked()
                 FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(keySetName)), mKeySetEntry.keySet, false);
             }
 
+            PrepareIndividual(ui->comboIndividual->currentIndex());
+
             delayTimer.setSingleShot(true);
             delayTimer.start(2000);
         }
