@@ -29,6 +29,7 @@
 #include <QTime>
 #include <QTimer>
 #include <QDateTime>
+#include <QLineEdit>
 
 #include "keyset.h"
 #include "sessionevent.h"
@@ -83,6 +84,9 @@ private:
 
     Schedule CurrentSchedule;
 
+    QLineEdit * mEditRef;
+    qint64 extraTime;
+
     void DetectScheduleKey(QKeyEvent * mKey);
     void DetectFrequencyKey(QKeyEvent * mKey);
     void DetectDurationKey(QKeyEvent * mKey);
@@ -96,6 +100,8 @@ private:
     void ParseTimes();
 
     bool Started = false;
+
+    int counter = 0;
 
     void reject();
 

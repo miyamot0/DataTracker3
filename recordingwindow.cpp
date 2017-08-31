@@ -664,7 +664,7 @@ void RecordingWindow::UpdateTables()
 {
     for (int i=0; i<keySet.FrequencyKeys.count(); i++)
     {
-        int counter = 0;
+        counter = 0;
 
         for (int j=0; j<PressedKeys.count(); j++)
         {
@@ -683,7 +683,7 @@ void RecordingWindow::UpdateTables()
 
     for (int i=0; i<keySet.DurationKeys.count(); i++)
     {
-        int counter = 0;
+        counter = 0;
         DurationSums[i] = 0;
         waitingForNext = false;
 
@@ -722,7 +722,7 @@ void RecordingWindow::UpdateTables()
 
     for (int i=0; i<ScheduleDurationSums.count(); i++)
     {
-        int counter = 0;
+        counter = 0;
         ScheduleDurationSums[i] = 0;
         waitingForNext = false;
 
@@ -778,16 +778,14 @@ void RecordingWindow::ParseTimes()
     {
         if (DurationFlags[i])
         {
-            qint64 extraTime = DurationFlaggedTimes[i].msecsTo(QDateTime::currentDateTime());
-            ui->tableWidgetDuration->item(i, 3)->setText(formatTimeLabel(DurationSums[i] + extraTime));
+            extraTime = DurationFlaggedTimes[i].msecsTo(QDateTime::currentDateTime());
+            ui->tableWidgetDuration->item(i, 3)->setText(formatTimeLabel(DurationSums[i] + extraTime) + "  (" + formatTimeLabel(extraTime) + ")");
         }
         else
         {
             ui->tableWidgetDuration->item(i, 3)->setText(formatTimeLabel(DurationSums[i]));
         }
     }
-
-    QLineEdit * mEditRef;
 
     for (int i=0; i<ScheduleDurationSums.count(); i++)
     {
@@ -806,7 +804,7 @@ void RecordingWindow::ParseTimes()
 
         if (ScheduleFlags[i])
         {
-            qint64 extraTime = ScheduleDurationFlaggedTimes[i].msecsTo(QDateTime::currentDateTime());
+            extraTime = ScheduleDurationFlaggedTimes[i].msecsTo(QDateTime::currentDateTime());
             mEditRef->setText(formatTimeLabel(ScheduleDurationSums[i] + extraTime));
         }
         else
