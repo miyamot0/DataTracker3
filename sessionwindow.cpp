@@ -293,6 +293,16 @@ void SessionWindow::on_buttonKeySet_clicked()
                                                    tr("Key Set Name:"),
                                                    QLineEdit::Normal,
                                                    "", &ok);
+
+        if (ok && (keySetName == "Collectors" || keySetName == "Therapists"))
+        {
+            QMessageBox::critical(NULL, tr("Name not allowed"),
+                                  tr("The names 'Collectors' and 'Therapists' are not allowed. Please rename."),
+                                  QMessageBox::Ok);
+
+            return;
+        }
+
         if (ok && !keySetName.isEmpty())
         {
             KeySetEditor mKeySetEntry;
