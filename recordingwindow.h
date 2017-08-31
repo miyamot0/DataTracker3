@@ -100,8 +100,11 @@ private:
     void ParseTimes();
 
     bool Started = false;
-
     int counter = 0;
+    int keyCode;
+
+    bool waitingForNext;
+    QDateTime prev, after;
 
     void reject();
 

@@ -678,9 +678,6 @@ void RecordingWindow::UpdateTables()
         ui->tableWidgetFrequency->item(i, 2)->setText(QString::number(counter));
     }
 
-    bool waitingForNext;
-    QDateTime prev, after;
-
     for (int i=0; i<keySet.DurationKeys.count(); i++)
     {
         counter = 0;
@@ -715,10 +712,20 @@ void RecordingWindow::UpdateTables()
 
         ui->tableWidgetDuration->item(i, 2)->setText(QString::number((int)(((double)counter / 2)+(0.5))));
 
+        if (DurationFlags[i] != ((counter % 2) == 1))
+        {
+            if (((counter % 2) == 1))
+            {
+                ui->tableWidgetDuration->item(i, 3)->setBackground(QColor("green"));
+            }
+            else
+            {
+                ui->tableWidgetDuration->item(i, 3)->setBackground(QColor("transparent"));
+            }
+        }
+
         DurationFlags[i] = (counter % 2) == 1;
     }
-
-    int keyCode;
 
     for (int i=0; i<ScheduleDurationSums.count(); i++)
     {
