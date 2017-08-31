@@ -59,6 +59,7 @@ SessionWindow::SessionWindow(QString mCurrentWorkingDirectory, QWidget *parent) 
     ui->editSessionDuration->installEventFilter(this);
 
     connect(&delayTimer, SIGNAL(timeout()), this, SLOT(ForceMigration()));
+    connect(&fadeTimer, SIGNAL(timeout()), this, SLOT(ClearStatus()));
 }
 
 /**
@@ -107,9 +108,24 @@ void SessionWindow::ForceMigration()
     }
 }
 
+/**
+ * @brief SessionWindow::ForceMigrationFinished
+ * @param results
+ */
 void SessionWindow::ForceMigrationFinished(QString results)
 {
-    qDebug() << results;
+    ui->labelStatus->setText(results);
+
+    fadeTimer.setSingleShot(true);
+    fadeTimer.start(3000);
+}
+
+/**
+ * @brief SessionWindow::ClearStatus
+ */
+void SessionWindow::ClearStatus()
+{
+    ui->labelStatus->setText("");
 }
 
 /** Add a new group
@@ -1235,4 +1251,10 @@ void SessionWindow::on_tableDuration_doubleClicked(const QModelIndex)
     }
 
     EditCurrentKeySet();
+}
+
+void SessionWindow::on_pushButtonSync_clicked()
+{
+    delayTimer.setSingleShot(true);
+    delayTimer.start(500);
 }

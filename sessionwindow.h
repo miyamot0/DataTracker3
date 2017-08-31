@@ -90,12 +90,15 @@ private slots:
 
     void LoadSettings();
     void ForceMigration();
+    void ClearStatus();
 
     void PrepareSessionCounter();
     void PrepareDirectory();
     void PrepareGroup(int index);
     void PrepareIndividual(int index);
     void PrepareEvaluation(int index);
+
+    void on_pushButtonSync_clicked();
 
 private:
     Ui::SessionWindow *ui;
@@ -129,6 +132,7 @@ private:
     bool autoMigrate;
 
     QTimer delayTimer;
+    QTimer fadeTimer;
 
     int GetSessionDuration();
     int GetSessionNumber();
