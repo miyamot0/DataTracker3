@@ -229,7 +229,7 @@ static void ReadKeySet(QString path, KeySet * keySet)
  * @param path
  * @param keySet
  */
-static void WriteKeySet(QString path, KeySet keySet)
+static void WriteKeySet(QString path, KeySet keySet, bool overwrite)
 {
     QJsonObject json;
     json["Title"] = keySet.KeySetName;
@@ -260,14 +260,32 @@ static void WriteKeySet(QString path, KeySet keySet)
 
     QJsonDocument jsonDoc(json);
 
-    QFile saveFile(path);
+    if (overwrite)
+    {
+        QFile saveFile(path);
 
-    if (!saveFile.open(QIODevice::WriteOnly)) {
-        // TODO error handling
-        return;
+        if (!saveFile.open(QIODevice::WriteOnly)) {
+            // TODO error handling
+            return;
+        }
+
+        saveFile.write(jsonDoc.toJson());
+    }
+    else
+    {
+        QFileInfo existingFile(path);
+        QString pathNew = existingFile.canonicalPath() + QDir::separator() + existingFile.baseName() + "-1" + ".json";
+
+        QFile saveFile(pathNew);
+
+        if (!saveFile.open(QIODevice::WriteOnly)) {
+            // TODO error handling
+            return;
+        }
+
+        saveFile.write(jsonDoc.toJson());
     }
 
-    saveFile.write(jsonDoc.toJson());
 }
 
 /** Read therapists from file

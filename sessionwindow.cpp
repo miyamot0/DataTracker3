@@ -313,14 +313,14 @@ void SessionWindow::on_buttonKeySet_clicked()
             QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, ui->comboGroup->currentText());
             mKeyPath = FileTools::pathAppend(mKeyPath, ui->comboIndividual->currentText());
 
-            FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(keySetName)), mKeySetEntry.keySet);
+            FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(keySetName)), mKeySetEntry.keySet, false);
 
             if (!alternativeSaveLocation.isEmpty())
             {
                 mKeyPath = FileTools::pathAppend(alternativeSaveLocation, ui->comboGroup->currentText());
                 mKeyPath = FileTools::pathAppend(mKeyPath, ui->comboIndividual->currentText());
 
-                FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(keySetName)), mKeySetEntry.keySet);
+                FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(keySetName)), mKeySetEntry.keySet, false);
             }
 
             delayTimer.setSingleShot(true);
@@ -351,14 +351,14 @@ void SessionWindow::on_buttonKeySet_clicked()
                     QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, ui->comboGroup->currentText());
                     mKeyPath = FileTools::pathAppend(mKeyPath, ui->comboIndividual->currentText());
 
-                    FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(keySetName)), mKeySetEntry.keySet);
+                    FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(keySetName)), mKeySetEntry.keySet, false);
 
                     if (!alternativeSaveLocation.isEmpty())
                     {
                         mKeyPath = FileTools::pathAppend(alternativeSaveLocation, ui->comboGroup->currentText());
                         mKeyPath = FileTools::pathAppend(mKeyPath, ui->comboIndividual->currentText());
 
-                        FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(keySetName)), mKeySetEntry.keySet);
+                        FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(keySetName)), mKeySetEntry.keySet, false);
                     }
 
                     delayTimer.setSingleShot(true);
@@ -377,14 +377,14 @@ void SessionWindow::on_buttonKeySet_clicked()
                 QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, ui->comboGroup->currentText());
                 mKeyPath = FileTools::pathAppend(mKeyPath, ui->comboIndividual->currentText());
 
-                FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(ui->comboKeySet->currentText())), mKeySetEntry.keySet);
+                FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(ui->comboKeySet->currentText())), mKeySetEntry.keySet, true);
 
                 if (!alternativeSaveLocation.isEmpty())
                 {
                     QString mKeyPath = FileTools::pathAppend(alternativeSaveLocation, ui->comboGroup->currentText());
                     mKeyPath = FileTools::pathAppend(mKeyPath, ui->comboIndividual->currentText());
 
-                    FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(ui->comboKeySet->currentText())), mKeySetEntry.keySet);
+                    FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(ui->comboKeySet->currentText())), mKeySetEntry.keySet, true);
                 }
 
                 ui->tableFrequency->setRowCount(0);
@@ -888,7 +888,15 @@ void SessionWindow::EditCurrentKeySet()
     QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, ui->comboGroup->currentText());
     mKeyPath = FileTools::pathAppend(mKeyPath, ui->comboIndividual->currentText());
 
-    FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(ui->comboKeySet->currentText())), mKeySetEntry.keySet);
+    FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(ui->comboKeySet->currentText())), mKeySetEntry.keySet, true);
+
+    if (!alternativeSaveLocation.isEmpty())
+    {
+        mKeyPath = FileTools::pathAppend(mWorkingDirectory, ui->comboGroup->currentText());
+        mKeyPath = FileTools::pathAppend(mKeyPath, ui->comboIndividual->currentText());
+
+        FileTools::WriteKeySet(FileTools::pathAppend(mKeyPath, QString("%1.json").arg(ui->comboKeySet->currentText())), mKeySetEntry.keySet, true);
+    }
 
     ui->tableFrequency->setRowCount(0);
     ui->tableDuration->setRowCount(0);
