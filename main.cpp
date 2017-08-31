@@ -44,8 +44,6 @@ int main(int argc, char *argv[])
     bool displayDark = settings.value(QLatin1String("displayDark"), false).toBool();
     settings.endGroup();
 
-    // TODO new keys
-
     if (displayDark)
     {
         QFile f(":qdarkstyle/style.qss");
