@@ -47,8 +47,6 @@ StartWindow::StartWindow(QWidget *parent) :
     if (FileTools::CheckAndPrepDirectory(folderTitle))
     {
         workingDirectory = FileTools::pathAppend(QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)[0], folderTitle);
-
-        // TODO Auto and force refresh
     }
 
     LoadSettings();

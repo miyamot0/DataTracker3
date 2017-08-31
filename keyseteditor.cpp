@@ -312,8 +312,6 @@ void KeySetEditor::on_buttonBox_clicked(QAbstractButton *button)
 {
     if((QPushButton *)button == ui->buttonBox->button(QDialogButtonBox::Ok))
     {
-        // TODO keySet.KeySetName
-
         keySet.FrequencyKeys.clear();
 
         QKeySequence seq;
