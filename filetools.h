@@ -1245,12 +1245,6 @@ static bool WriteReliSpreadsheet(QString mWorkingDirectory, QString Group, QStri
 
             outputDisplay->append(mTempStringList);
         }
-
-        qDebug() << "output";
-    }
-    else
-    {
-        qDebug() << "no output";
     }
 
     QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, Group);
