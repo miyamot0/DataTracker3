@@ -324,18 +324,32 @@ static void WriteKeySet(QString path, KeySet keySet, bool overwrite)
     else
     {
         QFileInfo existingFile(path);
-        QString pathNew = existingFile.canonicalPath() + QDir::separator() + existingFile.baseName() + "-1" + ".json";
 
-        QFile saveFile(pathNew);
+        if (existingFile.exists())
+        {
+            QString pathNew = existingFile.canonicalPath() + QDir::separator() + existingFile.baseName() + "-1" + ".json";
 
-        if (!saveFile.open(QIODevice::WriteOnly)) {
-            // TODO error handling
-            return;
+            QFile saveFile(pathNew);
+
+            if (!saveFile.open(QIODevice::WriteOnly)) {
+                // TODO error handling
+                return;
+            }
+
+            saveFile.write(jsonDoc.toJson());
         }
+        else
+        {
+            QFile saveFile(path);
 
-        saveFile.write(jsonDoc.toJson());
+            if (!saveFile.open(QIODevice::WriteOnly)) {
+                // TODO error handling
+                return;
+            }
+
+            saveFile.write(jsonDoc.toJson());
+        }
     }
-
 }
 
 /** Read therapists from file
