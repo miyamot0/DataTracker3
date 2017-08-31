@@ -17,10 +17,11 @@ TODO
 
 ### Version
 ------
-0.1.0 (beta)
+0.2.0 (beta)
 
 ### Changelog
 ------
+ * 0.2.0 - File migration fixes, updates to auto-scoring, results dialog for reli
  * 0.1.0 - Auto update/notification
  * 0.0.9 - Session viewer
  * 0.0.8 - Automated file migrations (after every change, optional)
