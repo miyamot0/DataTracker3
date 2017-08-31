@@ -25,6 +25,7 @@
 #include "ui_evaluationviewerdialog.h"
 
 #include "filetools.h"
+#include "windowtools.h"
 
 EvaluationViewerDialog::EvaluationViewerDialog(QString mCurrentWorkingDirectory = "", QWidget *parent) :
     QDialog(parent),
@@ -97,6 +98,8 @@ EvaluationViewerDialog::EvaluationViewerDialog(QString mCurrentWorkingDirectory 
     ui->plotLayout->addWidget(chartView);
 
     axisY->setMin(0);
+
+    WindowTools::SetDialogFixedMaximize(this);
 }
 
 EvaluationViewerDialog::~EvaluationViewerDialog()
