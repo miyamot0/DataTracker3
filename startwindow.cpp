@@ -126,6 +126,9 @@ void StartWindow::downloadedFile(QNetworkReply *reply) {
     }
 }
 
+/**
+ * @brief StartWindow::on_actionLaunch_Updater_triggered
+ */
 void StartWindow::on_actionLaunch_Updater_triggered()
 {
     QString mCommand = "";
@@ -403,6 +406,9 @@ void StartWindow::on_actionSession_Visual_Analysis_triggered()
     sessionViewerDialog->exec();
 }
 
+/**
+ * @brief StartWindow::on_actionEvaluation_Visual_Analysis_triggered
+ */
 void StartWindow::on_actionEvaluation_Visual_Analysis_triggered()
 {
     evaluationViewerDialog = new EvaluationViewerDialog(workingDirectory, this);

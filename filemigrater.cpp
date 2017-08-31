@@ -47,7 +47,7 @@ void FileMigrater::working()
     if (FileTools::ReadToLocal(AlternateDirectory, WorkingDirectory, FolderName) &&
         FileTools::WriteToRemote(WorkingDirectory, AlternateDirectory, FolderName))
     {
-        emit workFinished("Files were copied migrated.");
+        emit workFinished("Files were migrated successfully.");
     }
     else
     {
