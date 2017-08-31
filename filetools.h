@@ -46,6 +46,13 @@ class FileTools
 {
 public:
 
+/**
+ * @brief ReadToLocal
+ * @param workingDirectory
+ * @param backupSaveLocation
+ * @param folderTitle
+ * @return
+ */
 static bool ReadToLocal(QString workingDirectory, QString backupSaveLocation, QString folderTitle)
 {
     bool value = true;
@@ -86,6 +93,8 @@ static bool ReadToLocal(QString workingDirectory, QString backupSaveLocation, QS
     QFile *tempFile;
     QFileInfo *tempFileInfo;
 
+    QFileInfo *holderFileInfo;
+
     foreach (QString mRemote, mFiles)
     {
         base = QString(mRemote);
@@ -104,11 +113,34 @@ static bool ReadToLocal(QString workingDirectory, QString backupSaveLocation, QS
                 return false;
             }
         }
+        else
+        {
+            holderFileInfo = new QFileInfo(base);
+
+            if (tempFileInfo->lastModified().secsTo(holderFileInfo->lastModified()) > 10)
+            {
+                QFile::remove(tempTest);
+
+                value = QFile::copy(base, tempTest);
+
+                if (!value)
+                {
+                    return false;
+                }
+            }
+        }
     }
 
     return true;
 }
 
+/**
+ * @brief WriteToRemote
+ * @param workingDirectory
+ * @param backupSaveLocation
+ * @param folderTitle
+ * @return
+ */
 static bool WriteToRemote(QString workingDirectory, QString backupSaveLocation, QString folderTitle)
 {
     bool value = true;
@@ -148,6 +180,8 @@ static bool WriteToRemote(QString workingDirectory, QString backupSaveLocation, 
     QFile *tempFile;
     QFileInfo *tempFileInfo;
 
+    QFileInfo *holderFileInfo;
+
     foreach (QString mLocal, mFiles)
     {
         base = QString(mLocal);
@@ -164,6 +198,22 @@ static bool WriteToRemote(QString workingDirectory, QString backupSaveLocation, 
             if (!value)
             {
                 return false;
+            }
+        }
+        else
+        {
+            holderFileInfo = new QFileInfo(base);
+
+            if (tempFileInfo->lastModified().secsTo(holderFileInfo->lastModified()) > 10)
+            {
+                QFile::remove(tempTest);
+
+                value = QFile::copy(base, tempTest);
+
+                if (!value)
+                {
+                    return false;
+                }
             }
         }
     }
