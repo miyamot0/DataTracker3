@@ -389,6 +389,12 @@ void SessionViewerDialog::on_tableWidget_currentCellChanged(int currentRow, int,
         chart->removeAllSeries();
         chart2->removeAllSeries();
 
+        chart->removeAxis(axisX);
+        chart->removeAxis(axisY);
+
+        chart2->removeAxis(axisX2);
+        chart2->removeAxis(axisY2);
+
         lineSeries.clear();
         lineSeries2.clear();
 
@@ -525,7 +531,7 @@ void SessionViewerDialog::on_tableWidget_currentCellChanged(int currentRow, int,
 
                         *lineSeries2[i] << QPointF(startSecs, runningSum);
 
-                        runningSum = runningSum + (startSecs + endSecs);
+                        runningSum = runningSum + (endSecs - startSecs);
 
                         *lineSeries2[i] << QPointF(endSecs, runningSum);
 
@@ -536,21 +542,18 @@ void SessionViewerDialog::on_tableWidget_currentCellChanged(int currentRow, int,
                         prev = event.TimePressed;
                         waitingForNext = true;
                     }
-
-
                 }
             }
 
             if (waitingForNext)
             {
                 startSecs = ((double) startTime.msecsTo(prev)) / 1000;
-                endSecs = ((double) startTime.msecsTo(endTime)) / 1000;
 
                 *lineSeries2[i] << QPointF(startSecs, runningSum);
 
-                runningSum = runningSum + (startSecs + endSecs);
+                runningSum = runningSum + (totalSecs - startSecs);
 
-                *lineSeries2[i] << QPointF(endSecs, runningSum);
+                *lineSeries2[i] << QPointF(totalSecs, runningSum);
             }
 
             if ((int) runningSum > max)
