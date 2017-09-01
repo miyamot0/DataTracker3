@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>913</width>
-    <height>632</height>
+    <width>982</width>
+    <height>635</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -62,10 +62,31 @@
             <property name="sizeConstraint">
              <enum>QLayout::SetDefaultConstraint</enum>
             </property>
+            <property name="fieldGrowthPolicy">
+             <enum>QFormLayout::ExpandingFieldsGrow</enum>
+            </property>
             <item row="0" column="0">
              <widget class="QLabel" name="labelGroup">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>125</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>125</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="styleSheet">
-               <string notr="true">padding: 10 20 10 5;</string>
+               <string notr="true"/>
               </property>
               <property name="text">
                <string>Select Groups:</string>
@@ -85,6 +106,18 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>212</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>212</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
                 <property name="focusPolicy">
                  <enum>Qt::TabFocus</enum>
                 </property>
@@ -101,10 +134,22 @@
               <item>
                <widget class="QPushButton" name="buttonGroup">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>150</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>150</width>
+                  <height>16777215</height>
+                 </size>
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::ClickFocus</enum>
@@ -121,8 +166,26 @@
             </item>
             <item row="1" column="0">
              <widget class="QLabel" name="labelIndividual">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>125</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>125</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="styleSheet">
-               <string notr="true">padding: 10 20 10 5;</string>
+               <string notr="true"/>
               </property>
               <property name="text">
                <string>Select Individual:</string>
@@ -138,6 +201,18 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>212</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>212</width>
+                  <height>16777215</height>
+                 </size>
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::TabFocus</enum>
@@ -155,10 +230,22 @@
               <item>
                <widget class="QPushButton" name="buttonIndividual">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>150</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>150</width>
+                  <height>16777215</height>
+                 </size>
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::ClickFocus</enum>
@@ -175,8 +262,26 @@
             </item>
             <item row="2" column="0">
              <widget class="QLabel" name="labelEvaluation">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>125</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>125</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="styleSheet">
-               <string notr="true">padding: 10 20 10 5;</string>
+               <string notr="true"/>
               </property>
               <property name="text">
                <string>Select Evaluation:</string>
@@ -192,6 +297,18 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>212</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>212</width>
+                  <height>16777215</height>
+                 </size>
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::TabFocus</enum>
@@ -209,10 +326,22 @@
               <item>
                <widget class="QPushButton" name="buttonEvaluation">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>150</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>150</width>
+                  <height>16777215</height>
+                 </size>
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::ClickFocus</enum>
@@ -229,8 +358,20 @@
             </item>
             <item row="3" column="0">
              <widget class="QLabel" name="labelCondition">
+              <property name="minimumSize">
+               <size>
+                <width>125</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>125</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="styleSheet">
-               <string notr="true">padding: 10 20 10 5;</string>
+               <string notr="true"/>
               </property>
               <property name="text">
                <string>Select Condition:</string>
@@ -246,6 +387,18 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>212</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>212</width>
+                  <height>16777215</height>
+                 </size>
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::TabFocus</enum>
@@ -263,10 +416,22 @@
               <item>
                <widget class="QPushButton" name="buttonCondition">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>150</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>150</width>
+                  <height>16777215</height>
+                 </size>
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::ClickFocus</enum>
@@ -283,8 +448,20 @@
             </item>
             <item row="4" column="0">
              <widget class="QLabel" name="labelKeySet">
+              <property name="minimumSize">
+               <size>
+                <width>125</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>125</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="styleSheet">
-               <string notr="true">padding: 10 20 10 5;</string>
+               <string notr="true"/>
               </property>
               <property name="text">
                <string>Select Key Set:</string>
@@ -300,6 +477,18 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>212</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>212</width>
+                  <height>16777215</height>
+                 </size>
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::TabFocus</enum>
@@ -317,10 +506,22 @@
               <item>
                <widget class="QPushButton" name="buttonKeySet">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>150</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>150</width>
+                  <height>16777215</height>
+                 </size>
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::ClickFocus</enum>
@@ -337,8 +538,20 @@
             </item>
             <item row="5" column="0">
              <widget class="QLabel" name="labelTherapist">
+              <property name="minimumSize">
+               <size>
+                <width>125</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>125</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="styleSheet">
-               <string notr="true">padding: 10 20 10 5;</string>
+               <string notr="true"/>
               </property>
               <property name="text">
                <string>Session Therapist:</string>
@@ -354,6 +567,18 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>212</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>212</width>
+                  <height>16777215</height>
+                 </size>
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::TabFocus</enum>
@@ -371,10 +596,22 @@
               <item>
                <widget class="QPushButton" name="buttonTherapist">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>150</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>150</width>
+                  <height>16777215</height>
+                 </size>
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::ClickFocus</enum>
@@ -391,8 +628,20 @@
             </item>
             <item row="6" column="0">
              <widget class="QLabel" name="labelCollector">
+              <property name="minimumSize">
+               <size>
+                <width>125</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>125</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="styleSheet">
-               <string notr="true">padding: 10 20 10 5;</string>
+               <string notr="true"/>
               </property>
               <property name="text">
                <string>Data Collector:</string>
@@ -408,6 +657,18 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>212</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>212</width>
+                  <height>16777215</height>
+                 </size>
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::TabFocus</enum>
@@ -425,10 +686,22 @@
               <item>
                <widget class="QPushButton" name="buttonCollector">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>150</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>150</width>
+                  <height>16777215</height>
+                 </size>
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::ClickFocus</enum>
@@ -445,8 +718,20 @@
             </item>
             <item row="7" column="0">
              <widget class="QLabel" name="labelRole">
+              <property name="minimumSize">
+               <size>
+                <width>125</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>125</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="styleSheet">
-               <string notr="true">padding: 10 20 10 5;</string>
+               <string notr="true"/>
               </property>
               <property name="text">
                <string>Collector's Role:</string>
@@ -455,13 +740,28 @@
             </item>
             <item row="7" column="1">
              <layout class="QHBoxLayout" name="layoutRole">
-              <item>
+              <property name="sizeConstraint">
+               <enum>QLayout::SetDefaultConstraint</enum>
+              </property>
+              <item alignment="Qt::AlignLeft">
                <widget class="QComboBox" name="comboRole">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>212</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>212</width>
+                  <height>16777215</height>
+                 </size>
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::TabFocus</enum>
@@ -474,7 +774,7 @@
                 </property>
                 <item>
                  <property name="text">
-                  <string>Select Role</string>
+                  <string>Select Collector's Role</string>
                  </property>
                 </item>
                 <item>
@@ -489,28 +789,24 @@
                 </item>
                </widget>
               </item>
-              <item>
-               <widget class="QLabel" name="holderRole">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true"/>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-               </widget>
-              </item>
              </layout>
             </item>
             <item row="8" column="0">
              <widget class="QLabel" name="label">
+              <property name="minimumSize">
+               <size>
+                <width>125</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>125</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="styleSheet">
-               <string notr="true">padding: 10 20 10 5;</string>
+               <string notr="true"/>
               </property>
               <property name="text">
                <string>Session Duration:</string>
@@ -526,6 +822,18 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>212</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>212</width>
+                  <height>16777215</height>
+                 </size>
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::TabFocus</enum>
@@ -601,10 +909,22 @@
                  <bool>true</bool>
                 </property>
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>150</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>150</width>
+                  <height>16777215</height>
+                 </size>
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::NoFocus</enum>
@@ -621,8 +941,20 @@
             </item>
             <item row="9" column="0">
              <widget class="QLabel" name="labelSessionNumber">
+              <property name="minimumSize">
+               <size>
+                <width>125</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>125</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="styleSheet">
-               <string notr="true">padding: 10 20 10 5;</string>
+               <string notr="true"/>
               </property>
               <property name="text">
                <string>Session Number:</string>
@@ -638,6 +970,18 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>212</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>212</width>
+                  <height>16777215</height>
+                 </size>
                 </property>
                 <property name="mouseTracking">
                  <bool>true</bool>
@@ -663,6 +1007,18 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>150</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>150</width>
+                  <height>16777215</height>
+                 </size>
                 </property>
                 <property name="styleSheet">
                  <string notr="true"/>
@@ -787,10 +1143,25 @@
        </item>
        <item>
         <layout class="QFormLayout" name="formLayout">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::ExpandingFieldsGrow</enum>
+         </property>
+         <property name="labelAlignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+         <property name="formAlignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
          <item row="0" column="0">
           <widget class="QLabel" name="labelSaveLocation">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
-            <string>Main Save Location:</string>
+            <string>Main Location:</string>
            </property>
           </widget>
          </item>
@@ -806,8 +1177,14 @@
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="labelAlternativeLocation">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
-            <string>Alternate Save Location:</string>
+            <string>Alternate Location:</string>
            </property>
           </widget>
          </item>
