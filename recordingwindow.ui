@@ -148,6 +148,15 @@
         <layout class="QVBoxLayout" name="panelLeftBottom">
          <item>
           <layout class="QFormLayout" name="layoutParameters">
+           <property name="fieldGrowthPolicy">
+            <enum>QFormLayout::ExpandingFieldsGrow</enum>
+           </property>
+           <property name="labelAlignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+           <property name="formAlignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+           </property>
            <item row="0" column="0" colspan="2">
             <widget class="QLabel" name="labelTitle_2">
              <property name="text">
@@ -157,6 +166,12 @@
            </item>
            <item row="1" column="0">
             <widget class="QLabel" name="labelGroup">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text">
               <string>Group Name:</string>
              </property>
@@ -180,6 +195,12 @@
            </item>
            <item row="2" column="0">
             <widget class="QLabel" name="labelPatient">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text">
               <string>Patient Name:</string>
              </property>
@@ -200,6 +221,12 @@
            </item>
            <item row="3" column="0">
             <widget class="QLabel" name="labelEvaluation">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text">
               <string>Evaluation:</string>
              </property>
@@ -220,6 +247,12 @@
            </item>
            <item row="4" column="0">
             <widget class="QLabel" name="labelCondition">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text">
               <string>Condition:</string>
              </property>
@@ -240,6 +273,12 @@
            </item>
            <item row="5" column="0">
             <widget class="QLabel" name="labelCollector">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text">
               <string>Collector:</string>
              </property>
@@ -267,6 +306,12 @@
            </item>
            <item row="6" column="0">
             <widget class="QLabel" name="label_7">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text">
               <string>Role:</string>
              </property>
@@ -293,6 +338,15 @@
         <layout class="QVBoxLayout" name="panelRightBottom">
          <item>
           <layout class="QFormLayout" name="layoutDurations">
+           <property name="fieldGrowthPolicy">
+            <enum>QFormLayout::ExpandingFieldsGrow</enum>
+           </property>
+           <property name="labelAlignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+           <property name="formAlignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+           </property>
            <property name="verticalSpacing">
             <number>6</number>
            </property>
@@ -305,6 +359,12 @@
            </item>
            <item row="1" column="0">
             <widget class="QLabel" name="label">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text">
               <string>Total Time:</string>
              </property>
@@ -328,6 +388,12 @@
            </item>
            <item row="2" column="0">
             <widget class="QLabel" name="label_2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text">
               <string>Schedule 1 Time:</string>
              </property>
@@ -354,6 +420,12 @@
            </item>
            <item row="3" column="0">
             <widget class="QLabel" name="label_3">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text">
               <string>Schedule 2 Time:</string>
              </property>
@@ -377,6 +449,12 @@
            </item>
            <item row="4" column="0">
             <widget class="QLabel" name="label_5">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text">
               <string>Schedule 3 Time:</string>
              </property>
