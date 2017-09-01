@@ -593,13 +593,11 @@ void SessionWindow::on_comboSessionDuration_currentIndexChanged(int index)
         {
             ui->editSessionDuration->setText(QString("%1 Seconds").arg(sessionDurationDialog.GetSeconds()));
         }
-
-        //ui->editSessionDuration->setReadOnly(false);
     }
-    //else
-    //{
-    //    ui->editSessionDuration->setReadOnly(true);
-    //}
+    else
+    {
+        ui->editSessionDuration->setText("");
+    }
 }
 
 /**
