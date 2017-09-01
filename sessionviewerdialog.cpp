@@ -387,12 +387,15 @@ void SessionViewerDialog::on_comboBoxDimension_currentIndexChanged(int index)
 
         fKeyDesc = mFrequencyKeys.toSet().toList();
 
+        mSeriesSelect.setWindowTitle(tr("Select Frequency Keys"));
         mSeriesSelect.AddOptions(fKeyDesc);
-        mSeriesSelect.exec();
 
-        fKeyShow = mSeriesSelect.GetBoolList();
+        if (mSeriesSelect.exec() != QDialog::Rejected)
+        {
+            fKeyShow = mSeriesSelect.GetBoolList();
 
-        DrawFrequencyPlot();
+            DrawFrequencyPlot();
+        }
     }
     else if (index == 2)
     {
@@ -407,12 +410,16 @@ void SessionViewerDialog::on_comboBoxDimension_currentIndexChanged(int index)
 
         dKeyDesc = mDurationKeys.toSet().toList();
 
+        mSeriesSelect.setWindowTitle(tr("Select Duration Keys"));
         mSeriesSelect.AddOptions(dKeyDesc);
-        mSeriesSelect.exec();
 
-        dKeyShow = mSeriesSelect.GetBoolList();
+        if (mSeriesSelect.exec() != QDialog::Rejected)
+        {
+            dKeyShow = mSeriesSelect.GetBoolList();
 
-        DrawDurationPlot();
+            DrawDurationPlot();
+        }
+
     }
     else
     {
@@ -420,6 +427,9 @@ void SessionViewerDialog::on_comboBoxDimension_currentIndexChanged(int index)
     }
 }
 
+/**
+ * @brief SessionViewerDialog::GetDurationKeySets
+ */
 void SessionViewerDialog::GetDurationKeySets()
 {
     QJsonArray durationArray;
@@ -560,6 +570,9 @@ void SessionViewerDialog::DrawFrequencyPlot()
     }
 }
 
+/**
+ * @brief SessionViewerDialog::DrawDurationPlot
+ */
 void SessionViewerDialog::DrawDurationPlot()
 {
     chart->removeAllSeries();
@@ -705,6 +718,10 @@ void SessionViewerDialog::DrawFrequencySeries(int index)
     }
 }
 
+/**
+ * @brief SessionViewerDialog::DrawDurationSeries
+ * @param index
+ */
 void SessionViewerDialog::DrawDurationSeries(int index)
 {
     if (index < 0)
@@ -813,6 +830,10 @@ void SessionViewerDialog::DrawDurationSeries(int index)
     }
 }
 
+/**
+ * @brief SessionViewerDialog::on_tableWidget_currentCellChanged
+ * @param currentRow
+ */
 void SessionViewerDialog::on_tableWidget_currentCellChanged(int currentRow, int, int, int)
 {
     if (currentRow < 0)
