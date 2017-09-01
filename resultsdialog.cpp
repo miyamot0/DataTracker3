@@ -221,16 +221,13 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
     int fKeys = currKeySet.FrequencyKeys.count();
     int dKeys = currKeySet.DurationKeys.count();
 
-    // Prepopulate bins
-    QList<QList<int>> mFrequencyBins;
-    for (int i(0); i<bins; i++)
-    {
-        mFrequencyBins.append(QList<int>());
+    QStringList fKeyList;
+    QList<double> fKeySum;
 
-        for (int j(0); j<fKeys; j++)
-        {
-            mFrequencyBins[i].append(0);
-        }
+    for (int i(0); i<currKeySet.FrequencyKeys.count(); i++)
+    {
+        fKeyList.append(currKeySet.FrequencyKeys.at(i).KeyDescription);
+        fKeySum.append(0.0);
     }
 
     QList<QList<double>> mDurationBins;
@@ -245,21 +242,6 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
     }
 
     KeySetEntry temp;
-    int timeHolder;
-
-    for (int i(0); i<fKeys; i++)
-    {
-        temp = currKeySet.FrequencyKeys.at(i);
-
-        foreach(SessionEvent event, *PressedKeys)
-        {
-            if (event.KeyEntered.KeyCode == temp.KeyCode)
-            {
-                timeHolder = startTime->secsTo(event.TimePressed) / 10;
-                mFrequencyBins[timeHolder][i] = mFrequencyBins[timeHolder][i] + 1;
-            }
-        }
-    }
 
     bool waitingForNext = false;
     QDateTime prev, after;
@@ -343,7 +325,7 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
     axisX = new QValueAxis;
     axisX->applyNiceNumbers();
     axisX->setGridLineColor(Qt::transparent);
-    axisX->setTitleText(tr("10s Bins"));
+    axisX->setTitleText(tr("Session Time (seconds)"));
     axisX->setTitleFont(QFont("Serif", 10, -1, false));
     axisX->setTitleBrush(Qt::black);
     axisX->setMin(0);
@@ -359,7 +341,7 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
     axisY = new QValueAxis;
     axisY->applyNiceNumbers();
     axisY->setGridLineColor(Qt::transparent);
-    axisY->setTitleText(tr("Frequency"));
+    axisY->setTitleText(tr("Behavior Count"));
     axisY->setTitleFont(QFont("Serif", 10, -1, false));
     axisY->setTitleBrush(Qt::black);
     //axisY->setTickCount(5);
@@ -373,12 +355,12 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
 
     int runTotal = 0;
 
-    for (int i(0); i<fKeys; i++)
+    for (int i(0); i<fKeyList.count(); i++)
     {
         lineSeries.append(new QLineSeries);
 
         lineSeries[i]->setUseOpenGL(true);
-        lineSeries[i]->setName(currKeySet.FrequencyKeys.at(i).KeyDescription);
+        lineSeries[i]->setName(fKeyList.at(i));
         lineSeries[i]->clear();
         lineSeries[i]->show();
 
@@ -399,28 +381,51 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
     }
 
     int max = 0;
+    QString tempKey;
 
-    for (int i(0); i<fKeys; i++)
+    qint64 secs;
+
+    for (int i(0); i<fKeyList.count(); i++)
     {
-        runTotal = 0;
+        tempKey = fKeyList.at(i);
+        fKeySum[i] = 0;
 
-        lineSeries[i]->append(0, 0);
-        for (int j(0); j<mFrequencyBins.length(); j++)
-        {
-            runTotal = runTotal + mFrequencyBins[j][i];
-            lineSeries[i]->append(j + 1, runTotal);
-        }
+        foreach (SessionEvent key, *PressedKeys) {
+            if (key.KeyEntered.KeyDescription == tempKey)
+            {
+                int fIndex = fKeyList.indexOf(key.KeyEntered.KeyDescription);
 
-        if (runTotal > max)
-        {
-            max = runTotal;
+                if (fIndex != -1)
+                {
+                    secs = startTime->secsTo(key.TimePressed);
+
+                    *lineSeries[fKeyList.indexOf(tempKey)] << QPointF(secs, fKeySum[fKeyList.indexOf(tempKey)]);
+                    fKeySum[fKeyList.indexOf(tempKey)] = fKeySum[fKeyList.indexOf(tempKey)] + 1;
+                    *lineSeries[fKeyList.indexOf(tempKey)] << QPointF(secs, fKeySum[fKeyList.indexOf(tempKey)]);
+
+                    if (fKeySum[fKeyList.indexOf(tempKey)] > (int) max)
+                    {
+                        max = (double) fKeySum[fKeyList.indexOf(tempKey)];
+                    }
+                }
+            }
         }
+    }
+
+    // Cap off
+    for (int i(0); i<lineSeries.count(); i++)
+    {
+        lineSeries.at(i)->append(totalSecs, lineSeries.at(i)->at(lineSeries.at(i)->count() - 1).y());
     }
 
     axisY->setMin(0);
     axisY->setMax(max + 1);
 
+    axisX->setMin(0);
+    axisX->setMax(startTime->secsTo(*endTime));
+
     // dur
+
     chart2 = new QChart();
     chart2->layout()->setContentsMargins(0, 0, 0, 0);
     chart2->setBackgroundRoundness(0);
