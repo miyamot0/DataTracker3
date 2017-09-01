@@ -109,7 +109,7 @@ bool KeySetCapture::eventFilter(QObject *, QEvent *e)
         ui->editKey->setText(QString("Key Set: %1").arg(mKey->text().toUpper()));
         waitingOnInput = false;
         ui->buttonKey->setEnabled(true);
-        ui->editKey->setStyleSheet(QString("QLineEdit { background: green; padding: 10 20 }"));
+        ui->editKey->setStyleSheet(QString("QLineEdit { background: green; }"));
 
         enteredKey = true;
     }
@@ -133,7 +133,7 @@ void KeySetCapture::on_buttonKey_clicked()
     ui->editKey->setText("Waiting for Key Press");
     waitingOnInput = true;
     ui->buttonKey->setEnabled(false);
-    ui->editKey->setStyleSheet(QString("QLineEdit { background: red; padding: 10 20 }"));
+    ui->editKey->setStyleSheet(QString("QLineEdit { background: red; }"));
 
     enteredKey = false;
 
