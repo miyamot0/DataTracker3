@@ -143,6 +143,8 @@ private:
         .arg(msecMod, 2, 10, QLatin1Char('0'));
     }
 
+    QString GetFrequencyKeyDescription(int code);
+    QString GetDurationKeyDescription(int code);
 };
 
 #endif // RECORDINGWINDOW_H

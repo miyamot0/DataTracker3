@@ -9,6 +9,7 @@
 #include "directorysearcher.h"
 #include "reliabilityparse.h"
 #include "keysetentry.h"
+#include "seriesselectdialog.h"
 #include "sessionevent.h"
 
 namespace Ui {
@@ -27,15 +28,24 @@ public slots:
     void WorkUpdate(QString update);
     void WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAction action);
 
+    void DrawBlankPlot();
+    void DrawFrequencyPlot();
+
 private slots:
     void on_comboBoxGroup_currentIndexChanged(int index);
     void on_comboBoxIndividual_currentIndexChanged(int index);
     void on_comboBoxEvaluation_currentIndexChanged(int index);
 
     void on_tableWidget_currentCellChanged(int currentRow, int, int, int);
+    void on_comboBoxDimension_currentIndexChanged(int index);
+    void on_pushButton_clicked();
+
+    void DrawFrequencySeries(int index);
 
 private:
     Ui::SessionViewerDialog *ui;
+
+    SeriesSelectDialog mSeriesSelect;
 
     DirectoryParse mCurrentDirectory;
     QString mWorkingDirectory;
@@ -47,18 +57,13 @@ private:
     QJsonObject json;
 
     QChart * chart;
-    QChart * chart2;
 
     QChartView * chartView;
-    QChartView * chartView2;
 
     QValueAxis * axisX,
-               * axisY,
-               * axisX2,
-               * axisY2;
+               * axisY;
 
-    QList<QLineSeries *> lineSeries,
-                         lineSeries2;
+    QList<QLineSeries *> lineSeries;
 
     QList<int> fKeySet;
     QList<int> fKeySum;
@@ -97,7 +102,14 @@ private:
 
     int tempKeyCode;
 
+    QList<QString> fKeyDesc, dKeyDesc;
 
+    QList<bool> fKeyShow, dKeyShow;
+
+    void GetFrequencyKeySets();
+    void GetDurationKeySets();
+
+    QStringList fKeySeriesNames;
 
     QString formatReli(bool value)
     {

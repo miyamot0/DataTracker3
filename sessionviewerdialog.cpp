@@ -84,52 +84,6 @@ SessionViewerDialog::SessionViewerDialog(QString mCurrentWorkingDirectory, QWidg
 
     axisY->setMin(0);
 
-    // Duration Plots
-
-    lineSeries2.clear();
-
-    chart2 = new QChart();
-    chart2->layout()->setContentsMargins(0, 0, 0, 0);
-    chart2->setBackgroundRoundness(0);
-    chart2->setTitle("");
-    chart2->setTitleFont(QFont("Serif", 10, -1, false));
-    chart2->setTitleBrush(Qt::black);
-
-    axisX2 = new QValueAxis;
-    axisX2->applyNiceNumbers();
-    axisX2->setGridLineColor(Qt::transparent);
-    axisX2->setTitleText(tr("Seconds"));
-    axisX2->setTitleFont(QFont("Serif", 10, -1, false));
-    axisX2->setTitleBrush(Qt::black);
-    axisX2->setMin(0);
-    axisX2->setLabelsFont(QFont("Serif", 10, -1, false));
-    axisX2->setLabelFormat(QString("%.0f"));
-    axisX2->setLabelsBrush(Qt::black);
-    axisX2->setLabelsColor(Qt::black);
-    axisX2->setLinePenColor(Qt::black);
-    axisX2->setLinePen(QPen(Qt::black));
-
-    axisY2 = new QValueAxis;
-    axisY2->applyNiceNumbers();
-    axisY2->setGridLineColor(Qt::transparent);
-    axisY2->setTitleText(tr("Total Time (s)"));
-    axisY2->setTitleFont(QFont("Serif", 10, -1, false));
-    axisY2->setTitleBrush(Qt::black);
-    axisY2->setLabelsFont(QFont("Serif", 10, -1, false));
-    axisY2->setLabelsBrush(Qt::black);
-    axisY2->setLabelsColor(Qt::black);
-    axisY2->setMin(0);
-    axisY2->setMax(100);
-    axisY2->setLinePenColor(Qt::black);
-    axisY2->setLinePen(QPen(Qt::black));
-
-    chartView2 = new QChartView(chart2);
-    chartView2->setRenderHint(QPainter::Antialiasing);
-
-    ui->plotLayout2->addWidget(chartView2);
-
-    axisY2->setMin(0);
-
     WindowTools::SetDialogFixedMaximize(this);
 }
 
@@ -138,6 +92,88 @@ SessionViewerDialog::~SessionViewerDialog()
     delete ui;
 }
 
+/**
+ * @brief SessionViewerDialog::WorkUpdate
+ * @param update
+ */
+void SessionViewerDialog::WorkUpdate(QString update)
+{
+    qDebug() << "WORK_UPDATE: " << update;
+}
+
+/**
+ * @brief SessionViewerDialog::WorkFinished
+ * @param finalResult
+ * @param action
+ */
+void SessionViewerDialog::WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAction action)
+{
+    if (action == ParseTypes::ParseAction::Group)
+    {
+        while (ui->comboBoxGroup->count() > 1)
+        {
+            ui->comboBoxGroup->removeItem(1);
+        }
+        while (ui->comboBoxIndividual->count() > 1)
+        {
+            ui->comboBoxIndividual->removeItem(1);
+        }
+        while (ui->comboBoxEvaluation->count() > 1)
+        {
+            ui->comboBoxEvaluation->removeItem(1);
+        }
+
+        ui->tableWidget->setRowCount(0);
+
+        for (int i(0); i<finalResult.Groups.count(); i++)
+        {
+            ui->comboBoxGroup->addItem(finalResult.Groups.at(i));
+        }
+
+        ui->comboBoxDimension->setCurrentIndex(0);
+    }
+    else if (action == ParseTypes::ParseAction::Individual)
+    {
+        while (ui->comboBoxIndividual->count() > 1)
+        {
+            ui->comboBoxIndividual->removeItem(1);
+        }
+        while (ui->comboBoxEvaluation->count() > 1)
+        {
+            ui->comboBoxEvaluation->removeItem(1);
+        }
+
+        ui->tableWidget->setRowCount(0);
+
+        for (int i(0); i<finalResult.Individuals.count(); i++)
+        {
+            ui->comboBoxIndividual->addItem(finalResult.Individuals.at(i));
+        }
+
+        ui->comboBoxDimension->setCurrentIndex(0);
+    }
+    else if (action == ParseTypes::ParseAction::Evaluation)
+    {
+        while (ui->comboBoxEvaluation->count() > 1)
+        {
+            ui->comboBoxEvaluation->removeItem(1);
+        }
+
+        ui->tableWidget->setRowCount(0);
+
+        for (int i(0); i<finalResult.Evaluations.count(); i++)
+        {
+            ui->comboBoxEvaluation->addItem(finalResult.Evaluations.at(i));
+        }
+
+        ui->comboBoxDimension->setCurrentIndex(0);
+    }
+}
+
+/**
+ * @brief SessionViewerDialog::on_comboBoxGroup_currentIndexChanged
+ * @param index
+ */
 void SessionViewerDialog::on_comboBoxGroup_currentIndexChanged(int index)
 {
     if (index == 0)
@@ -177,8 +213,15 @@ void SessionViewerDialog::on_comboBoxGroup_currentIndexChanged(int index)
 
     workerThread->wait();
     worker->startWork();
+
+    ui->comboBoxDimension->setCurrentIndex(0);
+    DrawBlankPlot();
 }
 
+/**
+ * @brief SessionViewerDialog::on_comboBoxIndividual_currentIndexChanged
+ * @param index
+ */
 void SessionViewerDialog::on_comboBoxIndividual_currentIndexChanged(int index)
 {
     if (index == 0)
@@ -214,8 +257,15 @@ void SessionViewerDialog::on_comboBoxIndividual_currentIndexChanged(int index)
 
     workerThread->wait();
     worker->startWork();
+
+    ui->comboBoxDimension->setCurrentIndex(0);
+    DrawBlankPlot();
 }
 
+/**
+ * @brief SessionViewerDialog::on_comboBoxEvaluation_currentIndexChanged
+ * @param index
+ */
 void SessionViewerDialog::on_comboBoxEvaluation_currentIndexChanged(int index)
 {
     if (index == 0)
@@ -308,68 +358,289 @@ void SessionViewerDialog::on_comboBoxEvaluation_currentIndexChanged(int index)
         ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 2, new QTableWidgetItem(PrimaryReliabilityObjects.at(i).Collector));
         ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 3, new QTableWidgetItem(formatReli(PrimaryReliabilityObjects.at(i).Reli)));
     }
+
+    ui->comboBoxDimension->setCurrentIndex(0);
+    DrawBlankPlot();
 }
 
-void SessionViewerDialog::WorkUpdate(QString update)
+/**
+ * @brief SessionViewerDialog::on_comboBoxDimension_currentIndexChanged
+ * @param index
+ */
+void SessionViewerDialog::on_comboBoxDimension_currentIndexChanged(int index)
 {
-    qDebug() << "WORK_UPDATE: " << update;
+    if (ui->tableWidget->rowCount() < 1)
+    {
+        return;
+    }
+
+    if (index == 1)
+    {
+        GetFrequencyKeySets();
+
+        QStringList mFrequencyKeys;
+
+        for (QString mKey : fKeyDesc)
+        {
+            mFrequencyKeys.append(mKey.split("-")[0]);
+        }
+
+        fKeyDesc = mFrequencyKeys.toSet().toList();
+
+        mSeriesSelect.AddOptions(fKeyDesc);
+        mSeriesSelect.exec();
+
+        fKeyShow = mSeriesSelect.GetBoolList();
+
+        DrawFrequencyPlot();
+    }
+    else if (index == 2)
+    {
+        /*
+        GetDurationKeySets();
+
+        QStringList mDurationKeys;
+
+        for (QString mKey : dKeyDesc)
+        {
+            mDurationKeys.append(mKey.split("-")[0]);
+        }
+
+        dKeyDesc = mDurationKeys.toSet().toList();
+
+        mSeriesSelect.AddOptions(dKeyDesc);
+        mSeriesSelect.exec();
+
+        dKeyShow = mSeriesSelect.GetBoolList();
+
+        DrawDurationPlot();
+        */
+    }
+    else
+    {
+        DrawBlankPlot();
+    }
 }
 
-void SessionViewerDialog::WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAction action)
+void SessionViewerDialog::GetDurationKeySets()
 {
-    if (action == ParseTypes::ParseAction::Group)
+    QJsonArray durationArray;
+
+    if (PrimaryReliabilityObjects.count() > 0 && FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(0).PrimaryFilePath, &json))
     {
-        while (ui->comboBoxGroup->count() > 1)
-        {
-            ui->comboBoxGroup->removeItem(1);
-        }
-        while (ui->comboBoxIndividual->count() > 1)
-        {
-            ui->comboBoxIndividual->removeItem(1);
-        }
-        while (ui->comboBoxEvaluation->count() > 1)
-        {
-            ui->comboBoxEvaluation->removeItem(1);
-        }
+        dKeyDesc.clear();
 
-        ui->tableWidget->setRowCount(0);
-
-        for (int i(0); i<finalResult.Groups.count(); i++)
+        // Get keys, add lines
+        for (int i(0); i<PrimaryReliabilityObjects.count(); i++)
         {
-            ui->comboBoxGroup->addItem(finalResult.Groups.at(i));
+            if (FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(i).PrimaryFilePath, &json))
+            {
+                durationArray = json["DurationKeys"].toArray();
+                foreach (const QJsonValue collector, durationArray) {
+                    QJsonObject mObj = collector.toObject();
+
+                    if (!dKeyDesc.contains((mObj["Description"].toString() + "-" + json["Condition"].toString())))
+                    {
+                        dKeyDesc.append((mObj["Description"].toString() + "-" + json["Condition"].toString()));
+                    }
+                }
+            }
         }
     }
-    else if (action == ParseTypes::ParseAction::Individual)
+}
+
+/**
+ * @brief SessionViewerDialog::GetFrequencyKeySets
+ */
+void SessionViewerDialog::GetFrequencyKeySets()
+{
+    QJsonArray frequencyArray;
+
+    if (PrimaryReliabilityObjects.count() > 0 && FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(0).PrimaryFilePath, &json))
     {
-        while (ui->comboBoxIndividual->count() > 1)
-        {
-            ui->comboBoxIndividual->removeItem(1);
-        }
-        while (ui->comboBoxEvaluation->count() > 1)
-        {
-            ui->comboBoxEvaluation->removeItem(1);
-        }
+        fKeyDesc.clear();
 
-        ui->tableWidget->setRowCount(0);
-
-        for (int i(0); i<finalResult.Individuals.count(); i++)
+        // Get all keys
+        for (int i(0); i<PrimaryReliabilityObjects.count(); i++)
         {
-            ui->comboBoxIndividual->addItem(finalResult.Individuals.at(i));
+            if (FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(i).PrimaryFilePath, &json))
+            {
+                frequencyArray = json["FrequencyKeys"].toArray();
+                foreach (const QJsonValue collector, frequencyArray) {
+                    QJsonObject mObj = collector.toObject();
+
+                    if (!fKeyDesc.contains((mObj["Description"].toString() + "-" + json["Condition"].toString())))
+                    {
+                        fKeyDesc.append((mObj["Description"].toString() + "-" + json["Condition"].toString()));
+                    }
+                }
+            }
         }
     }
-    else if (action == ParseTypes::ParseAction::Evaluation)
+}
+
+/**
+ * @brief SessionViewerDialog::on_pushButton_clicked
+ */
+void SessionViewerDialog::on_pushButton_clicked()
+{
+    on_comboBoxDimension_currentIndexChanged(ui->comboBoxDimension->currentIndex());
+}
+
+/**
+ * @brief SessionViewerDialog::DrawBlankPlot
+ */
+void SessionViewerDialog::DrawBlankPlot()
+{
+    chart->setTitle("");
+    chart->removeAllSeries();
+    chart->removeAxis(axisX);
+    chart->removeAxis(axisY);
+
+    axisX->setTitleText("Counts");
+    axisY->setTitleText("Session");
+}
+
+/**
+ * @brief SessionViewerDialog::DrawFrequencyPlot
+ */
+void SessionViewerDialog::DrawFrequencyPlot()
+{
+    chart->removeAllSeries();
+    chart->removeAxis(axisX);
+    chart->removeAxis(axisY);
+
+    axisX->setTitleText("Seconds");
+    axisY->setTitleText("Behavior Counts");
+
+    QJsonArray frequencyArray;
+    QString tempName;
+
+    fKeySeriesNames.clear();
+
+    if (PrimaryReliabilityObjects.count() > 0 && FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(0).PrimaryFilePath, &json))
     {
-        while (ui->comboBoxEvaluation->count() > 1)
+        chart->removeAllSeries();
+        lineSeries.clear();
+
+        if (FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(0).PrimaryFilePath, &json))
         {
-            ui->comboBoxEvaluation->removeItem(1);
+            frequencyArray = json["FrequencyKeys"].toArray();
+            foreach (const QJsonValue collector, frequencyArray) {
+                QJsonObject mObj = collector.toObject();
+
+                int fIndex = fKeyDesc.indexOf(mObj["Description"].toString());
+
+                if (fIndex != -1 && fKeyShow.at(fIndex))
+                {
+                    tempName = mObj["Description"].toString();
+
+                    if (!fKeySeriesNames.contains(tempName))
+                    {
+                        fKeySeriesNames.append(tempName);
+
+                        lineSeries.append(new QLineSeries);
+
+                        lineSeries[fKeySeriesNames.indexOf(tempName)]->setUseOpenGL(true);
+                        lineSeries[fKeySeriesNames.indexOf(tempName)]->setName(tempName);
+                        lineSeries[fKeySeriesNames.indexOf(tempName)]->clear();
+                        lineSeries[fKeySeriesNames.indexOf(tempName)]->show();
+
+                        *lineSeries[fKeySeriesNames.indexOf(tempName)] << QPointF(0, 0);
+
+                        chart->addSeries(lineSeries[fKeySeriesNames.indexOf(tempName)]);
+
+                        chart->setAxisX(axisX, lineSeries[fKeySeriesNames.indexOf(tempName)]);
+                        chart->setAxisY(axisY, lineSeries[fKeySeriesNames.indexOf(tempName)]);
+
+                    }
+                }
+            }
         }
 
-        ui->tableWidget->setRowCount(0);
+        DrawFrequencySeries(ui->tableWidget->currentRow());
+    }
+}
 
-        for (int i(0); i<finalResult.Evaluations.count(); i++)
+/**
+ * @brief SessionViewerDialog::DrawFrequencySeries
+ * @param index
+ */
+void SessionViewerDialog::DrawFrequencySeries(int index)
+{
+    if (index < 0)
+    {
+        if (ui->tableWidget->rowCount() < 1)
         {
-            ui->comboBoxEvaluation->addItem(finalResult.Evaluations.at(i));
+            return;
         }
+        else
+        {
+            index = 0;
+
+            ui->tableWidget->selectRow(index);
+        }
+    }
+
+    temp = PrimaryReliabilityObjects.at(index);
+    result = FileTools::ReadSessionFromJSON(temp.PrimaryFilePath, &json);
+
+    int secs;
+    max = 1;
+
+    QString tempName;
+
+    if (result)
+    {
+        fKeySum.clear();
+
+        foreach (QLineSeries * series, lineSeries)
+        {
+            series->clear();
+        }
+
+        foreach (QString key, fKeyDesc) {
+            fKeySum.append(0);
+        }
+
+        startTime = QDateTime(QDateTime::fromString(json["StartTime"].toString()));
+        totalSecs = (int)((double) json["SessionDuration"].toInt() / 1000);
+
+        chart->setTitle(QString("Session #: %1").arg(json["Session"].toInt()));
+
+        pressedKeysJson = json["PressedKeys"].toArray();
+
+        foreach (const QJsonValue collector, pressedKeysJson) {
+            QJsonObject mObj = collector.toObject();
+
+            SessionEvent mEntry;
+            mEntry.KeyEntered.KeyCode = mObj["KeyCode"].toInt();
+            mEntry.KeyEntered.KeyDescription = mObj["KeyDescription"].toString();
+            mEntry.KeyEntered.KeyName = mObj["KeyName"].toString();
+            mEntry.TimePressed = QDateTime(QDateTime::fromString(mObj["TimePressed"].toString()));
+
+            int fIndex = fKeyDesc.indexOf(mObj["KeyDescription"].toString());
+
+            if (fIndex != -1 && fKeyShow[fIndex] == true)
+            {
+                tempName = (mObj["KeyDescription"].toString());
+                secs = startTime.secsTo(QDateTime::fromString(mObj["TimePressed"].toString()));
+
+                *lineSeries[fKeySeriesNames.indexOf(tempName)] << QPointF(secs, fKeySum[fKeySeriesNames.indexOf(tempName)]);
+                fKeySum[fKeySeriesNames.indexOf(tempName)] = fKeySum[fKeySeriesNames.indexOf(tempName)] + 1;
+                *lineSeries[fKeySeriesNames.indexOf(tempName)] << QPointF(secs, fKeySum[fKeySeriesNames.indexOf(tempName)]);
+
+                if (fKeySum[fKeySeriesNames.indexOf(tempName)] > (int) max)
+                {
+                    max = (double) fKeySum[fKeySeriesNames.indexOf(tempName)];
+                }
+            }
+        }
+
+        axisY->setMax(max + 1);
+        axisX->setMax(totalSecs);
+
+        max = 0;
     }
 }
 
@@ -380,6 +651,13 @@ void SessionViewerDialog::on_tableWidget_currentCellChanged(int currentRow, int,
         return;
     }
 
+    if (ui->comboBoxDimension->currentIndex() == 1)
+    {
+        DrawFrequencySeries(currentRow);
+    }
+
+    return;
+
     temp = PrimaryReliabilityObjects.at(currentRow);
 
     result = FileTools::ReadSessionFromJSON(temp.PrimaryFilePath, &json);
@@ -387,16 +665,9 @@ void SessionViewerDialog::on_tableWidget_currentCellChanged(int currentRow, int,
     if (result)
     {
         chart->removeAllSeries();
-        chart2->removeAllSeries();
-
         chart->removeAxis(axisX);
-        chart->removeAxis(axisY);
-
-        chart2->removeAxis(axisX2);
-        chart2->removeAxis(axisY2);
 
         lineSeries.clear();
-        lineSeries2.clear();
 
         fKeySet.clear();
         fKeySum.clear();
@@ -453,19 +724,19 @@ void SessionViewerDialog::on_tableWidget_currentCellChanged(int currentRow, int,
             dKeySet.append(mObj["Code"].toInt());
             dKeySum.append(0.0);
 
-            lineSeries2.append(new QLineSeries);
+            //lineSeries2.append(new QLineSeries);
 
-            lineSeries2[lineSeries2.count() - 1]->setUseOpenGL(true);
-            lineSeries2[lineSeries2.count() - 1]->setName(mObj["Description"].toString());
-            lineSeries2[lineSeries2.count() - 1]->clear();
-            lineSeries2[lineSeries2.count() - 1]->show();
+            //lineSeries2[lineSeries2.count() - 1]->setUseOpenGL(true);
+            //lineSeries2[lineSeries2.count() - 1]->setName(mObj["Description"].toString());
+            //lineSeries2[lineSeries2.count() - 1]->clear();
+            //lineSeries2[lineSeries2.count() - 1]->show();
 
-            chart2->addSeries(lineSeries2[lineSeries2.count() - 1]);
+            //chart2->addSeries(lineSeries2[lineSeries2.count() - 1]);
 
-            chart2->setAxisX(axisX2, lineSeries2[lineSeries2.count() - 1]);
-            chart2->setAxisY(axisY2, lineSeries2[lineSeries2.count() - 1]);
+            //chart2->setAxisX(axisX2, lineSeries2[lineSeries2.count() - 1]);
+            //chart2->setAxisY(axisY2, lineSeries2[lineSeries2.count() - 1]);
 
-            *lineSeries2[lineSeries2.count() - 1] << QPointF(0, 0);
+            //*lineSeries2[lineSeries2.count() - 1] << QPointF(0, 0);
         }
 
         PressedKeys.clear();
@@ -529,11 +800,11 @@ void SessionViewerDialog::on_tableWidget_currentCellChanged(int currentRow, int,
                         startSecs = ((double) startTime.msecsTo(prev)) / 1000;
                         endSecs = ((double) startTime.msecsTo(after)) / 1000;
 
-                        *lineSeries2[i] << QPointF(startSecs, runningSum);
+                        //*lineSeries2[i] << QPointF(startSecs, runningSum);
 
                         runningSum = runningSum + (endSecs - startSecs);
 
-                        *lineSeries2[i] << QPointF(endSecs, runningSum);
+                        //*lineSeries2[i] << QPointF(endSecs, runningSum);
 
                         waitingForNext = false;
                     }
@@ -549,11 +820,11 @@ void SessionViewerDialog::on_tableWidget_currentCellChanged(int currentRow, int,
             {
                 startSecs = ((double) startTime.msecsTo(prev)) / 1000;
 
-                *lineSeries2[i] << QPointF(startSecs, runningSum);
+                //*lineSeries2[i] << QPointF(startSecs, runningSum);
 
                 runningSum = runningSum + (totalSecs - startSecs);
 
-                *lineSeries2[i] << QPointF(totalSecs, runningSum);
+                //*lineSeries2[i] << QPointF(totalSecs, runningSum);
             }
 
             if ((int) runningSum > max)
@@ -562,7 +833,10 @@ void SessionViewerDialog::on_tableWidget_currentCellChanged(int currentRow, int,
             }
         }
 
-        axisY2->setMax(max + 1);
-        axisX2->setMax(totalSecs);
+        //axisY2->setMax(max + 1);
+        //axisX2->setMax(totalSecs);
     }
 }
+
+
+

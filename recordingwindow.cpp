@@ -570,13 +570,31 @@ void RecordingWindow::DetectFrequencyKey(QKeyEvent * mKey)
             KeySetEntry loggedKeySet;
             loggedKeySet.KeyCode = mKey->key();
             loggedKeySet.KeyName = mKey->text();
-            loggedKeySet.KeyDescription = mKey->text();
+            loggedKeySet.KeyDescription = GetFrequencyKeyDescription(mKey->key());
 
             loggedKey.KeyEntered = loggedKeySet;
 
             AddKey(loggedKey);
         }
     }
+}
+
+/**
+ * @brief RecordingWindow::GetFrequencyKeyDescription
+ * @param code
+ * @return
+ */
+QString RecordingWindow::GetFrequencyKeyDescription(int code)
+{
+    for (int i(0); i<keySet.FrequencyKeys.count(); i++)
+    {
+        if (code == keySet.FrequencyKeys.at(i).KeyCode)
+        {
+            return keySet.FrequencyKeys.at(i).KeyDescription;
+        }
+    }
+
+    return QString("NaN");
 }
 
 /**
@@ -597,13 +615,31 @@ void RecordingWindow::DetectDurationKey(QKeyEvent * mKey)
             KeySetEntry loggedKeySet;
             loggedKeySet.KeyCode = mKey->key();
             loggedKeySet.KeyName = mKey->text();
-            loggedKeySet.KeyDescription = mKey->text();
+            loggedKeySet.KeyDescription = GetDurationKeyDescription(mKey->key());
 
             loggedKey.KeyEntered = loggedKeySet;
 
             AddKey(loggedKey);
         }
     }
+}
+
+/**
+ * @brief RecordingWindow::GetDurationKeyDescription
+ * @param code
+ * @return
+ */
+QString RecordingWindow::GetDurationKeyDescription(int code)
+{
+    for (int i(0); i<keySet.DurationKeys.count(); i++)
+    {
+        if (code == keySet.DurationKeys.at(i).KeyCode)
+        {
+            return keySet.DurationKeys.at(i).KeyDescription;
+        }
+    }
+
+    return QString("NaN");
 }
 
 /**
