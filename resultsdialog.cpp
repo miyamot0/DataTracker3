@@ -111,6 +111,15 @@ void ResultsDialog::SetTitle(QString title)
  */
 void ResultsDialog::BuildTables()
 {
+    ui->tableMainDurAll->setRowCount(0);
+    ui->tableMainFreqAll->setRowCount(0);
+    ui->tableMainDurOne->setRowCount(0);
+    ui->tableMainFreqOne->setRowCount(0);
+    ui->tableMainDurTwo->setRowCount(0);
+    ui->tableMainFreqTwo->setRowCount(0);
+    ui->tableMainDurThree->setRowCount(0);
+    ui->tableMainFreqThree->setRowCount(0);
+
     for (int i(0); i<FrequencyOverall.count(); i++)
     {
         ui->tableMainFreqAll->insertRow(ui->tableMainFreqAll->rowCount());

@@ -956,34 +956,6 @@ SessionWindow::~SessionWindow()
     delete ui;
 }
 
-/*
-
-bool SessionWindow::eventFilter(QObject *obj, QEvent *e)
-{
-    if (e->type() == QEvent::FocusIn)
-    {
-        if (obj == ui->editSessionDuration && !sessionDurationDialog.AcceptDialog)
-        {
-            sessionDurationDialog.AcceptDialog = true;
-
-            if (sessionDurationDialog.exec() == QDialog::Accepted)
-            {
-                ui->editSessionDuration->setText(QString("%1 Seconds").arg(sessionDurationDialog.GetSeconds()));
-            }
-
-            ui->editSessionDuration->clearFocus();
-
-            ui->comboSessionDuration->setCurrentIndex(ui->comboSessionDuration->count() - 1);
-
-            sessionDurationDialog.AcceptDialog = false;
-        }
-    }
-
-    return false;
-}
-
-*/
-
 /** Get Duration Session
  * @brief SessionWindow::GetSessionDuration
  * @return
