@@ -415,6 +415,12 @@ void StartWindow::on_actionEvaluation_Visual_Analysis_triggered()
     evaluationViewerDialog->exec();
 }
 
+void StartWindow::on_actionEvaluation_Report_triggered()
+{
+    evaluationReportDialog = new EvaluationReportDialog(workingDirectory, this);
+    evaluationReportDialog->exec();
+}
+
 /** Open FAQ Window
  * @brief StartWindow::on_actionFrequently_Asked_Questions_triggered
  */

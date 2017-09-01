@@ -1268,6 +1268,426 @@ static bool WriteReliSpreadsheet(QString mWorkingDirectory, QString Group, QStri
     return xlsx.saveAs(path);
 }
 
+static bool WriteEvaluationReport(QList<ReliabilityParse> * PrimaryReliabilityObjects,
+                                  QString mWorkingDirectory,
+                                  QString Group,
+                                  QString Individual,
+                                  QString Evaluation,
+                                  QStringList * mFKeys,
+                                  QStringList * mDKeys)
+{
+    QJsonObject json;
+    QJsonArray tempArray;
+
+    int tempIndex;
+
+    QStringList keyIndex = QStringList(*mFKeys + *mDKeys);
+
+    QXlsx::Document xlsx;
+
+    int rowStart = 8;
+    xlsx.addSheet("Case Report");
+
+    // Main schedule
+    for (int i(0); i<PrimaryReliabilityObjects->count(); i++)
+    {
+        if (FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects->at(i).PrimaryFilePath, &json))
+        {
+            if (i == 0)
+            {
+                xlsx.write(1, 1, "Evaluation Report");
+                xlsx.write(2, 1,
+                           QString("Group: %1").arg(json["Group"].toString()));
+                xlsx.write(3, 1,
+                           QString("Individual: %1").arg(json["Individual"].toString()));
+                xlsx.write(4, 1,
+                           QString("Evaluation: %1").arg(json["Evaluation"].toString()));
+                xlsx.write(5, 1,
+                           QString("Date Composed: %1").arg(QDateTime::currentDateTime().toString()));
+
+                xlsx.write(rowStart - 1, 1, "Session");
+                xlsx.write(rowStart - 1, 2, "Condition");
+                xlsx.write(rowStart - 1, 3, "Recorder");
+                xlsx.write(rowStart - 1, 4, "Therapist");
+                xlsx.write(rowStart - 1, 5, "Reli");
+                xlsx.write(rowStart - 1, 6, "Session Time (min)");
+
+                int spacing = 0;
+
+                xlsx.write(rowStart - 2, 7 + spacing, "Frequency (Count)");
+                for (int j(0); j<mFKeys->count(); j++)
+                {
+                    xlsx.write(rowStart - 1, 7 + spacing, mFKeys->at(j));
+                    spacing++;
+                }
+
+                xlsx.write(rowStart - 2, 7 + spacing, "Duration (Seconds)");
+                for (int j(0); j<mDKeys->count(); j++)
+                {
+                    xlsx.write(rowStart - 1, 7 + spacing, mDKeys->at(j));
+                    spacing++;
+                }
+
+                xlsx.write(rowStart - 2, 7 + spacing, "Frequency (RPM)");
+                for (int j(0); j<mFKeys->count(); j++)
+                {
+                    xlsx.write(rowStart - 1, 7 + spacing, mFKeys->at(j));
+                    spacing++;
+                }
+
+                xlsx.write(rowStart - 2, 7 + spacing, "Duration (Percent session)");
+                for (int j(0); j<mDKeys->count(); j++)
+                {
+                    xlsx.write(rowStart - 1, 7 + spacing, mDKeys->at(j));
+                    spacing++;
+                }
+            }
+
+            xlsx.write(rowStart, 1, QString::number(json["Session"].toInt()));
+            xlsx.write(rowStart, 2, json["Condition"].toString());
+            xlsx.write(rowStart, 3, json["Collector"].toString());
+            xlsx.write(rowStart, 4, json["Therapist"].toString());
+            xlsx.write(rowStart, 5, PrimaryReliabilityObjects->at(i).SecondaryObserver);
+            xlsx.write(rowStart, 6, QString::number(((double)json["SessionDuration"].toInt()/1000)/60, 'f', 1));
+
+            rowStart++;
+
+            tempArray = json["FrequencyOverall"].toArray();
+            foreach (const QJsonValue arrayObj, tempArray) {
+                QJsonObject mObj = arrayObj.toObject();
+
+                tempIndex = keyIndex.indexOf(mObj["Key"].toString());
+
+                if (tempIndex != -1)
+                {
+                    xlsx.write(rowStart - 1, 7 + tempIndex, QString::number(mObj["Count"].toInt()));
+                    xlsx.write(rowStart - 1, 7 + tempIndex + keyIndex.count(), mObj["Rate"].toString());
+                }
+            }
+
+            tempArray = json["DurationOverall"].toArray();
+            foreach (const QJsonValue arrayObj, tempArray) {
+                QJsonObject mObj = arrayObj.toObject();
+
+                tempIndex = keyIndex.indexOf(mObj["Key"].toString());
+
+                if (tempIndex != -1)
+                {
+                    xlsx.write(rowStart - 1, 7 + tempIndex, QString::number((double)mObj["Count"].toInt()/1000, 'f', 2));
+                    xlsx.write(rowStart - 1, 7 + tempIndex + keyIndex.count(), mObj["Rate"].toString());
+                }
+            }
+        }
+    }
+
+    rowStart = 8;
+    xlsx.addSheet("Schedule One");
+
+    // Schedule One
+    for (int i(0); i<PrimaryReliabilityObjects->count(); i++)
+    {
+        if (FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects->at(i).PrimaryFilePath, &json))
+        {
+            if (i == 0)
+            {
+                xlsx.write(1, 1, "Evaluation Report");
+                xlsx.write(2, 1,
+                           QString("Group: %1").arg(json["Group"].toString()));
+                xlsx.write(3, 1,
+                           QString("Individual: %1").arg(json["Individual"].toString()));
+                xlsx.write(4, 1,
+                           QString("Evaluation: %1").arg(json["Evaluation"].toString()));
+                xlsx.write(5, 1,
+                           QString("Date Composed: %1").arg(QDateTime::currentDateTime().toString()));
+
+                xlsx.write(rowStart - 1, 1, "Session");
+                xlsx.write(rowStart - 1, 2, "Condition");
+                xlsx.write(rowStart - 1, 3, "Recorder");
+                xlsx.write(rowStart - 1, 4, "Therapist");
+                xlsx.write(rowStart - 1, 5, "Reli");
+                xlsx.write(rowStart - 1, 6, "Session Time (min)");
+
+                int spacing = 0;
+
+                xlsx.write(rowStart - 2, 7 + spacing, "Frequency (Count)");
+                for (int j(0); j<mFKeys->count(); j++)
+                {
+                    xlsx.write(rowStart - 1, 7 + spacing, mFKeys->at(j));
+                    spacing++;
+                }
+
+                xlsx.write(rowStart - 2, 7 + spacing, "Duration (Seconds)");
+                for (int j(0); j<mDKeys->count(); j++)
+                {
+                    xlsx.write(rowStart - 1, 7 + spacing, mDKeys->at(j));
+                    spacing++;
+                }
+
+                xlsx.write(rowStart - 2, 7 + spacing, "Frequency (RPM)");
+                for (int j(0); j<mFKeys->count(); j++)
+                {
+                    xlsx.write(rowStart - 1, 7 + spacing, mFKeys->at(j));
+                    spacing++;
+                }
+
+                xlsx.write(rowStart - 2, 7 + spacing, "Duration (Percent session)");
+                for (int j(0); j<mDKeys->count(); j++)
+                {
+                    xlsx.write(rowStart - 1, 7 + spacing, mDKeys->at(j));
+                    spacing++;
+                }
+            }
+
+            xlsx.write(rowStart, 1, QString::number(json["Session"].toInt()));
+            xlsx.write(rowStart, 2, json["Condition"].toString());
+            xlsx.write(rowStart, 3, json["Collector"].toString());
+            xlsx.write(rowStart, 4, json["Therapist"].toString());
+            xlsx.write(rowStart, 5, PrimaryReliabilityObjects->at(i).SecondaryObserver);
+            xlsx.write(rowStart, 6, QString::number(((double)json["ScheduleOneDuration"].toInt()/1000)/60, 'f', 1));
+
+            rowStart++;
+
+            tempArray = json["FrequencyOne"].toArray();
+            foreach (const QJsonValue arrayObj, tempArray) {
+                QJsonObject mObj = arrayObj.toObject();
+
+                tempIndex = keyIndex.indexOf(mObj["Key"].toString());
+
+                if (tempIndex != -1)
+                {
+                    xlsx.write(rowStart - 1, 7 + tempIndex, QString::number(mObj["Count"].toInt()));
+                    xlsx.write(rowStart - 1, 7 + tempIndex + keyIndex.count(), mObj["Rate"].toString());
+                }
+            }
+
+            tempArray = json["DurationOne"].toArray();
+            foreach (const QJsonValue arrayObj, tempArray) {
+                QJsonObject mObj = arrayObj.toObject();
+
+                tempIndex = keyIndex.indexOf(mObj["Key"].toString());
+
+                if (tempIndex != -1)
+                {
+                    xlsx.write(rowStart - 1, 7 + tempIndex, QString::number((double)mObj["Count"].toInt()/1000, 'f', 2));
+                    xlsx.write(rowStart - 1, 7 + tempIndex + keyIndex.count(), mObj["Rate"].toString());
+                }
+            }
+        }
+    }
+
+    rowStart = 8;
+    xlsx.addSheet("Schedule Two");
+
+    // Schedule Two
+    for (int i(0); i<PrimaryReliabilityObjects->count(); i++)
+    {
+        if (FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects->at(i).PrimaryFilePath, &json))
+        {
+            if (i == 0)
+            {
+                xlsx.write(1, 1, "Evaluation Report");
+                xlsx.write(2, 1,
+                           QString("Group: %1").arg(json["Group"].toString()));
+                xlsx.write(3, 1,
+                           QString("Individual: %1").arg(json["Individual"].toString()));
+                xlsx.write(4, 1,
+                           QString("Evaluation: %1").arg(json["Evaluation"].toString()));
+                xlsx.write(5, 1,
+                           QString("Date Composed: %1").arg(QDateTime::currentDateTime().toString()));
+
+                xlsx.write(rowStart - 1, 1, "Session");
+                xlsx.write(rowStart - 1, 2, "Condition");
+                xlsx.write(rowStart - 1, 3, "Recorder");
+                xlsx.write(rowStart - 1, 4, "Therapist");
+                xlsx.write(rowStart - 1, 5, "Reli");
+                xlsx.write(rowStart - 1, 6, "Session Time (min)");
+
+                int spacing = 0;
+
+                xlsx.write(rowStart - 2, 7 + spacing, "Frequency (Count)");
+                for (int j(0); j<mFKeys->count(); j++)
+                {
+                    xlsx.write(rowStart - 1, 7 + spacing, mFKeys->at(j));
+                    spacing++;
+                }
+
+                xlsx.write(rowStart - 2, 7 + spacing, "Duration (Seconds)");
+                for (int j(0); j<mDKeys->count(); j++)
+                {
+                    xlsx.write(rowStart - 1, 7 + spacing, mDKeys->at(j));
+                    spacing++;
+                }
+
+                xlsx.write(rowStart - 2, 7 + spacing, "Frequency (RPM)");
+                for (int j(0); j<mFKeys->count(); j++)
+                {
+                    xlsx.write(rowStart - 1, 7 + spacing, mFKeys->at(j));
+                    spacing++;
+                }
+
+                xlsx.write(rowStart - 2, 7 + spacing, "Duration (Percent session)");
+                for (int j(0); j<mDKeys->count(); j++)
+                {
+                    xlsx.write(rowStart - 1, 7 + spacing, mDKeys->at(j));
+                    spacing++;
+                }
+            }
+
+            xlsx.write(rowStart, 1, QString::number(json["Session"].toInt()));
+            xlsx.write(rowStart, 2, json["Condition"].toString());
+            xlsx.write(rowStart, 3, json["Collector"].toString());
+            xlsx.write(rowStart, 4, json["Therapist"].toString());
+            xlsx.write(rowStart, 5, PrimaryReliabilityObjects->at(i).SecondaryObserver);
+            xlsx.write(rowStart, 6, QString::number(((double)json["ScheduleTwoDuration"].toInt()/1000)/60, 'f', 1));
+
+            rowStart++;
+
+            tempArray = json["FrequencyTwo"].toArray();
+            foreach (const QJsonValue arrayObj, tempArray) {
+                QJsonObject mObj = arrayObj.toObject();
+
+                tempIndex = keyIndex.indexOf(mObj["Key"].toString());
+
+                if (tempIndex != -1)
+                {
+                    xlsx.write(rowStart - 1, 7 + tempIndex, QString::number(mObj["Count"].toInt()));
+                    xlsx.write(rowStart - 1, 7 + tempIndex + keyIndex.count(), mObj["Rate"].toString());
+                }
+            }
+
+            tempArray = json["DurationTwo"].toArray();
+            foreach (const QJsonValue arrayObj, tempArray) {
+                QJsonObject mObj = arrayObj.toObject();
+
+                tempIndex = keyIndex.indexOf(mObj["Key"].toString());
+
+                if (tempIndex != -1)
+                {
+                    xlsx.write(rowStart - 1, 7 + tempIndex, QString::number((double)mObj["Count"].toInt()/1000, 'f', 2));
+                    xlsx.write(rowStart - 1, 7 + tempIndex + keyIndex.count(), mObj["Rate"].toString());
+                }
+            }
+        }
+    }
+
+    rowStart = 8;
+    xlsx.addSheet("Schedule Three");
+
+    // Schedule Three
+    for (int i(0); i<PrimaryReliabilityObjects->count(); i++)
+    {
+        if (FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects->at(i).PrimaryFilePath, &json))
+        {
+            if (i == 0)
+            {
+                xlsx.write(1, 1, "Evaluation Report");
+                xlsx.write(2, 1,
+                           QString("Group: %1").arg(json["Group"].toString()));
+                xlsx.write(3, 1,
+                           QString("Individual: %1").arg(json["Individual"].toString()));
+                xlsx.write(4, 1,
+                           QString("Evaluation: %1").arg(json["Evaluation"].toString()));
+                xlsx.write(5, 1,
+                           QString("Date Composed: %1").arg(QDateTime::currentDateTime().toString()));
+
+                xlsx.write(rowStart - 1, 1, "Session");
+                xlsx.write(rowStart - 1, 2, "Condition");
+                xlsx.write(rowStart - 1, 3, "Recorder");
+                xlsx.write(rowStart - 1, 4, "Therapist");
+                xlsx.write(rowStart - 1, 5, "Reli");
+                xlsx.write(rowStart - 1, 6, "Session Time (min)");
+
+                int spacing = 0;
+
+                xlsx.write(rowStart - 2, 7 + spacing, "Frequency (Count)");
+                for (int j(0); j<mFKeys->count(); j++)
+                {
+                    xlsx.write(rowStart - 1, 7 + spacing, mFKeys->at(j));
+                    spacing++;
+                }
+
+                xlsx.write(rowStart - 2, 7 + spacing, "Duration (Seconds)");
+                for (int j(0); j<mDKeys->count(); j++)
+                {
+                    xlsx.write(rowStart - 1, 7 + spacing, mDKeys->at(j));
+                    spacing++;
+                }
+
+                xlsx.write(rowStart - 2, 7 + spacing, "Frequency (RPM)");
+                for (int j(0); j<mFKeys->count(); j++)
+                {
+                    xlsx.write(rowStart - 1, 7 + spacing, mFKeys->at(j));
+                    spacing++;
+                }
+
+                xlsx.write(rowStart - 2, 7 + spacing, "Duration (Percent session)");
+                for (int j(0); j<mDKeys->count(); j++)
+                {
+                    xlsx.write(rowStart - 1, 7 + spacing, mDKeys->at(j));
+                    spacing++;
+                }
+            }
+
+            xlsx.write(rowStart, 1, QString::number(json["Session"].toInt()));
+            xlsx.write(rowStart, 2, json["Condition"].toString());
+            xlsx.write(rowStart, 3, json["Collector"].toString());
+            xlsx.write(rowStart, 4, json["Therapist"].toString());
+            xlsx.write(rowStart, 5, PrimaryReliabilityObjects->at(i).SecondaryObserver);
+            xlsx.write(rowStart, 6, QString::number(((double)json["ScheduleThreeDuration"].toInt()/1000)/60, 'f', 1));
+
+            rowStart++;
+
+            tempArray = json["FrequencyThree"].toArray();
+            foreach (const QJsonValue arrayObj, tempArray) {
+                QJsonObject mObj = arrayObj.toObject();
+
+                tempIndex = keyIndex.indexOf(mObj["Key"].toString());
+
+                if (tempIndex != -1)
+                {
+                    xlsx.write(rowStart - 1, 7 + tempIndex, QString::number(mObj["Count"].toInt()));
+                    xlsx.write(rowStart - 1, 7 + tempIndex + keyIndex.count(), mObj["Rate"].toString());
+                }
+            }
+
+            tempArray = json["DurationThree"].toArray();
+            foreach (const QJsonValue arrayObj, tempArray) {
+                QJsonObject mObj = arrayObj.toObject();
+
+                tempIndex = keyIndex.indexOf(mObj["Key"].toString());
+
+                if (tempIndex != -1)
+                {
+                    xlsx.write(rowStart - 1, 7 + tempIndex, QString::number((double)mObj["Count"].toInt()/1000, 'f', 2));
+                    xlsx.write(rowStart - 1, 7 + tempIndex + keyIndex.count(), mObj["Rate"].toString());
+                }
+            }
+        }
+    }
+
+    xlsx.selectSheet("Case Report");
+
+    QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, Group);
+    mKeyPath = FileTools::pathAppend(mKeyPath, Individual);
+    mKeyPath = FileTools::pathAppend(mKeyPath, Evaluation);
+
+    QDir dir(mKeyPath);
+
+    if (!dir.exists())
+    {
+        dir.mkpath(mKeyPath);
+    }
+
+    QString mFileName = QString("Report_%1%2%3.xlsx")
+            .arg(Group.mid(0, 2))
+            .arg(Individual.mid(0, 2))
+            .arg(Evaluation.mid(0, 3));
+
+    QString path = FileTools::pathAppend(mKeyPath, mFileName);
+
+    return xlsx.saveAs(path);
+}
+
 /**
  * @brief formatSchedule
  * @param schedule

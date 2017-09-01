@@ -42,6 +42,7 @@
 #include "licensedialog.h"
 #include "sessionviewerdialog.h"
 #include "evaluationviewerdialog.h"
+#include "evaluationreportdialog.h"
 
 namespace Ui {
 class StartWindow;
@@ -70,6 +71,7 @@ private slots:
     void on_actionSession_Visual_Analysis_triggered();
     void on_actionFrequently_Asked_Questions_triggered();
     void on_actionEvaluation_Visual_Analysis_triggered();
+    void on_actionEvaluation_Report_triggered();
     void on_actionContact_triggered();
     void on_actionAbout_triggered();
     void on_buttonStart_clicked();
@@ -88,6 +90,7 @@ private:
     SettingsDialog settingsDialog;
     SessionViewerDialog * sessionViewerDialog;
     EvaluationViewerDialog * evaluationViewerDialog;
+    EvaluationReportDialog * evaluationReportDialog;
     FAQDialog faqDialog;
 
     ReliabilityDialog * reliabilityDialog;

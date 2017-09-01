@@ -155,14 +155,21 @@
    </widget>
    <widget class="QMenu" name="menuAnalyses">
     <property name="title">
-     <string>Analyses</string>
+     <string>Analysis</string>
     </property>
-    <addaction name="actionCalculate_Reliability"/>
     <addaction name="actionSession_Visual_Analysis"/>
     <addaction name="actionEvaluation_Visual_Analysis"/>
    </widget>
+   <widget class="QMenu" name="menuReports">
+    <property name="title">
+     <string>Reports</string>
+    </property>
+    <addaction name="actionCalculate_Reliability"/>
+    <addaction name="actionEvaluation_Report"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuAnalyses"/>
+   <addaction name="menuReports"/>
    <addaction name="menuOptions"/>
    <addaction name="menuLicenses"/>
    <addaction name="menuHelp"/>
@@ -185,7 +192,7 @@
   <action name="actionCalculate_Reliability">
    <property name="icon">
     <iconset resource="resourcefile.qrc">
-     <normaloff>:/images/applications-system.png</normaloff>:/images/applications-system.png</iconset>
+     <normaloff>:/images/x-office-spreadsheet.png</normaloff>:/images/x-office-spreadsheet.png</iconset>
    </property>
    <property name="text">
     <string>Calculate Reliability</string>
@@ -194,7 +201,7 @@
   <action name="actionSettings_2">
    <property name="icon">
     <iconset resource="resourcefile.qrc">
-     <normaloff>:/images/applications-system.png</normaloff>:/images/applications-system.png</iconset>
+     <normaloff>:/images/preferences-system.png</normaloff>:/images/preferences-system.png</iconset>
    </property>
    <property name="text">
     <string>Output Settings</string>
@@ -302,6 +309,15 @@
    </property>
    <property name="text">
     <string>Evaluation Visual Analysis</string>
+   </property>
+  </action>
+  <action name="actionEvaluation_Report">
+   <property name="icon">
+    <iconset resource="resourcefile.qrc">
+     <normaloff>:/images/x-office-spreadsheet.png</normaloff>:/images/x-office-spreadsheet.png</iconset>
+   </property>
+   <property name="text">
+    <string>Evaluation Report</string>
    </property>
   </action>
  </widget>

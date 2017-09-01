@@ -67,7 +67,8 @@ SOURCES += main.cpp\
     filemigrater.cpp \
     evaluationviewerdialog.cpp \
     displaytabledialog.cpp \
-    seriesselectdialog.cpp
+    seriesselectdialog.cpp \
+    evaluationreportdialog.cpp
 
 HEADERS  += startwindow.h \
     sessionwindow.h \
@@ -100,7 +101,8 @@ HEADERS  += startwindow.h \
     filemigrater.h \
     evaluationviewerdialog.h \
     displaytabledialog.h \
-    seriesselectdialog.h
+    seriesselectdialog.h \
+    evaluationreportdialog.h
 
 FORMS    += startwindow.ui \
     sessionwindow.ui \
@@ -118,7 +120,8 @@ FORMS    += startwindow.ui \
     sessionviewerdialog.ui \
     evaluationviewerdialog.ui \
     displaytabledialog.ui \
-    seriesselectdialog.ui
+    seriesselectdialog.ui \
+    evaluationreportdialog.ui
 
 RESOURCES += \
     resourcefile.qrc \
