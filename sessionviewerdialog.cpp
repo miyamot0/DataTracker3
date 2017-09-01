@@ -347,6 +347,9 @@ void SessionViewerDialog::on_comboBoxEvaluation_currentIndexChanged(int index)
         }
     }
 
+    qSort(PrimaryReliabilityObjects.begin(), PrimaryReliabilityObjects.end(),
+          [](const ReliabilityParse a, const ReliabilityParse b) -> bool {return a.SessionNumber < b.SessionNumber;});
+
     ui->tableWidget->setRowCount(0);
 
     for (int i(0); i<PrimaryReliabilityObjects.count(); i++)
