@@ -34,56 +34,10 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui(new Ui::SettingsDialog)
 {
     ui->setupUi(this);
-    ui->editSaveLocation->installEventFilter(this);
 
     setWindowTitle(tr("Program Settings"));
 
     WindowTools::SetDialogFixedDisplay(this);
-}
-
-/**
- * @brief SettingsDialog::eventFilter
- * @param obj
- * @param e
- * @return
- */
-bool SettingsDialog::eventFilter(QObject *obj, QEvent *e)
-{
-    if (e->type() == QEvent::FocusIn)
-    {
-        if (obj == ui->editSaveLocation)
-        {
-            QString mLocation;
-
-            if (ui->editSaveLocation->text().length() == 0)
-            {
-                mLocation = QFileDialog::getExistingDirectory (this,
-                                                               tr("Pick Alternate Save Location"),
-                                                               QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)[0],
-                                                               QFileDialog::ShowDirsOnly);
-            }
-            else
-            {
-                mLocation = QFileDialog::getExistingDirectory (this,
-                                                               tr("Pick Alternate Save Location"),
-                                                               ui->editSaveLocation->text(),
-                                                               QFileDialog::ShowDirsOnly);
-            }
-
-            QDir mPotentialDir(mLocation);
-
-            if (mLocation.length() !=0 && mPotentialDir.exists())
-            {
-                ui->editSaveLocation->setText(mLocation);
-            }
-        }
-
-        ui->pushButton->setFocus();
-        ui->editSaveLocation->clearFocus();
-        ui->pushButton->setFocus();
-    }
-
-    return false;
 }
 
 /**
@@ -234,4 +188,45 @@ void SettingsDialog::on_pushButton_clicked()
     }
 
     accept();
+}
+
+void SettingsDialog::on_setSaveLocation_clicked()
+{
+    QString mLocation;
+
+    if (ui->editSaveLocation->text().length() == 0)
+    {
+#ifdef _WIN32
+        mLocation = QFileDialog::getExistingDirectory (this,
+                                                       tr("Pick Alternate Save Location"),
+                                                       QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)[0],
+                                                       QFileDialog::ShowDirsOnly);
+#elif TARGET_OS_MAC
+        mLocation = QFileDialog::getExistingDirectory (this,
+                                                       tr("Pick Alternate Save Location"),
+                                                       QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)[0],
+                                                       QFileDialog::ShowDirsOnly | QFileDialog::DontUseNativeDialog);
+#endif
+    }
+    else
+    {
+#ifdef _WIN32
+        mLocation = QFileDialog::getExistingDirectory (this,
+                                                       tr("Pick Alternate Save Location"),
+                                                       ui->editSaveLocation->text(),
+                                                       QFileDialog::ShowDirsOnly);
+#elif TARGET_OS_MAC
+        mLocation = QFileDialog::getExistingDirectory (this,
+                                                       tr("Pick Alternate Save Location"),
+                                                       ui->editSaveLocation->text(),
+                                                       QFileDialog::ShowDirsOnly | QFileDialog::DontUseNativeDialog);
+#endif
+    }
+
+    QDir mPotentialDir(mLocation);
+
+    if (mLocation.length() !=0 && mPotentialDir.exists())
+    {
+        ui->editSaveLocation->setText(mLocation);
+    }
 }

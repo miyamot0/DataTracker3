@@ -63,10 +63,10 @@ public:
 private slots:
     void on_pushButton_clicked();
 
+    void on_setSaveLocation_clicked();
+
 private:
     Ui::SettingsDialog *ui;
-
-    bool eventFilter(QObject *obj, QEvent *e);
 };
 
 #endif // SETTINGSDIALOG_H
