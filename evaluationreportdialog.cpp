@@ -29,7 +29,7 @@
 #include "windowtools.h"
 #include "filetools.h"
 
-EvaluationReportDialog::EvaluationReportDialog(QString mCurrentWorkingDirectory = "", QWidget *parent) :
+EvaluationReportDialog::EvaluationReportDialog(QString mCurrentWorkingDirectory, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::EvaluationReportDialog)
 {

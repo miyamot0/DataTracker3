@@ -44,6 +44,7 @@ public:
 
     KeySet();
 
+#ifdef _WIN32
     KeySet& KeySet::operator=( const KeySet& other ) {
         KeySetName = other.KeySetName;
         FrequencyKeys = other.FrequencyKeys;
@@ -53,6 +54,18 @@ public:
 
         return *this;
     }
+#elif TARGET_OS_MAC
+    KeySet& operator=( const KeySet& other ) {
+        KeySetName = other.KeySetName;
+        FrequencyKeys = other.FrequencyKeys;
+        DurationKeys = other.DurationKeys;
+        TotalSeconds = other.TotalSeconds;
+        Session = other.Session;
+
+        return *this;
+    }
+#endif
+
 };
 
 #endif // KEYSET_H

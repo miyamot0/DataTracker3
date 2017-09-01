@@ -27,7 +27,7 @@
 #include "filetools.h"
 #include "windowtools.h"
 
-EvaluationViewerDialog::EvaluationViewerDialog(QString mCurrentWorkingDirectory = "", QWidget *parent) :
+EvaluationViewerDialog::EvaluationViewerDialog(QString mCurrentWorkingDirectory, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::EvaluationViewerDialog)
 {

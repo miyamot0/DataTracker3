@@ -52,6 +52,7 @@ public:
     Schedule ScheduleType;
     Measurement MeasurementType;
 
+#ifdef _WIN32
     SessionEvent& SessionEvent::operator=( const SessionEvent& other ) {
         KeyEntered = other.KeyEntered;
         TimePressed = other.TimePressed;
@@ -60,6 +61,18 @@ public:
 
         return *this;
     }
+#elif TARGET_OS_MAC
+    SessionEvent& operator=( const SessionEvent& other ) {
+        KeyEntered = other.KeyEntered;
+        TimePressed = other.TimePressed;
+        ScheduleType = other.ScheduleType;
+        MeasurementType = other.MeasurementType;
+
+        return *this;
+    }
+#endif
+
+
 };
 
 #endif // SESSIONEVENT_H
