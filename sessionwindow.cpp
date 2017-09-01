@@ -143,8 +143,8 @@ void SessionWindow::on_buttonGroup_clicked()
             QString mPath = FileTools::pathAppend(mWorkingDirectory, text);
             QDir mPresentDirectory(mPath);
 
-            if (!mPresentDirectory.exists()){
-                mPresentDirectory.mkdir(".");
+            if (!mPresentDirectory.exists()){                
+                mPresentDirectory.mkpath(mPath);
             }
 
             PrepareDirectory();
@@ -184,7 +184,7 @@ void SessionWindow::on_buttonIndividual_clicked()
             QDir mPresentDirectory(mPath);
 
             if (!mPresentDirectory.exists()){
-                mPresentDirectory.mkdir(".");
+                mPresentDirectory.mkpath(mPath);
             }
 
             PrepareGroup(ui->comboGroup->currentIndex());
@@ -228,7 +228,7 @@ void SessionWindow::on_buttonEvaluation_clicked()
             QDir mPresentDirectory(mPath);
 
             if (!mPresentDirectory.exists()){
-                mPresentDirectory.mkdir(".");
+                mPresentDirectory.mkpath(mPath);
             }
 
             PrepareIndividual(ui->comboIndividual->currentIndex());
@@ -277,7 +277,7 @@ void SessionWindow::on_buttonCondition_clicked()
             QDir mPresentDirectory(mPath);
 
             if (!mPresentDirectory.exists()){
-                mPresentDirectory.mkdir(".");
+                mPresentDirectory.mkpath(mPath);
             }
 
             PrepareEvaluation(ui->comboEvaluation->currentIndex());
@@ -589,12 +589,17 @@ void SessionWindow::on_comboSessionDuration_currentIndexChanged(int index)
 {
     if (index == ui->comboSessionDuration->count() - 1)
     {
-        ui->editSessionDuration->setReadOnly(false);
+        if (sessionDurationDialog.exec() == QDialog::Accepted)
+        {
+            ui->editSessionDuration->setText(QString("%1 Seconds").arg(sessionDurationDialog.GetSeconds()));
+        }
+
+        //ui->editSessionDuration->setReadOnly(false);
     }
-    else
-    {
-        ui->editSessionDuration->setReadOnly(true);
-    }
+    //else
+    //{
+    //    ui->editSessionDuration->setReadOnly(true);
+    //}
 }
 
 /**
@@ -953,12 +958,8 @@ SessionWindow::~SessionWindow()
     delete ui;
 }
 
-/** Focus checks
- * @brief SessionWindow::eventFilter
- * @param obj
- * @param e
- * @return
- */
+/*
+
 bool SessionWindow::eventFilter(QObject *obj, QEvent *e)
 {
     if (e->type() == QEvent::FocusIn)
@@ -982,6 +983,8 @@ bool SessionWindow::eventFilter(QObject *obj, QEvent *e)
 
     return false;
 }
+
+*/
 
 /** Get Duration Session
  * @brief SessionWindow::GetSessionDuration

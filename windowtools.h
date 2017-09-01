@@ -42,7 +42,7 @@ void static SetWindowFixed(QMainWindow * window)
 
     #elif TARGET_OS_MAC
 
-
+    window->setWindowFlags(Qt::Window | Qt::MSWindowsFixedSizeDialogHint);
 
     #endif
 }
@@ -59,7 +59,7 @@ void static SetDialogFixed(QDialog * window)
 
     #elif TARGET_OS_MAC
 
-
+    window->setWindowFlags(Qt::Window | Qt::MSWindowsFixedSizeDialogHint);
 
     #endif
 }
@@ -81,7 +81,12 @@ void static SetDialogFixedDisplay(QDialog * window)
 
     #elif TARGET_OS_MAC
 
-
+    window->setWindowFlags(Qt::Window |
+                           Qt::MSWindowsFixedSizeDialogHint |
+                           Qt::WindowTitleHint |
+                           Qt::WindowSystemMenuHint |
+                           Qt::CustomizeWindowHint |
+                           Qt::WindowCloseButtonHint);
 
     #endif
 }
@@ -103,7 +108,12 @@ void static SetDialogFixedMaximize(QDialog * window)
 
     #elif TARGET_OS_MAC
 
+    Qt::WindowFlags flags = window->windowFlags();
 
+    flags |= Qt::WindowMaximizeButtonHint;
+    flags & ~Qt::WindowContextHelpButtonHint;
+
+    window->setWindowFlags(flags);
 
     #endif
 }

@@ -136,7 +136,7 @@ private:
 
     int GetSessionDuration();
     int GetSessionNumber();
-    bool eventFilter(QObject *obj, QEvent *e);
+    //bool eventFilter(QObject *obj, QEvent *e);
 
     void ScoreAvailableKeys();
     void BuildResults();
