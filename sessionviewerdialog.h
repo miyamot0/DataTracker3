@@ -30,6 +30,7 @@ public slots:
 
     void DrawBlankPlot();
     void DrawFrequencyPlot();
+    void DrawDurationPlot();
 
 private slots:
     void on_comboBoxGroup_currentIndexChanged(int index);
@@ -41,6 +42,7 @@ private slots:
     void on_pushButton_clicked();
 
     void DrawFrequencySeries(int index);
+    void DrawDurationSeries(int index);
 
 private:
     Ui::SessionViewerDialog *ui;
@@ -109,7 +111,7 @@ private:
     void GetFrequencyKeySets();
     void GetDurationKeySets();
 
-    QStringList fKeySeriesNames;
+    QStringList fKeySeriesNames, dKeySeriesNames;
 
     QString formatReli(bool value)
     {
