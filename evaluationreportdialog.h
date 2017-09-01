@@ -47,15 +47,13 @@ public:
 private slots:
     void on_comboBoxGroup_currentIndexChanged(int index);
     void on_comboBoxIndividual_currentIndexChanged(int index);
+    void on_comboBoxEvaluation_currentIndexChanged(int index);
+    void on_pushButton_clicked();
 
     void WorkUpdate(QString update);
     void WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAction action);
 
     void ClearStatus();
-
-    void on_comboBoxEvaluation_currentIndexChanged(int index);
-
-    void on_pushButton_clicked();
 
 private:
     Ui::EvaluationReportDialog *ui;
@@ -69,7 +67,6 @@ private:
     QList<ReliabilityParse> SecondaryReliabilityObjects;
 
     QJsonObject json;
-
     QTimer fadeTimer;
 };
 

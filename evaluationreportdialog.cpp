@@ -257,7 +257,6 @@ void EvaluationReportDialog::on_comboBoxEvaluation_currentIndexChanged(int index
     qSort(PrimaryReliabilityObjects.begin(), PrimaryReliabilityObjects.end(),
           [](const ReliabilityParse a, const ReliabilityParse b) -> bool {return a.SessionNumber < b.SessionNumber;});
 
-
     for (int i(0); i<PrimaryReliabilityObjects.count(); i++)
     {
         ui->tableWidget->insertRow(ui->tableWidget->rowCount());
