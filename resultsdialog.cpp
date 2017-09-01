@@ -212,17 +212,21 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
     lineSeries.clear();
     lineSeries2.clear();
 
-    qint64 totalSecs = startTime->secsTo(*endTime);
+    qint64 totalSecs = startTime->secsTo(*endTime),
+           secs;
 
-    int bins = totalSecs / 10;
-    int overflow = ((totalSecs % 10) > 0) ? 1 : 0;
-    bins = bins + overflow;
-
-    int fKeys = currKeySet.FrequencyKeys.count();
-    int dKeys = currKeySet.DurationKeys.count();
-
-    QStringList fKeyList;
+    QStringList fKeyList,
+                dKeyList;
     QList<double> fKeySum;
+    QList<bool> dKeyRunning;
+
+    int max = 0,
+        startSecs,
+        endSecs;
+
+    double runningSum;
+
+    QString tempKey;
 
     for (int i(0); i<currKeySet.FrequencyKeys.count(); i++)
     {
@@ -230,90 +234,14 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
         fKeySum.append(0.0);
     }
 
-    QList<QList<double>> mDurationBins;
-    for (int i(0); i<bins; i++)
+    for (int i(0); i<currKeySet.DurationKeys.count(); i++)
     {
-        mDurationBins.append(QList<double>());
-
-        for (int j(0); j<dKeys; j++)
-        {
-            mDurationBins[i].append(0.0);
-        }
+        dKeyList.append(currKeySet.DurationKeys.at(i).KeyDescription);
+        dKeyRunning.append(false);
     }
-
-    KeySetEntry temp;
 
     bool waitingForNext = false;
     QDateTime prev, after;
-
-    QList<QPair<qint64, qint64>> runs;
-    qint64 start, stop;
-
-    for (int i(0); i<dKeys; i++)
-    {
-        temp = currKeySet.DurationKeys.at(i);
-        waitingForNext = false;
-        runs.clear();
-
-        foreach(SessionEvent event, *PressedKeys)
-        {
-            if (event.KeyEntered.KeyCode == temp.KeyCode)
-            {
-                if (waitingForNext)
-                {
-                    after = event.TimePressed;
-                    runs.append(QPair<qint64, qint64>(startTime->msecsTo(prev), startTime->msecsTo(after)));
-                    waitingForNext = false;
-                }
-                else
-                {
-                    prev = event.TimePressed;
-                    waitingForNext = true;
-                }
-            }
-        }
-
-        if (waitingForNext)
-        {
-            runs.append(QPair<qint64, qint64>(startTime->msecsTo(prev), (startTime->msecsTo(*endTime) - (startTime->msecsTo(*endTime) % 1000))));
-        }
-
-        for (int j(0); j<runs.length(); j++)
-        {
-            start = runs[j].first;
-            stop = runs[j].second;
-
-            int index1 = (int)(start / 10000);
-            int index2 = (int)(stop / 10000);
-
-            // !important In case overshot
-            if (index2 == bins)
-            {
-                index2--;
-            }
-
-            if (index1 == index2)
-            {
-                mDurationBins[index1][i] = mDurationBins[index1][i] + ((double)(stop - start))/1000;
-            }
-            else if ((index2 - index1) == 1)
-            {
-                mDurationBins[index1][i] = mDurationBins[index1][i] + ((double)(10000 - (start % 10000)))/1000;
-                mDurationBins[index2][i] = mDurationBins[index2][i] + ((double)(stop % 10000))/1000;
-            }
-            else
-            {
-                mDurationBins[index1][i] = mDurationBins[index1][i] + ((double)(10000 - (start % 10000)))/1000;
-
-                for (int k(index1 + 1); k < index2; k++)
-                {
-                    mDurationBins[k][i] = mDurationBins[k][i] + 10;
-                }
-
-                mDurationBins[index2][i] = mDurationBins[index2][i] + ((double)(stop % 10000))/1000;
-            }
-        }
-    }
 
     chart = new QChart();
     chart->layout()->setContentsMargins(0, 0, 0, 0);
@@ -335,8 +263,6 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
     axisX->setLabelsColor(Qt::black);
     axisX->setLinePenColor(Qt::black);
     axisX->setLinePen(QPen(Qt::black));
-    axisX->setMax(bins);
-    //axisX->setTickCount(bins);
 
     axisY = new QValueAxis;
     axisY->applyNiceNumbers();
@@ -344,7 +270,6 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
     axisY->setTitleText(tr("Behavior Count"));
     axisY->setTitleFont(QFont("Serif", 10, -1, false));
     axisY->setTitleBrush(Qt::black);
-    //axisY->setTickCount(5);
     axisY->setLabelsFont(QFont("Serif", 10, -1, false));
     axisY->setLabelsBrush(Qt::black);
     axisY->setLabelsColor(Qt::black);
@@ -352,8 +277,6 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
     axisY->setMax(100);
     axisY->setLinePenColor(Qt::black);
     axisY->setLinePen(QPen(Qt::black));
-
-    int runTotal = 0;
 
     for (int i(0); i<fKeyList.count(); i++)
     {
@@ -368,8 +291,6 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
 
         chart->setAxisX(axisX, lineSeries[i]);
         chart->setAxisY(axisY, lineSeries[i]);
-
-        runTotal = 0;
     }
 
     chartView = new QChartView(chart);
@@ -379,11 +300,6 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
     {
         ui->plotLayout->addWidget(chartView);
     }
-
-    int max = 0;
-    QString tempKey;
-
-    qint64 secs;
 
     for (int i(0); i<fKeyList.count(); i++)
     {
@@ -412,7 +328,7 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
         }
     }
 
-    // Cap off
+    // Cap off frequency
     for (int i(0); i<lineSeries.count(); i++)
     {
         lineSeries.at(i)->append(totalSecs, lineSeries.at(i)->at(lineSeries.at(i)->count() - 1).y());
@@ -424,7 +340,7 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
     axisX->setMin(0);
     axisX->setMax(startTime->secsTo(*endTime));
 
-    // dur
+    // Duration plotting
 
     chart2 = new QChart();
     chart2->layout()->setContentsMargins(0, 0, 0, 0);
@@ -446,8 +362,6 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
     axisX2->setLabelsColor(Qt::black);
     axisX2->setLinePenColor(Qt::black);
     axisX2->setLinePen(QPen(Qt::black));
-    axisX2->setMax(bins);
-    //axisX2->setTickCount(bins);
 
     axisY2 = new QValueAxis;
     axisY2->applyNiceNumbers();
@@ -455,7 +369,6 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
     axisY2->setTitleText(tr("Time (s)"));
     axisY2->setTitleFont(QFont("Serif", 10, -1, false));
     axisY2->setTitleBrush(Qt::black);
-    //axisY2->setTickCount(5);
     axisY2->setLabelsFont(QFont("Serif", 10, -1, false));
     axisY2->setLabelsBrush(Qt::black);
     axisY2->setLabelsColor(Qt::black);
@@ -464,14 +377,12 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
     axisY2->setLinePenColor(Qt::black);
     axisY2->setLinePen(QPen(Qt::black));
 
-    runTotal = 0;
-
-    for (int i(0); i<dKeys; i++)
+    for (int i(0); i<dKeyList.count(); i++)
     {
         lineSeries2.append(new QLineSeries);
 
         lineSeries2[i]->setUseOpenGL(true);
-        lineSeries2[i]->setName(currKeySet.DurationKeys.at(i).KeyDescription);
+        lineSeries2[i]->setName(dKeyList.at(i));
         lineSeries2[i]->clear();
         lineSeries2[i]->show();
 
@@ -479,9 +390,66 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
 
         chart2->setAxisX(axisX2, lineSeries2[i]);
         chart2->setAxisY(axisY2, lineSeries2[i]);
-
-        runTotal = 0;
     }
+
+    for (int i(0); i<dKeyList.count(); i++)
+    {
+        tempKey = dKeyList.at(i);
+        waitingForNext = false;
+        runningSum = 0;
+
+        foreach (SessionEvent key, *PressedKeys) {
+            if (key.KeyEntered.KeyDescription == tempKey)
+            {
+                if (waitingForNext)
+                {
+                    after = key.TimePressed;
+
+                    startSecs = ((double) startTime->msecsTo(prev)) / 1000;
+                    endSecs = ((double) startTime->msecsTo(after)) / 1000;
+
+                    *lineSeries2[dKeyList.indexOf(tempKey)] << QPointF(startSecs, runningSum);
+                    runningSum = runningSum + (endSecs - startSecs);
+                    *lineSeries2[dKeyList.indexOf(tempKey)] << QPointF(endSecs, runningSum);
+
+                    if (runningSum > (int) max)
+                    {
+                        max = (double) runningSum;
+                    }
+
+                    waitingForNext = false;
+                }
+                else
+                {
+                    prev = key.TimePressed;
+                    waitingForNext = true;
+                }
+            }
+        }
+
+        if (waitingForNext)
+        {
+            startSecs = ((double) startTime->msecsTo(prev)) / 1000;
+
+            *lineSeries2[dKeyList.indexOf(tempKey)] << QPointF(startSecs, runningSum);
+            runningSum = runningSum + (totalSecs - startSecs);
+            *lineSeries2[dKeyList.indexOf(tempKey)] << QPointF(totalSecs, runningSum);
+        }
+
+        if ((int) runningSum > max)
+        {
+            max = (int) runningSum;
+        }
+    }
+
+    // Cap off duration
+    for (int i(0); i<lineSeries2.count(); i++)
+    {
+        lineSeries2.at(i)->append(totalSecs, lineSeries2.at(i)->at(lineSeries2.at(i)->count() - 1).y());
+    }
+
+    axisY2->setMax(max + 1);
+    axisX2->setMax(totalSecs);
 
     chartView2 = new QChartView(chart2);
     chartView2->setRenderHint(QPainter::Antialiasing);
@@ -490,26 +458,6 @@ void ResultsDialog::BuildPlot(KeySet currKeySet, QList<SessionEvent> * PressedKe
     {
         ui->plotLayout2->addWidget(chartView2);
     }
-
-    for (int i(0); i<dKeys; i++)
-    {
-        runTotal = 0;
-
-        lineSeries2[i]->append(0, 0);
-        for (int j(0); j<mDurationBins.length(); j++)
-        {
-            runTotal = runTotal + mDurationBins[j][i];
-            lineSeries2[i]->append(j + 1, runTotal);
-        }
-
-        if (runTotal > max)
-        {
-            max = runTotal;
-        }
-    }
-
-    axisY2->setMin(0);
-    axisY2->setMax(max + 1);
 
     Drawn = true;
 }
