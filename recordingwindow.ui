@@ -300,7 +300,10 @@
            <item row="7" column="0" colspan="2">
             <widget class="QLabel" name="label_6">
              <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Instructions&lt;/span&gt;&lt;/p&gt;&lt;p&gt;TAB Key: Begin Session&lt;/p&gt;&lt;p&gt;Backspace Key: Remove Last Entered Key&lt;/p&gt;&lt;p&gt;ESC Key: Terminate Session&lt;/p&gt;&lt;p&gt;Z Key: Switch to Schedule 1 (Base, Green)&lt;/p&gt;&lt;p&gt;X Key: Switch to Schedule 2 (Yellow)&lt;/p&gt;&lt;p&gt;C Key: Switch to Schedule 3 (Red)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Instructions&lt;/span&gt;&lt;/p&gt;&lt;p&gt;TAB Key: Begin Session&lt;br/&gt;Backspace Key: Remove Last Entered Key&lt;br/&gt;ESC Key: Terminate Session&lt;/p&gt;&lt;p&gt;Z Key: Switch to Schedule 1 (Base, Green)&lt;br/&gt;X Key: Switch to Schedule 2 (Yellow)&lt;br/&gt;C Key: Switch to Schedule 3 (Red)&lt;/p&gt;&lt;p&gt;Note: Schedule keys cannot be deleted, instead the proper schedule keys must be used to select the correct schedule (e.g., Switch back to Schedule 1 by Z, not Backspace).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
