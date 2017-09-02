@@ -81,7 +81,6 @@ private:
                * axisY;
     QList<QLineSeries *> lineSeries;
     QList<QScatterSeries *> pointSeries;
-
     QList<QString> fKeyDesc, dKeyDesc;
     QList<QString> fKeyConds, dKeyConds;
 
