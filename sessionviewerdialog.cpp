@@ -389,6 +389,15 @@ void SessionViewerDialog::on_comboBoxEvaluation_currentIndexChanged(int index)
 }
 
 /**
+ * @brief SessionViewerDialog::on_comboBoxSchedule_currentIndexChanged
+ * @param index
+ */
+void SessionViewerDialog::on_comboBoxSchedule_currentIndexChanged(int index)
+{
+    ui->comboBoxDimension->setCurrentIndex(0);
+}
+
+/**
  * @brief SessionViewerDialog::on_comboBoxDimension_currentIndexChanged
  * @param index
  */
@@ -874,3 +883,5 @@ void SessionViewerDialog::on_tableWidget_currentCellChanged(int currentRow, int,
         DrawDurationSeries(currentRow);
     }
 }
+
+

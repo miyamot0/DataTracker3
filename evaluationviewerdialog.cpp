@@ -204,6 +204,9 @@ void EvaluationViewerDialog::on_comboBoxGroup_currentIndexChanged(int index)
             ui->comboBoxEvaluation->removeItem(1);
         }
 
+        ui->comboBoxSchedule->setCurrentIndex(0);
+        ui->comboBoxDimension->setCurrentIndex(0);
+
         ui->tableWidget->setRowCount(0);
 
         return;
@@ -246,6 +249,9 @@ void EvaluationViewerDialog::on_comboBoxIndividual_currentIndexChanged(int index
         {
             ui->comboBoxEvaluation->removeItem(1);
         }
+
+        ui->comboBoxSchedule->setCurrentIndex(0);
+        ui->comboBoxDimension->setCurrentIndex(0);
 
         ui->tableWidget->setRowCount(0);
 
@@ -365,6 +371,16 @@ void EvaluationViewerDialog::on_comboBoxEvaluation_currentIndexChanged(int index
         ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 2, new QTableWidgetItem(PrimaryReliabilityObjects.at(i).Collector));
     }
 
+    ui->comboBoxSchedule->setCurrentIndex(0);
+    ui->comboBoxDimension->setCurrentIndex(0);
+}
+
+/**
+ * @brief EvaluationViewerDialog::on_comboBoxSchedule_currentIndexChanged
+ * @param index
+ */
+void EvaluationViewerDialog::on_comboBoxSchedule_currentIndexChanged(int index)
+{
     ui->comboBoxDimension->setCurrentIndex(0);
 }
 
@@ -605,7 +621,8 @@ void EvaluationViewerDialog::DrawDurationPlot()
             session = json["Session"].toInt();
             totalSeconds = json["SessionDuration"].toInt();
 
-            durationArray = json["DurationOverall"].toArray();
+            //durationArray = json["DurationOverall"].toArray();
+            durationArray = json[createKeyString("Duration", ui->comboBoxSchedule->currentIndex())].toArray();
             foreach (const QJsonValue collector, durationArray) {
                 QJsonObject mObj = collector.toObject();
 
@@ -657,7 +674,7 @@ void EvaluationViewerDialog::DrawFrequencyPlot()
     lineSeries.clear();
     pointSeries.clear();
 
-    QString title = QString("Frequency Display (");
+    QString title = QString("Frequency Display, Schedule: " + createKeyString("", ui->comboBoxSchedule->currentIndex()) + " (");
     bool firstString = true;
 
     for (int i(0); i<fKeyDesc.count(); i++)
@@ -735,7 +752,7 @@ void EvaluationViewerDialog::DrawFrequencyPlot()
             session = json["Session"].toInt();
             totalSeconds = json["SessionDuration"].toInt();
 
-            frequencyArray = json["FrequencyOverall"].toArray();
+            frequencyArray = json[createKeyString("Frequency", ui->comboBoxSchedule->currentIndex())].toArray();
             foreach (const QJsonValue collector, frequencyArray) {
                 QJsonObject mObj = collector.toObject();
 
@@ -747,7 +764,7 @@ void EvaluationViewerDialog::DrawFrequencyPlot()
                 }
             }
 
-            minutes = ((double) (totalSeconds / 1000)) / 60;
+            minutes = ((double) (totalSeconds / 1000)) / (double) 60;
 
             lineSeries[fKeyConds.indexOf(PrimaryReliabilityObjects.at(i).Condition)]->append(session, (double) count / minutes);
             pointSeries[fKeyConds.indexOf(PrimaryReliabilityObjects.at(i).Condition)]->append(session, (double) count / minutes);

@@ -64,6 +64,8 @@ private slots:
 
     void on_comboBoxDimension_currentIndexChanged(int index);
 
+    void on_comboBoxSchedule_currentIndexChanged(int index);
+
 private:
     Ui::EvaluationViewerDialog *ui;
 
@@ -92,6 +94,30 @@ private:
 
     void GetFrequencyKeySets();
     void GetDurationKeySets();
+
+    QString createKeyString(QString base, int value)
+    {
+        QString mSuffix;
+
+        if (value == 1)
+        {
+            mSuffix = "One";
+        }
+        else if (value == 2)
+        {
+            mSuffix = "Two";
+        }
+        else if (value == 3)
+        {
+            mSuffix = "Three";
+        }
+        else
+        {
+            mSuffix = "Overall";
+        }
+
+        return base.append(mSuffix);
+    }
 };
 
 #endif // EVALUATIONVIEWERDIALOG_H

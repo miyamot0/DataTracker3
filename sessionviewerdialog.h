@@ -67,6 +67,8 @@ private slots:
     void DrawFrequencySeries(int index);
     void DrawDurationSeries(int index);
 
+    void on_comboBoxSchedule_currentIndexChanged(int index);
+
 private:
     Ui::SessionViewerDialog *ui;
 
@@ -135,6 +137,30 @@ private:
     void GetDurationKeySets();
 
     QStringList fKeySeriesNames, dKeySeriesNames;
+
+    QString createKeyString(QString base, int value)
+    {
+        QString mSuffix;
+
+        if (value == 1)
+        {
+            mSuffix = "One";
+        }
+        else if (value == 2)
+        {
+            mSuffix = "Two";
+        }
+        else if (value == 3)
+        {
+            mSuffix = "Three";
+        }
+        else
+        {
+            mSuffix = "Overall";
+        }
+
+        return base;
+    }
 
     QString formatReli(bool value)
     {
