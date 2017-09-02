@@ -158,7 +158,47 @@ void SessionWindow::on_buttonGroup_clicked()
  */
 void SessionWindow::on_comboGroup_currentIndexChanged(int index)
 {
-    PrepareGroup(index);
+    if (index == 0)
+    {
+        ui->comboIndividual->setEnabled(false);
+        ui->comboEvaluation->setEnabled(false);
+        ui->comboCondition->setEnabled(false);
+        ui->comboKeySet->setEnabled(false);
+        ui->comboTherapist->setEnabled(false);
+        ui->comboCollector->setEnabled(false);
+        ui->comboRole->setEnabled(false);
+        ui->comboBoxTiming->setEnabled(false);
+        ui->comboSessionDuration->setEnabled(false);
+
+        ui->buttonIndividual->setEnabled(false);
+        ui->buttonEvaluation->setEnabled(false);
+        ui->buttonCondition->setEnabled(false);
+        ui->buttonKeySet->setEnabled(false);
+        ui->buttonTherapist->setEnabled(false);
+        ui->buttonCollector->setEnabled(false);
+    }
+    else
+    {
+        PrepareGroup(index);
+
+        ui->comboIndividual->setEnabled(true);
+        ui->comboEvaluation->setEnabled(false);
+        ui->comboCondition->setEnabled(false);
+        ui->comboKeySet->setEnabled(false);
+        ui->comboTherapist->setEnabled(false);
+        ui->comboCollector->setEnabled(false);
+        ui->comboRole->setEnabled(false);
+        ui->comboBoxTiming->setEnabled(false);
+        ui->comboSessionDuration->setEnabled(false);
+
+        ui->buttonIndividual->setEnabled(true);
+        ui->buttonEvaluation->setEnabled(false);
+        ui->buttonCondition->setEnabled(false);
+        ui->buttonKeySet->setEnabled(false);
+        ui->buttonTherapist->setEnabled(false);
+        ui->buttonCollector->setEnabled(false);
+    }
+
 }
 
 /** Add a new individual
@@ -201,7 +241,46 @@ void SessionWindow::on_buttonIndividual_clicked()
  */
 void SessionWindow::on_comboIndividual_currentIndexChanged(int index)
 {
-    PrepareIndividual(index);
+    if (index == 0)
+    {
+        ui->comboIndividual->setEnabled(true);
+        ui->comboEvaluation->setEnabled(false);
+        ui->comboCondition->setEnabled(false);
+        ui->comboKeySet->setEnabled(false);
+        ui->comboTherapist->setEnabled(false);
+        ui->comboCollector->setEnabled(false);
+        ui->comboRole->setEnabled(false);
+        ui->comboBoxTiming->setEnabled(false);
+        ui->comboSessionDuration->setEnabled(false);
+
+        ui->buttonIndividual->setEnabled(true);
+        ui->buttonEvaluation->setEnabled(false);
+        ui->buttonCondition->setEnabled(false);
+        ui->buttonKeySet->setEnabled(false);
+        ui->buttonTherapist->setEnabled(false);
+        ui->buttonCollector->setEnabled(false);
+    }
+    else
+    {
+        PrepareIndividual(index);
+
+        ui->comboIndividual->setEnabled(true);
+        ui->comboEvaluation->setEnabled(true);
+        ui->comboCondition->setEnabled(false);
+        ui->comboKeySet->setEnabled(false);
+        ui->comboTherapist->setEnabled(false);
+        ui->comboCollector->setEnabled(false);
+        ui->comboRole->setEnabled(false);
+        ui->comboBoxTiming->setEnabled(false);
+        ui->comboSessionDuration->setEnabled(false);
+
+        ui->buttonIndividual->setEnabled(true);
+        ui->buttonEvaluation->setEnabled(true);
+        ui->buttonCondition->setEnabled(false);
+        ui->buttonKeySet->setEnabled(false);
+        ui->buttonTherapist->setEnabled(false);
+        ui->buttonCollector->setEnabled(false);
+    }
 }
 
 /** Add a new evaluation
@@ -245,9 +324,47 @@ void SessionWindow::on_buttonEvaluation_clicked()
  */
 void SessionWindow::on_comboEvaluation_currentIndexChanged(int index)
 {
-    PrepareEvaluation(index);
+    if (index == 0)
+    {
+        ui->comboIndividual->setEnabled(true);
+        ui->comboEvaluation->setEnabled(true);
+        ui->comboCondition->setEnabled(false);
+        ui->comboKeySet->setEnabled(false);
+        ui->comboTherapist->setEnabled(false);
+        ui->comboCollector->setEnabled(false);
+        ui->comboRole->setEnabled(false);
+        ui->comboBoxTiming->setEnabled(false);
+        ui->comboSessionDuration->setEnabled(false);
 
-    PrepareSessionCounter();
+        ui->buttonIndividual->setEnabled(true);
+        ui->buttonEvaluation->setEnabled(true);
+        ui->buttonCondition->setEnabled(false);
+        ui->buttonKeySet->setEnabled(false);
+        ui->buttonTherapist->setEnabled(false);
+        ui->buttonCollector->setEnabled(false);
+    }
+    else
+    {
+        PrepareEvaluation(index);
+        PrepareSessionCounter();
+
+        ui->comboIndividual->setEnabled(true);
+        ui->comboEvaluation->setEnabled(true);
+        ui->comboCondition->setEnabled(true);
+        ui->comboKeySet->setEnabled(true);
+        ui->comboTherapist->setEnabled(true);
+        ui->comboCollector->setEnabled(true);
+        ui->comboRole->setEnabled(true);
+        ui->comboBoxTiming->setEnabled(true);
+        ui->comboSessionDuration->setEnabled(true);
+
+        ui->buttonIndividual->setEnabled(true);
+        ui->buttonEvaluation->setEnabled(true);
+        ui->buttonCondition->setEnabled(true);
+        ui->buttonKeySet->setEnabled(true);
+        ui->buttonTherapist->setEnabled(true);
+        ui->buttonCollector->setEnabled(true);
+    }
 }
 
 /** Add a new condition

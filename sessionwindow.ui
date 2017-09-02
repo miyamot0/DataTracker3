@@ -196,6 +196,9 @@
              <layout class="QHBoxLayout" name="layoutIndividual">
               <item>
                <widget class="QComboBox" name="comboIndividual">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -229,6 +232,9 @@
               </item>
               <item>
                <widget class="QPushButton" name="buttonIndividual">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -292,6 +298,9 @@
              <layout class="QHBoxLayout" name="layoutEvaluation">
               <item>
                <widget class="QComboBox" name="comboEvaluation">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -325,6 +334,9 @@
               </item>
               <item>
                <widget class="QPushButton" name="buttonEvaluation">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -382,6 +394,9 @@
              <layout class="QHBoxLayout" name="layoutCondition">
               <item>
                <widget class="QComboBox" name="comboCondition">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -415,6 +430,9 @@
               </item>
               <item>
                <widget class="QPushButton" name="buttonCondition">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -472,6 +490,9 @@
              <layout class="QHBoxLayout" name="layoutKeySet">
               <item>
                <widget class="QComboBox" name="comboKeySet">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -505,6 +526,9 @@
               </item>
               <item>
                <widget class="QPushButton" name="buttonKeySet">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -562,6 +586,9 @@
              <layout class="QHBoxLayout" name="layoutTherapist">
               <item>
                <widget class="QComboBox" name="comboTherapist">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -595,6 +622,9 @@
               </item>
               <item>
                <widget class="QPushButton" name="buttonTherapist">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -652,6 +682,9 @@
              <layout class="QHBoxLayout" name="layoutCollector">
               <item>
                <widget class="QComboBox" name="comboCollector">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -685,6 +718,9 @@
               </item>
               <item>
                <widget class="QPushButton" name="buttonCollector">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -745,6 +781,9 @@
               </property>
               <item alignment="Qt::AlignLeft">
                <widget class="QComboBox" name="comboRole">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -817,6 +856,9 @@
              <layout class="QHBoxLayout" name="layoutSessionDuration">
               <item>
                <widget class="QComboBox" name="comboSessionDuration">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -1053,6 +1095,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_2">
               <item>
                <widget class="QComboBox" name="comboBoxTiming">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>212</width>
