@@ -74,7 +74,7 @@ EvaluationViewerDialog::EvaluationViewerDialog(QString mCurrentWorkingDirectory,
     axisX->setTitleBrush(Qt::black);
     axisX->setMin(0);
     axisX->setLabelsFont(QFont("Serif", 10, -1, false));
-    axisX->setLabelFormat(QString("%.0f"));
+    axisX->setLabelFormat(QString("%.1f"));
     axisX->setLabelsBrush(Qt::black);
     axisX->setLabelsColor(Qt::black);
     axisX->setLinePenColor(Qt::black);
@@ -90,7 +90,7 @@ EvaluationViewerDialog::EvaluationViewerDialog(QString mCurrentWorkingDirectory,
     axisY->setLabelsBrush(Qt::black);
     axisY->setLabelsColor(Qt::black);
     axisY->setMin(0);
-    axisY->setMax(1);
+    axisY->setMax(100);
     axisY->setLinePenColor(Qt::black);
     axisY->setLinePen(QPen(Qt::black));
 
@@ -379,45 +379,37 @@ void EvaluationViewerDialog::on_comboBoxDimension_currentIndexChanged(int index)
         return;
     }
 
+    if (index == 0)
+    {
+        DrawBlankPlot();
+    }
     if (index == 1)
     {
         GetFrequencyKeySets();
 
-        QStringList mFrequencyKeys;
-
-        for (QString mKey : fKeyDesc)
-        {
-            mFrequencyKeys.append(mKey.split("-")[0]);
-        }
-
-        fKeyDesc = mFrequencyKeys.toSet().toList();
-
+        mSeriesSelect.setWindowTitle(tr("Select keys to include"));
         mSeriesSelect.AddOptions(fKeyDesc);
-        mSeriesSelect.exec();
 
-        fKeyShow = mSeriesSelect.GetBoolList();
+        if (mSeriesSelect.exec() != QDialog::Rejected)
+        {
+            fKeyShow = mSeriesSelect.GetBoolList();
 
-        DrawFrequencyPlot();
+            DrawFrequencyPlot();
+        }
     }
     else if (index == 2)
     {
         GetDurationKeySets();
 
-        QStringList mDurationKeys;
-
-        for (QString mKey : dKeyDesc)
-        {
-            mDurationKeys.append(mKey.split("-")[0]);
-        }
-
-        dKeyDesc = mDurationKeys.toSet().toList();
-
+        mSeriesSelect.setWindowTitle(tr("Select keys to include"));
         mSeriesSelect.AddOptions(dKeyDesc);
-        mSeriesSelect.exec();
 
-        dKeyShow = mSeriesSelect.GetBoolList();
+        if (mSeriesSelect.exec() != QDialog::Rejected)
+        {
+            dKeyShow = mSeriesSelect.GetBoolList();
 
-        DrawDurationPlot();
+            DrawDurationPlot();
+        }
     }
 }
 
@@ -426,10 +418,20 @@ void EvaluationViewerDialog::on_comboBoxDimension_currentIndexChanged(int index)
  */
 void EvaluationViewerDialog::GetDurationKeySets()
 {
-    QJsonArray durationArray;
+    dKeyConds.clear();
+
+    for (int i(0); i<PrimaryReliabilityObjects.count(); i++)
+    {
+        if (!dKeyConds.contains(PrimaryReliabilityObjects.at(i).Condition))
+        {
+            dKeyConds.append(PrimaryReliabilityObjects.at(i).Condition);
+        }
+    }
 
     if (PrimaryReliabilityObjects.count() > 0 && FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(0).PrimaryFilePath, &json))
     {
+        QJsonArray durationArray;
+
         dKeyDesc.clear();
 
         // Get keys, add lines
@@ -441,9 +443,9 @@ void EvaluationViewerDialog::GetDurationKeySets()
                 foreach (const QJsonValue collector, durationArray) {
                     QJsonObject mObj = collector.toObject();
 
-                    if (!dKeyDesc.contains((mObj["Description"].toString() + "-" + json["Condition"].toString())))
+                    if (!dKeyDesc.contains(mObj["Description"].toString()))
                     {
-                        dKeyDesc.append((mObj["Description"].toString() + "-" + json["Condition"].toString()));
+                        dKeyDesc.append(mObj["Description"].toString());
                     }
                 }
             }
@@ -456,10 +458,20 @@ void EvaluationViewerDialog::GetDurationKeySets()
  */
 void EvaluationViewerDialog::GetFrequencyKeySets()
 {
-    QJsonArray frequencyArray;
+    fKeyConds.clear();
+
+    for (int i(0); i<PrimaryReliabilityObjects.count(); i++)
+    {
+        if (!fKeyConds.contains(PrimaryReliabilityObjects.at(i).Condition))
+        {
+            fKeyConds.append(PrimaryReliabilityObjects.at(i).Condition);
+        }
+    }
 
     if (PrimaryReliabilityObjects.count() > 0 && FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(0).PrimaryFilePath, &json))
     {
+        QJsonArray durationArray;
+
         fKeyDesc.clear();
 
         // Get keys, add lines
@@ -467,13 +479,13 @@ void EvaluationViewerDialog::GetFrequencyKeySets()
         {
             if (FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(i).PrimaryFilePath, &json))
             {
-                frequencyArray = json["FrequencyKeys"].toArray();
-                foreach (const QJsonValue collector, frequencyArray) {
+                durationArray = json["FrequencyKeys"].toArray();
+                foreach (const QJsonValue collector, durationArray) {
                     QJsonObject mObj = collector.toObject();
 
-                    if (!fKeyDesc.contains((mObj["Description"].toString() + "-" + json["Condition"].toString())))
+                    if (!fKeyDesc.contains(mObj["Description"].toString()))
                     {
-                        fKeyDesc.append((mObj["Description"].toString() + "-" + json["Condition"].toString()));
+                        fKeyDesc.append(mObj["Description"].toString());
                     }
                 }
             }
@@ -490,6 +502,20 @@ void EvaluationViewerDialog::on_pushButton_clicked()
 }
 
 /**
+ * @brief SessionViewerDialog::DrawBlankPlot
+ */
+void EvaluationViewerDialog::DrawBlankPlot()
+{
+    chart->setTitle("");
+    chart->removeAllSeries();
+    chart->removeAxis(axisX);
+    chart->removeAxis(axisY);
+
+    axisX->setTitleText("Counts");
+    axisY->setTitleText("Session");
+}
+
+/**
  * @brief EvaluationViewerDialog::DrawDurationPlot
  */
 void EvaluationViewerDialog::DrawDurationPlot()
@@ -498,87 +524,125 @@ void EvaluationViewerDialog::DrawDurationPlot()
     chart->removeAxis(axisX);
     chart->removeAxis(axisY);
 
+    lineSeries.clear();
+    pointSeries.clear();
+
+    QString title = QString("Duration Display (");
+    bool firstString = true;
+
+    for (int i(0); i<dKeyDesc.count(); i++)
+    {
+        if (dKeyShow[i] == true && firstString)
+        {
+            title.append(dKeyDesc[i]);
+
+            firstString = false;
+        }
+        else if (dKeyShow[i] == true && !firstString)
+        {
+            title.append("," + dKeyDesc[i]);
+
+            firstString = false;
+        }
+    }
+
+    title.append(")");
+
+    chart->setTitle(title);
     axisX->setTitleText("Session");
-    axisY->setTitleText("Total Seconds Recorded");
+    axisY->setTitleText("Percent of Session");
 
     QJsonArray durationArray;
 
     QString tempName;
     QStringList dKeySeriesNames;
 
-    double max = 1;
-    int session = 1;
+    double max = 0,
+           minutes = 0;
 
-    if (PrimaryReliabilityObjects.count() > 0 && FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(0).PrimaryFilePath, &json))
+    int session = 0,
+        maxSession = 0,
+        totalSeconds,
+        count,
+        dIndex = -1;
+
+    for (int i(0); i<dKeyConds.count(); i++)
     {
-        chart->removeAllSeries();
-        lineSeries.clear();
+        lineSeries.append(new QLineSeries);
 
-        for (int i(0); i<PrimaryReliabilityObjects.count(); i++)
+        lineSeries[i]->setUseOpenGL(true);
+        lineSeries[i]->setName(dKeyConds[i]);
+        lineSeries[i]->clear();
+        lineSeries[i]->show();
+        lineSeries[i]->setPointsVisible(true);
+
+        chart->addSeries(lineSeries[i]);
+
+        chart->setAxisX(axisX, lineSeries[i]);
+        chart->setAxisY(axisY, lineSeries[i]);
+
+        pointSeries.append(new QScatterSeries);
+
+        pointSeries[i]->setUseOpenGL(true);
+        pointSeries[i]->setName("");
+        pointSeries[i]->setColor(lineSeries[i]->color());
+        pointSeries[i]->clear();
+        pointSeries[i]->show();
+        pointSeries[i]->setPointsVisible(true);
+
+        chart->addSeries(pointSeries[i]);
+
+        chart->setAxisX(axisX, pointSeries[i]);
+        chart->setAxisY(axisY, pointSeries[i]);
+    }
+
+    for (int i(0); i<PrimaryReliabilityObjects.count(); i++)
+    {
+        count = 0;
+
+        if (FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(i).PrimaryFilePath, &json))
         {
-            if (FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(i).PrimaryFilePath, &json))
-            {
-                durationArray = json["DurationKeys"].toArray();
-                foreach (const QJsonValue collector, durationArray) {
-                    QJsonObject mObj = collector.toObject();
+            session = json["Session"].toInt();
+            totalSeconds = json["SessionDuration"].toInt();
 
-                    int dIndex = dKeyDesc.indexOf(mObj["Description"].toString());
+            durationArray = json["DurationOverall"].toArray();
+            foreach (const QJsonValue collector, durationArray) {
+                QJsonObject mObj = collector.toObject();
 
-                    if (dIndex != 1 && dKeyShow[dIndex] == true)
-                    {
-                        tempName = (mObj["Description"].toString() + "-" + json["Condition"].toString());
+                dIndex = dKeyDesc.indexOf(mObj["Key"].toString());
 
-                        if (!dKeySeriesNames.contains(tempName))
-                        {
-                            dKeySeriesNames.append(tempName);
-
-                            lineSeries.append(new QLineSeries);
-
-                            lineSeries[dKeySeriesNames.indexOf(tempName)]->setUseOpenGL(true);
-                            lineSeries[dKeySeriesNames.indexOf(tempName)]->setName(tempName);
-                            lineSeries[dKeySeriesNames.indexOf(tempName)]->clear();
-                            lineSeries[dKeySeriesNames.indexOf(tempName)]->show();
-
-                            chart->addSeries(lineSeries[dKeySeriesNames.indexOf(tempName)]);
-
-                            chart->setAxisX(axisX, lineSeries[dKeySeriesNames.indexOf(tempName)]);
-                            chart->setAxisY(axisY, lineSeries[dKeySeriesNames.indexOf(tempName)]);
-                        }
-                    }
-                }
-
-                durationArray = json["DurationOverall"].toArray();
-                foreach (const QJsonValue collector, durationArray) {
-                    QJsonObject mObj = collector.toObject();
-
-                    int dIndex = dKeyDesc.indexOf(mObj["Key"].toString());
-
-                    if (dIndex != 1 && dKeyShow[dIndex] == true)
-                    {
-                        tempName = (mObj["Key"].toString() + "-" + json["Condition"].toString());
-
-                        *lineSeries[dKeySeriesNames.indexOf(tempName)] << QPointF(json["Session"].toInt(), ((double)json["Count"].toInt() / 1000));
-
-                        if (((double)json["Count"].toInt() / 1000) > max)
-                        {
-                            max = ((double)json["Count"].toInt() / 1000);
-                        }
-
-                        if (json["Session"].toInt() > session)
-                        {
-                            session = json["Session"].toInt();
-                        }
-                    }
+                if (dIndex != -1 && dKeyShow[dIndex])
+                {
+                    count = count + mObj["Count"].toInt();
                 }
             }
+
+            lineSeries[dKeyConds.indexOf(PrimaryReliabilityObjects.at(i).Condition)]->append(session, (double) count / (double) totalSeconds);
+            pointSeries[dKeyConds.indexOf(PrimaryReliabilityObjects.at(i).Condition)]->append(session, (double) count / (double) totalSeconds);
+
+            if ((double) count / minutes > max)
+            {
+                max = (double) count / (double) totalSeconds;
+            }
+
+            if (session > maxSession)
+            {
+                maxSession = session;
+            }
         }
-
-        axisX->setMin(0);
-        axisX->setMax(session);
-
-        axisY->setMin(0);
-        axisY->setMax(max);
     }
+
+    for (int i(0); i<pointSeries.count(); i++)
+    {
+        chart->legend()->markers(pointSeries[i])[0]->setVisible(false);
+    }
+
+    axisX->setMin(0);
+    axisX->setMax(maxSession);
+
+    axisY->setMin(0);
+    axisY->setMax(max * 1.1);
+
 }
 
 /**
@@ -590,6 +654,31 @@ void EvaluationViewerDialog::DrawFrequencyPlot()
     chart->removeAxis(axisX);
     chart->removeAxis(axisY);
 
+    lineSeries.clear();
+    pointSeries.clear();
+
+    QString title = QString("Frequency Display (");
+    bool firstString = true;
+
+    for (int i(0); i<fKeyDesc.count(); i++)
+    {
+        if (fKeyShow[i] == true && firstString)
+        {
+            title.append(fKeyDesc[i]);
+
+            firstString = false;
+        }
+        else if (fKeyShow[i] == true && !firstString)
+        {
+            title.append("," + fKeyDesc[i]);
+
+            firstString = false;
+        }
+    }
+
+    title.append(")");
+
+    chart->setTitle(title);
     axisX->setTitleText("Session");
     axisY->setTitleText("Rate/Minute");
 
@@ -598,79 +687,91 @@ void EvaluationViewerDialog::DrawFrequencyPlot()
     QString tempName;
     QStringList fKeySeriesNames;
 
-    double max = 1;
-    int session = 1;
+    double max = 0,
+           minutes = 0;
 
-    if (PrimaryReliabilityObjects.count() > 0 && FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(0).PrimaryFilePath, &json))
+    int session = 0,
+        maxSession = 0,
+        totalSeconds,
+        count,
+        fIndex = -1;
+
+    for (int i(0); i<fKeyConds.count(); i++)
     {
-        chart->removeAllSeries();
-        lineSeries.clear();
+        lineSeries.append(new QLineSeries);
 
-        for (int i(0); i<PrimaryReliabilityObjects.count(); i++)
+        lineSeries[i]->setUseOpenGL(true);
+        lineSeries[i]->setName(fKeyConds[i]);
+        lineSeries[i]->clear();
+        lineSeries[i]->show();
+        lineSeries[i]->setPointsVisible(true);
+
+        chart->addSeries(lineSeries[i]);
+
+        chart->setAxisX(axisX, lineSeries[i]);
+        chart->setAxisY(axisY, lineSeries[i]);
+
+        pointSeries.append(new QScatterSeries);
+
+        pointSeries[i]->setUseOpenGL(true);
+        pointSeries[i]->setName("");
+        pointSeries[i]->setColor(lineSeries[i]->color());
+        pointSeries[i]->clear();
+        pointSeries[i]->show();
+        pointSeries[i]->setPointsVisible(true);
+
+        chart->addSeries(pointSeries[i]);
+
+        chart->setAxisX(axisX, pointSeries[i]);
+        chart->setAxisY(axisY, pointSeries[i]);
+    }
+
+    for (int i(0); i<PrimaryReliabilityObjects.count(); i++)
+    {
+        count = 0;
+
+        if (FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(i).PrimaryFilePath, &json))
         {
-            if (FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(i).PrimaryFilePath, &json))
-            {
-                frequencyArray = json["FrequencyKeys"].toArray();
-                foreach (const QJsonValue collector, frequencyArray) {
-                    QJsonObject mObj = collector.toObject();
+            session = json["Session"].toInt();
+            totalSeconds = json["SessionDuration"].toInt();
 
-                    int fIndex = fKeyDesc.indexOf(mObj["Description"].toString());
+            frequencyArray = json["FrequencyOverall"].toArray();
+            foreach (const QJsonValue collector, frequencyArray) {
+                QJsonObject mObj = collector.toObject();
 
-                    if (fIndex != 1 && fKeyShow[fIndex] == true)
-                    {
-                        tempName = (mObj["Description"].toString() + "-" + json["Condition"].toString());
+                fIndex = fKeyDesc.indexOf(mObj["Key"].toString());
 
-                        if (!fKeySeriesNames.contains(tempName))
-                        {
-                            fKeySeriesNames.append(tempName);
-
-                            lineSeries.append(new QLineSeries);
-
-                            lineSeries[fKeySeriesNames.indexOf(tempName)]->setUseOpenGL(true);
-                            lineSeries[fKeySeriesNames.indexOf(tempName)]->setName(tempName);
-                            lineSeries[fKeySeriesNames.indexOf(tempName)]->clear();
-                            lineSeries[fKeySeriesNames.indexOf(tempName)]->show();
-
-                            chart->addSeries(lineSeries[fKeySeriesNames.indexOf(tempName)]);
-
-                            chart->setAxisX(axisX, lineSeries[fKeySeriesNames.indexOf(tempName)]);
-                            chart->setAxisY(axisY, lineSeries[fKeySeriesNames.indexOf(tempName)]);
-
-                        }
-                    }
-                }
-
-                frequencyArray = json["FrequencyOverall"].toArray();
-                foreach (const QJsonValue collector, frequencyArray) {
-                    QJsonObject mObj = collector.toObject();
-
-                    int fIndex = fKeyDesc.indexOf(mObj["Key"].toString());
-
-                    if (fIndex != 1 && fKeyShow[fIndex] == true)
-                    {                        
-                        tempName = (mObj["Key"].toString() + "-" + json["Condition"].toString());
-
-                        *lineSeries[fKeySeriesNames.indexOf(tempName)] << QPointF((double) json["Session"].toInt(), mObj["Rate"].toString().toDouble());
-                        //lineSeries[fKeySeriesNames.indexOf(tempName)]->append((double) json["Session"].toInt(), mObj["Rate"].toString().toDouble());
-
-                        if (mObj["Rate"].toString().toDouble() > max)
-                        {
-                            max = mObj["Rate"].toString().toDouble();
-                        }
-
-                        if (json["Session"].toInt() > session)
-                        {
-                            session = json["Session"].toInt();
-                        }
-                    }
+                if (fIndex != -1 && fKeyShow[fIndex])
+                {
+                    count = count + mObj["Count"].toInt();
                 }
             }
+
+            minutes = ((double) (totalSeconds / 1000)) / 60;
+
+            lineSeries[fKeyConds.indexOf(PrimaryReliabilityObjects.at(i).Condition)]->append(session, (double) count / minutes);
+            pointSeries[fKeyConds.indexOf(PrimaryReliabilityObjects.at(i).Condition)]->append(session, (double) count / minutes);
+
+            if ((double) count / minutes > max)
+            {
+                max = (double) count / minutes;
+            }
+
+            if (session > maxSession)
+            {
+                maxSession = session;
+            }
         }
-
-        axisX->setMin(0);
-        axisX->setMax(session);
-
-        axisY->setMin(0);
-        axisY->setMax(max);
     }
+
+    for (int i(0); i<pointSeries.count(); i++)
+    {
+        chart->legend()->markers(pointSeries[i])[0]->setVisible(false);
+    }
+
+    axisX->setMin(0);
+    axisX->setMax(maxSession);
+
+    axisY->setMin(0);
+    axisY->setMax(max * 1.1);
 }

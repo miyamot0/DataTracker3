@@ -51,7 +51,7 @@ public slots:
     void WorkUpdate(QString update);
     void WorkFinished(DirectoryParse finalResult, ParseTypes::ParseAction action);
 
-    //void DrawPlot();
+    void DrawBlankPlot();
     void DrawFrequencyPlot();
     void DrawDurationPlot();
 
@@ -83,8 +83,10 @@ private:
     QValueAxis * axisX,
                * axisY;
     QList<QLineSeries *> lineSeries;
+    QList<QScatterSeries *> pointSeries;
 
     QList<QString> fKeyDesc, dKeyDesc;
+    QList<QString> fKeyConds, dKeyConds;
 
     QList<bool> fKeyShow, dKeyShow;
 
