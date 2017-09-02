@@ -21,6 +21,8 @@
 
   */
 
+#include <QDebug>
+
 #include "evaluationviewerdialog.h"
 #include "ui_evaluationviewerdialog.h"
 
@@ -591,7 +593,6 @@ void EvaluationViewerDialog::DrawFrequencyPlot()
     axisX->setTitleText("Session");
     axisY->setTitleText("Rate/Minute");
 
-    QList<KeySetEntry> FrequencyKeys;
     QJsonArray frequencyArray;
 
     QString tempName;
@@ -609,8 +610,6 @@ void EvaluationViewerDialog::DrawFrequencyPlot()
         {
             if (FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(i).PrimaryFilePath, &json))
             {
-                FrequencyKeys.clear();
-
                 frequencyArray = json["FrequencyKeys"].toArray();
                 foreach (const QJsonValue collector, frequencyArray) {
                     QJsonObject mObj = collector.toObject();
@@ -648,10 +647,11 @@ void EvaluationViewerDialog::DrawFrequencyPlot()
                     int fIndex = fKeyDesc.indexOf(mObj["Key"].toString());
 
                     if (fIndex != 1 && fKeyShow[fIndex] == true)
-                    {
+                    {                        
                         tempName = (mObj["Key"].toString() + "-" + json["Condition"].toString());
 
-                        *lineSeries[fKeySeriesNames.indexOf(tempName)] << QPointF(json["Session"].toInt(), mObj["Rate"].toString().toDouble());
+                        *lineSeries[fKeySeriesNames.indexOf(tempName)] << QPointF((double) json["Session"].toInt(), mObj["Rate"].toString().toDouble());
+                        //lineSeries[fKeySeriesNames.indexOf(tempName)]->append((double) json["Session"].toInt(), mObj["Rate"].toString().toDouble());
 
                         if (mObj["Rate"].toString().toDouble() > max)
                         {
