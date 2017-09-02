@@ -29,11 +29,8 @@
 
 #include "directoryparse.h"
 #include "directorysearcher.h"
-
 #include "reliabilityparse.h"
-
 #include "seriesselectdialog.h"
-
 
 namespace Ui {
 class EvaluationViewerDialog;
@@ -59,12 +56,10 @@ private slots:
     void on_comboBoxGroup_currentIndexChanged(int index);
     void on_comboBoxIndividual_currentIndexChanged(int index);
     void on_comboBoxEvaluation_currentIndexChanged(int index);
+    void on_comboBoxDimension_currentIndexChanged(int index);
+    void on_comboBoxSchedule_currentIndexChanged(int);
 
     void on_pushButton_clicked();
-
-    void on_comboBoxDimension_currentIndexChanged(int index);
-
-    void on_comboBoxSchedule_currentIndexChanged(int index);
 
 private:
     Ui::EvaluationViewerDialog *ui;

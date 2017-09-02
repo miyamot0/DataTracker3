@@ -379,7 +379,7 @@ void EvaluationViewerDialog::on_comboBoxEvaluation_currentIndexChanged(int index
  * @brief EvaluationViewerDialog::on_comboBoxSchedule_currentIndexChanged
  * @param index
  */
-void EvaluationViewerDialog::on_comboBoxSchedule_currentIndexChanged(int index)
+void EvaluationViewerDialog::on_comboBoxSchedule_currentIndexChanged(int)
 {
     ui->comboBoxDimension->setCurrentIndex(0);
 }
@@ -637,7 +637,7 @@ void EvaluationViewerDialog::DrawDurationPlot()
             lineSeries[dKeyConds.indexOf(PrimaryReliabilityObjects.at(i).Condition)]->append(session, (double) count / (double) totalSeconds);
             pointSeries[dKeyConds.indexOf(PrimaryReliabilityObjects.at(i).Condition)]->append(session, (double) count / (double) totalSeconds);
 
-            if ((double) count / minutes > max)
+            if (minutes > 0 && (double) count / minutes > max)
             {
                 max = (double) count / (double) totalSeconds;
             }
