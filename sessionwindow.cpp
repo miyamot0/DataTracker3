@@ -176,6 +176,9 @@ void SessionWindow::on_comboGroup_currentIndexChanged(int index)
         ui->buttonKeySet->setEnabled(false);
         ui->buttonTherapist->setEnabled(false);
         ui->buttonCollector->setEnabled(false);
+
+        ui->editSessionDuration->setEnabled(false);
+        ui->editSessionNumber->setEnabled(false);
     }
     else
     {
@@ -197,6 +200,9 @@ void SessionWindow::on_comboGroup_currentIndexChanged(int index)
         ui->buttonKeySet->setEnabled(false);
         ui->buttonTherapist->setEnabled(false);
         ui->buttonCollector->setEnabled(false);
+
+        ui->editSessionDuration->setEnabled(false);
+        ui->editSessionNumber->setEnabled(false);
     }
 
 }
@@ -259,6 +265,9 @@ void SessionWindow::on_comboIndividual_currentIndexChanged(int index)
         ui->buttonKeySet->setEnabled(false);
         ui->buttonTherapist->setEnabled(false);
         ui->buttonCollector->setEnabled(false);
+
+        ui->editSessionDuration->setEnabled(false);
+        ui->editSessionNumber->setEnabled(false);
     }
     else
     {
@@ -280,6 +289,9 @@ void SessionWindow::on_comboIndividual_currentIndexChanged(int index)
         ui->buttonKeySet->setEnabled(false);
         ui->buttonTherapist->setEnabled(false);
         ui->buttonCollector->setEnabled(false);
+
+        ui->editSessionDuration->setEnabled(false);
+        ui->editSessionNumber->setEnabled(false);
     }
 }
 
@@ -342,6 +354,9 @@ void SessionWindow::on_comboEvaluation_currentIndexChanged(int index)
         ui->buttonKeySet->setEnabled(false);
         ui->buttonTherapist->setEnabled(false);
         ui->buttonCollector->setEnabled(false);
+
+        ui->editSessionDuration->setEnabled(false);
+        ui->editSessionNumber->setEnabled(false);
     }
     else
     {
@@ -364,6 +379,9 @@ void SessionWindow::on_comboEvaluation_currentIndexChanged(int index)
         ui->buttonKeySet->setEnabled(true);
         ui->buttonTherapist->setEnabled(true);
         ui->buttonCollector->setEnabled(true);
+
+        ui->editSessionDuration->setEnabled(false);
+        ui->editSessionNumber->setEnabled(true);
     }
 }
 
@@ -709,11 +727,17 @@ void SessionWindow::on_comboSessionDuration_currentIndexChanged(int index)
         if (sessionDurationDialog.exec() == QDialog::Accepted)
         {
             ui->editSessionDuration->setText(QString("%1 Seconds").arg(sessionDurationDialog.GetSeconds()));
+            ui->editSessionDuration->setEnabled(true);
+        }
+        else
+        {
+            ui->editSessionDuration->setEnabled(false);
         }
     }
     else
     {
-        ui->editSessionDuration->setText("");
+        ui->editSessionDuration->setText("");        
+        ui->editSessionDuration->setEnabled(false);
     }
 }
 
