@@ -7,5 +7,6 @@
         <file>images/view-refresh.png</file>
         <file>images/x-office-spreadsheet.png</file>
         <file>images/preferences-system.png</file>
+        <file>images/BackgroundScaled.png</file>
     </qresource>
 </RCC>

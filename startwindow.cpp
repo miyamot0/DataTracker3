@@ -78,6 +78,22 @@ StartWindow::StartWindow(QWidget *parent) :
     #elif TARGET_OS_MAC
         manager->get(QNetworkRequest(QUrl("http://www.smallnstats.com/DataTrackerRepositoryMac/Updates.xml")));
     #endif
+
+    QPixmap source(":/images/BackgroundScaled.png");
+
+    QImage image(this->size(), QImage::Format_ARGB32_Premultiplied);
+    image.fill(Qt::white);
+
+    QPainter painter(&image);
+    painter.setOpacity(0.2);
+    painter.drawPixmap(0, -10, source);
+    painter.end();
+
+    QPixmap background = QPixmap::fromImage(image);
+
+    QPalette palette;
+    palette.setBrush(QPalette::Background, background);
+    this->setPalette(palette);
 }
 
 /**
