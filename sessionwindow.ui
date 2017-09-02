@@ -1145,7 +1145,7 @@
              <item>
               <widget class="QLabel" name="label_3">
                <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sessions can be designed using the controls above. Changes are made in real-time and will be saved to the designated location(s) in real-time. All information should sync to all locations after each changes. You may prompt a re-sync or begin a session using the controls located below. Additional help and guidance can be found in the FAQ section of the main, starting window.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sessions are designed and selected using the controls above. Changes made here are performed in real-time and are saved to the designated location(s) in real-time. All information should sync to all locations after each changes. Additionally, you may prompt a re-sync if an error was encountered or if a network connection had been interrupted. Once the necessary details are provided, you can choose to begin a session using the controls located below. Additional help and guidance can be found in the FAQ section of the main, starting window.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>

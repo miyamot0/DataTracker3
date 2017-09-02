@@ -1370,6 +1370,9 @@ void SessionWindow::on_tableDuration_doubleClicked(const QModelIndex)
     EditCurrentKeySet();
 }
 
+/**
+ * @brief SessionWindow::on_pushButtonSync_clicked
+ */
 void SessionWindow::on_pushButtonSync_clicked()
 {
     delayTimer.setSingleShot(true);
