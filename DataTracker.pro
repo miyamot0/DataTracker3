@@ -161,7 +161,7 @@ win32 {
 #
 ###
 macx {
-    #macx:ICON = $${PWD}/SNS.icns
+    macx:ICON = $${PWD}/SNS.icns
 
     DT_FILES.files = License_Tango.txt \
                      License_QtXlsx.txt \
@@ -169,7 +169,7 @@ macx {
                      License_QDarkStyleSheet.txt \
                      License_BDataPro.txt \
                      COPYING \
-                     #SNS.icns \
+                     SNS.icns \
                      source/DataTracker.tar
 
     DT_FILES.path = Contents/Resources
@@ -186,4 +186,5 @@ DISTFILES += \
     License_QDarkStyleSheet.txt \
     License_BDataPro.txt \
     SNS.ico \
-    source/DataTracker.tar
+    source/DataTracker.tar \
+    SNS.icns

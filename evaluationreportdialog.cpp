@@ -254,7 +254,7 @@ void EvaluationReportDialog::on_comboBoxEvaluation_currentIndexChanged(int index
 
     ui->tableWidget->setRowCount(0);
 
-    qSort(PrimaryReliabilityObjects.begin(), PrimaryReliabilityObjects.end(),
+    std::sort(PrimaryReliabilityObjects.begin(), PrimaryReliabilityObjects.end(),
           [](const ReliabilityParse a, const ReliabilityParse b) -> bool {return a.SessionNumber < b.SessionNumber;});
 
     for (int i(0); i<PrimaryReliabilityObjects.count(); i++)
