@@ -1148,6 +1148,7 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
         }
 
         recordingWindow = new RecordingWindow();
+        recordingWindow->SetScheduleBasedOnMain(ui->comboBoxTiming->currentIndex() == 0, ui->comboBoxTiming->currentIndex() - 1);
         recordingWindow->LoadKeys(CurrentKeySet);
         recordingWindow->SetGroup(ui->comboGroup->currentText());
         recordingWindow->SetIndividual(ui->comboIndividual->currentText());

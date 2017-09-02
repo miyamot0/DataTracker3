@@ -64,6 +64,12 @@ public:
     void SetCollector(QString value);
     void SetRole(QString value);
 
+    void SetScheduleBasedOnMain(bool value, int index)
+    {
+        MainScheduleBased = value;
+        AlternativeScheduleIndex = index;
+    }
+
     bool eventFilter(QObject *, QEvent *e);
 
 public slots:
@@ -100,6 +106,9 @@ private:
     void ParseTimes();
 
     bool Started = false;
+    bool MainScheduleBased = true;
+    int AlternativeScheduleIndex = -1;
+
     int counter = 0;
     int keyCode;
 
@@ -144,6 +153,7 @@ private:
     }
 
     QString GetFrequencyKeyDescription(int code);
+
     QString GetDurationKeyDescription(int code);
 };
 

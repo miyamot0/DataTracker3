@@ -181,39 +181,79 @@ void RecordingWindow::UpdateGUI()
 
     ParseTimes();
 
-    if ((startTime.msecsTo(endTime) / 1000) >= keySet.TotalSeconds)
+    if (MainScheduleBased)
     {
-        SessionEvent loggedCloseKey;
-        loggedCloseKey.TimePressed = endTime;
-        loggedCloseKey.MeasurementType = Measurement::Schedule;
-        loggedCloseKey.ScheduleType = CurrentSchedule;
-
-        KeySetEntry loggedClosedKeySet;
-
-        if (CurrentSchedule == Schedule::One)
+        if ((startTime.msecsTo(endTime) / 1000) >= keySet.TotalSeconds)
         {
-            loggedClosedKeySet.KeyCode = Qt::Key_Z;
-            loggedClosedKeySet.KeyName = "Schedule 1 End";
-            loggedClosedKeySet.KeyDescription = "Schedule 1 End";
+            SessionEvent loggedCloseKey;
+            loggedCloseKey.TimePressed = endTime;
+            loggedCloseKey.MeasurementType = Measurement::Schedule;
+            loggedCloseKey.ScheduleType = CurrentSchedule;
+
+            KeySetEntry loggedClosedKeySet;
+
+            if (CurrentSchedule == Schedule::One)
+            {
+                loggedClosedKeySet.KeyCode = Qt::Key_Z;
+                loggedClosedKeySet.KeyName = "Schedule 1 End";
+                loggedClosedKeySet.KeyDescription = "Schedule 1 End";
+            }
+            else if (CurrentSchedule == Schedule::Two)
+            {
+                loggedClosedKeySet.KeyCode = Qt::Key_X;
+                loggedClosedKeySet.KeyName = "Schedule 2 End";
+                loggedClosedKeySet.KeyDescription = "Schedule 2 End";
+            }
+            else if (CurrentSchedule == Schedule::Three)
+            {
+                loggedClosedKeySet.KeyCode = Qt::Key_C;
+                loggedClosedKeySet.KeyName = "Schedule 3 End";
+                loggedClosedKeySet.KeyDescription = "Schedule 3 End";
+            }
+
+            loggedCloseKey.KeyEntered = loggedClosedKeySet;
+
+            AddKey(loggedCloseKey);
+
+            accept();
         }
-        else if (CurrentSchedule == Schedule::Two)
+    }
+    else if (!MainScheduleBased && ScheduleFlags[AlternativeScheduleIndex])
+    {
+        if (((ScheduleDurationSums[AlternativeScheduleIndex] + ScheduleDurationFlaggedTimes[AlternativeScheduleIndex].msecsTo(QDateTime::currentDateTime())) / 1000) >= keySet.TotalSeconds)
         {
-            loggedClosedKeySet.KeyCode = Qt::Key_X;
-            loggedClosedKeySet.KeyName = "Schedule 2 End";
-            loggedClosedKeySet.KeyDescription = "Schedule 2 End";
+            SessionEvent loggedCloseKey;
+            loggedCloseKey.TimePressed = endTime;
+            loggedCloseKey.MeasurementType = Measurement::Schedule;
+            loggedCloseKey.ScheduleType = CurrentSchedule;
+
+            KeySetEntry loggedClosedKeySet;
+
+            if (CurrentSchedule == Schedule::One)
+            {
+                loggedClosedKeySet.KeyCode = Qt::Key_Z;
+                loggedClosedKeySet.KeyName = "Schedule 1 End";
+                loggedClosedKeySet.KeyDescription = "Schedule 1 End";
+            }
+            else if (CurrentSchedule == Schedule::Two)
+            {
+                loggedClosedKeySet.KeyCode = Qt::Key_X;
+                loggedClosedKeySet.KeyName = "Schedule 2 End";
+                loggedClosedKeySet.KeyDescription = "Schedule 2 End";
+            }
+            else if (CurrentSchedule == Schedule::Three)
+            {
+                loggedClosedKeySet.KeyCode = Qt::Key_C;
+                loggedClosedKeySet.KeyName = "Schedule 3 End";
+                loggedClosedKeySet.KeyDescription = "Schedule 3 End";
+            }
+
+            loggedCloseKey.KeyEntered = loggedClosedKeySet;
+
+            AddKey(loggedCloseKey);
+
+            accept();
         }
-        else if (CurrentSchedule == Schedule::Three)
-        {
-            loggedClosedKeySet.KeyCode = Qt::Key_C;
-            loggedClosedKeySet.KeyName = "Schedule 3 End";
-            loggedClosedKeySet.KeyDescription = "Schedule 3 End";
-        }
-
-        loggedCloseKey.KeyEntered = loggedClosedKeySet;
-
-        AddKey(loggedCloseKey);
-
-        accept();
     }
 }
 
@@ -686,6 +726,13 @@ void RecordingWindow::RemoveKey()
         return;
     }
 
+    if (PressedKeys.last().KeyEntered.KeyCode == Qt::Key_Z ||
+        PressedKeys.last().KeyEntered.KeyCode == Qt::Key_X ||
+        PressedKeys.last().KeyEntered.KeyCode == Qt::Key_C)
+    {
+        return;
+    }
+
     PressedKeys.removeLast();
 
     ui->tableWidgetLog->removeRow(ui->tableWidgetLog->rowCount() - 1);
@@ -848,7 +895,7 @@ void RecordingWindow::ParseTimes()
         if (ScheduleFlags[i])
         {
             extraTime = ScheduleDurationFlaggedTimes[i].msecsTo(QDateTime::currentDateTime());
-            mEditRef->setText(formatTimeLabel(ScheduleDurationSums[i] + extraTime));
+            mEditRef->setText(formatTimeLabel(ScheduleDurationSums[i] + extraTime));            
         }
         else
         {
