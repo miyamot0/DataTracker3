@@ -99,7 +99,7 @@ StartWindow::StartWindow(QWidget *parent) :
     this->setPalette(palette);
 }
 
-/**
+/** Downloaded file event
  * @brief SheetWidget::downloadedFile
  * @param reply
  */
@@ -145,7 +145,7 @@ void StartWindow::downloadedFile(QNetworkReply *reply) {
     }
 }
 
-/**
+/** Launch updater process
  * @brief StartWindow::on_actionLaunch_Updater_triggered
  */
 void StartWindow::on_actionLaunch_Updater_triggered()
@@ -434,7 +434,7 @@ void StartWindow::on_actionSession_Visual_Analysis_triggered()
     sessionViewerDialog->exec();
 }
 
-/**
+/** Open Session Viewer Dialog
  * @brief StartWindow::on_actionEvaluation_Visual_Analysis_triggered
  */
 void StartWindow::on_actionEvaluation_Visual_Analysis_triggered()
@@ -443,6 +443,9 @@ void StartWindow::on_actionEvaluation_Visual_Analysis_triggered()
     evaluationViewerDialog->exec();
 }
 
+/** Open Evaluation Report Dialog
+ * @brief StartWindow::on_actionEvaluation_Report_triggered
+ */
 void StartWindow::on_actionEvaluation_Report_triggered()
 {
     evaluationReportDialog = new EvaluationReportDialog(workingDirectory, this);
