@@ -211,33 +211,43 @@ void SessionViewerDialog::on_comboBoxGroup_currentIndexChanged(int index)
 
         ui->tableWidget->setRowCount(0);
 
+        ui->comboBoxIndividual->setEnabled(false);
+        ui->comboBoxEvaluation->setEnabled(false);
+        ui->comboBoxDimension->setEnabled(false);
+
         return;
     }
+    else
+    {
+        workerThread = new QThread();
 
-    workerThread = new QThread();
+        mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
+        mCurrentDirectory.CurrentGroup = ui->comboBoxGroup->currentText();
+        mCurrentDirectory.CurrentIndividual = "";
+        mCurrentDirectory.CurrentEvaluation = "";
+        mCurrentDirectory.CurrentCondition = "";
+        mCurrentDirectory.CurrentKeySet = "";
 
-    mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
-    mCurrentDirectory.CurrentGroup = ui->comboBoxGroup->currentText();
-    mCurrentDirectory.CurrentIndividual = "";
-    mCurrentDirectory.CurrentEvaluation = "";
-    mCurrentDirectory.CurrentCondition = "";
-    mCurrentDirectory.CurrentKeySet = "";
+        worker = new DirectorySearcher(mCurrentDirectory);
 
-    worker = new DirectorySearcher(mCurrentDirectory);
+        worker->moveToThread(workerThread);
 
-    worker->moveToThread(workerThread);
+        connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
+        connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
+        connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
+        connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
+        connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
 
-    connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
-    connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
-    connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
-    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
-    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
+        workerThread->wait();
+        worker->startWork();
 
-    workerThread->wait();
-    worker->startWork();
+        ui->comboBoxDimension->setCurrentIndex(0);
+        DrawBlankPlot();
 
-    ui->comboBoxDimension->setCurrentIndex(0);
-    DrawBlankPlot();
+        ui->comboBoxIndividual->setEnabled(true);
+        ui->comboBoxEvaluation->setEnabled(false);
+        ui->comboBoxDimension->setEnabled(false);
+    }
 }
 
 /**
@@ -255,33 +265,42 @@ void SessionViewerDialog::on_comboBoxIndividual_currentIndexChanged(int index)
 
         ui->tableWidget->setRowCount(0);
 
+        ui->comboBoxEvaluation->setEnabled(false);
+        ui->comboBoxDimension->setEnabled(false);
+
         return;
     }
+    else
+    {
+        workerThread = new QThread();
 
-    workerThread = new QThread();
+        mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
+        mCurrentDirectory.CurrentGroup = ui->comboBoxGroup->currentText();
+        mCurrentDirectory.CurrentIndividual = ui->comboBoxIndividual->currentText();
+        mCurrentDirectory.CurrentEvaluation = "";
+        mCurrentDirectory.CurrentCondition = "";
+        mCurrentDirectory.CurrentKeySet = "";
 
-    mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
-    mCurrentDirectory.CurrentGroup = ui->comboBoxGroup->currentText();
-    mCurrentDirectory.CurrentIndividual = ui->comboBoxIndividual->currentText();
-    mCurrentDirectory.CurrentEvaluation = "";
-    mCurrentDirectory.CurrentCondition = "";
-    mCurrentDirectory.CurrentKeySet = "";
+        worker = new DirectorySearcher(mCurrentDirectory);
 
-    worker = new DirectorySearcher(mCurrentDirectory);
+        worker->moveToThread(workerThread);
 
-    worker->moveToThread(workerThread);
+        connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
+        connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
+        connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
+        connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
+        connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
 
-    connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
-    connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
-    connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
-    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
-    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
+        workerThread->wait();
+        worker->startWork();
 
-    workerThread->wait();
-    worker->startWork();
+        ui->comboBoxDimension->setCurrentIndex(0);
 
-    ui->comboBoxDimension->setCurrentIndex(0);
-    DrawBlankPlot();
+        DrawBlankPlot();
+
+        ui->comboBoxEvaluation->setEnabled(true);
+        ui->comboBoxDimension->setEnabled(false);
+    }
 }
 
 /**
@@ -294,98 +313,105 @@ void SessionViewerDialog::on_comboBoxEvaluation_currentIndexChanged(int index)
     {
         ui->tableWidget->setRowCount(0);
 
+        ui->comboBoxDimension->setEnabled(false);
+
         return;
     }
-
-    workerThread = new QThread();
-
-    mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
-    mCurrentDirectory.CurrentGroup = ui->comboBoxGroup->currentText();
-    mCurrentDirectory.CurrentIndividual = ui->comboBoxIndividual->currentText();
-    mCurrentDirectory.CurrentEvaluation = ui->comboBoxEvaluation->currentText();
-    mCurrentDirectory.CurrentCondition = "";
-    mCurrentDirectory.CurrentKeySet = "";
-
-    QString mFilePath = FileTools::pathAppend(mWorkingDirectory, ui->comboBoxGroup->currentText());
-    mFilePath = FileTools::pathAppend(mFilePath, ui->comboBoxIndividual->currentText());
-    mFilePath = FileTools::pathAppend(mFilePath, ui->comboBoxEvaluation->currentText());
-
-    PrimaryReliabilityObjects.clear();
-
-    QDirIterator iterator(mFilePath,
-                          QStringList() << "*.json",
-                          QDir::Files,
-                          QDirIterator::Subdirectories);
-
-    while (iterator.hasNext())
+    else
     {
-        QString mFileName = iterator.next();
+        workerThread = new QThread();
 
-        if (mFileName.contains(".json", Qt::CaseInsensitive))
+        mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
+        mCurrentDirectory.CurrentGroup = ui->comboBoxGroup->currentText();
+        mCurrentDirectory.CurrentIndividual = ui->comboBoxIndividual->currentText();
+        mCurrentDirectory.CurrentEvaluation = ui->comboBoxEvaluation->currentText();
+        mCurrentDirectory.CurrentCondition = "";
+        mCurrentDirectory.CurrentKeySet = "";
+
+        QString mFilePath = FileTools::pathAppend(mWorkingDirectory, ui->comboBoxGroup->currentText());
+        mFilePath = FileTools::pathAppend(mFilePath, ui->comboBoxIndividual->currentText());
+        mFilePath = FileTools::pathAppend(mFilePath, ui->comboBoxEvaluation->currentText());
+
+        PrimaryReliabilityObjects.clear();
+
+        QDirIterator iterator(mFilePath,
+                              QStringList() << "*.json",
+                              QDir::Files,
+                              QDirIterator::Subdirectories);
+
+        while (iterator.hasNext())
         {
-            QFile mSession(mFileName);
+            QString mFileName = iterator.next();
 
-            if (mSession.exists())
+            if (mFileName.contains(".json", Qt::CaseInsensitive))
             {
-                if (mSession.open(QIODevice::ReadOnly | QIODevice::Text))
+                QFile mSession(mFileName);
+
+                if (mSession.exists())
                 {
-                    QString sessionData = mSession.readAll();
-                    mSession.close();
-
-                    QJsonDocument loadSession = QJsonDocument::fromJson(sessionData.toUtf8());
-
-                    if (!loadSession.isNull())
+                    if (mSession.open(QIODevice::ReadOnly | QIODevice::Text))
                     {
-                        QJsonObject sessionObject = loadSession.object();
+                        QString sessionData = mSession.readAll();
+                        mSession.close();
 
-                        if((sessionObject["Role"].toString().contains("Primary", Qt::CaseInsensitive)))
+                        QJsonDocument loadSession = QJsonDocument::fromJson(sessionData.toUtf8());
+
+                        if (!loadSession.isNull())
                         {
-                            ReliabilityParse mReliObj;
-                            mReliObj.SessionNumber = sessionObject["Session"].toInt();
-                            mReliObj.Collector = sessionObject["Collector"].toString();
-                            mReliObj.Condition = sessionObject["Condition"].toString();
-                            mReliObj.SecondaryObserver = QString("---");
-                            mReliObj.PrimaryFilePath = mFileName;
-                            mReliObj.Reli = false;
-                            mReliObj.CanScoreAsReli = false;
+                            QJsonObject sessionObject = loadSession.object();
 
-                            PrimaryReliabilityObjects.append(mReliObj);
-                        }
-                        else
-                        {
-                            ReliabilityParse mReliObj;
-                            mReliObj.SessionNumber = sessionObject["Session"].toInt();
-                            mReliObj.Collector = sessionObject["Collector"].toString();
-                            mReliObj.Condition = sessionObject["Condition"].toString();
-                            mReliObj.PrimaryFilePath = mFileName;
-                            mReliObj.Reli = true;
-                            mReliObj.CanScoreAsReli = false;
+                            if((sessionObject["Role"].toString().contains("Primary", Qt::CaseInsensitive)))
+                            {
+                                ReliabilityParse mReliObj;
+                                mReliObj.SessionNumber = sessionObject["Session"].toInt();
+                                mReliObj.Collector = sessionObject["Collector"].toString();
+                                mReliObj.Condition = sessionObject["Condition"].toString();
+                                mReliObj.SecondaryObserver = QString("---");
+                                mReliObj.PrimaryFilePath = mFileName;
+                                mReliObj.Reli = false;
+                                mReliObj.CanScoreAsReli = false;
 
-                            PrimaryReliabilityObjects.append(mReliObj);
+                                PrimaryReliabilityObjects.append(mReliObj);
+                            }
+                            else
+                            {
+                                ReliabilityParse mReliObj;
+                                mReliObj.SessionNumber = sessionObject["Session"].toInt();
+                                mReliObj.Collector = sessionObject["Collector"].toString();
+                                mReliObj.Condition = sessionObject["Condition"].toString();
+                                mReliObj.PrimaryFilePath = mFileName;
+                                mReliObj.Reli = true;
+                                mReliObj.CanScoreAsReli = false;
+
+                                PrimaryReliabilityObjects.append(mReliObj);
+                            }
                         }
                     }
                 }
             }
         }
+
+        std::sort(PrimaryReliabilityObjects.begin(), PrimaryReliabilityObjects.end(),
+              [](const ReliabilityParse a, const ReliabilityParse b) -> bool {return a.SessionNumber < b.SessionNumber;});
+
+        ui->tableWidget->setRowCount(0);
+
+        for (int i(0); i<PrimaryReliabilityObjects.count(); i++)
+        {
+            ui->tableWidget->insertRow(ui->tableWidget->rowCount());
+
+            ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 0, new QTableWidgetItem(QString::number(PrimaryReliabilityObjects.at(i).SessionNumber)));
+            ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 1, new QTableWidgetItem(PrimaryReliabilityObjects.at(i).Condition));
+            ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 2, new QTableWidgetItem(PrimaryReliabilityObjects.at(i).Collector));
+            ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 3, new QTableWidgetItem(formatReli(PrimaryReliabilityObjects.at(i).Reli)));
+        }
+
+        ui->comboBoxDimension->setCurrentIndex(0);
+
+        DrawBlankPlot();
+
+        ui->comboBoxDimension->setEnabled(true);
     }
-
-    std::sort(PrimaryReliabilityObjects.begin(), PrimaryReliabilityObjects.end(),
-          [](const ReliabilityParse a, const ReliabilityParse b) -> bool {return a.SessionNumber < b.SessionNumber;});
-
-    ui->tableWidget->setRowCount(0);
-
-    for (int i(0); i<PrimaryReliabilityObjects.count(); i++)
-    {
-        ui->tableWidget->insertRow(ui->tableWidget->rowCount());
-
-        ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 0, new QTableWidgetItem(QString::number(PrimaryReliabilityObjects.at(i).SessionNumber)));
-        ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 1, new QTableWidgetItem(PrimaryReliabilityObjects.at(i).Condition));
-        ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 2, new QTableWidgetItem(PrimaryReliabilityObjects.at(i).Collector));
-        ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 3, new QTableWidgetItem(formatReli(PrimaryReliabilityObjects.at(i).Reli)));
-    }
-
-    ui->comboBoxDimension->setCurrentIndex(0);
-    DrawBlankPlot();
 }
 
 /**
