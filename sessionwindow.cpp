@@ -1280,10 +1280,77 @@ void SessionWindow::on_buttonBox_clicked(QAbstractButton *button)
 {
     if((QPushButton *)button == ui->buttonBox->button(QDialogButtonBox::Ok))
     {
+        if (ui->comboGroup->currentIndex() == 0)
+        {
+            QMessageBox::critical(NULL, tr("Group"),
+                                  tr("Set a group for the session."),
+                                  QMessageBox::Ok);
+
+            return;
+        }
+
+        if (ui->comboIndividual->currentIndex() == 0)
+        {
+            QMessageBox::critical(NULL, tr("Individual"),
+                                  tr("Set an individual for the session."),
+                                  QMessageBox::Ok);
+
+            return;
+        }
+
+        if (ui->comboEvaluation->currentIndex() == 0)
+        {
+            QMessageBox::critical(NULL, tr("Evaluation"),
+                                  tr("Set an evaluation for the session."),
+                                  QMessageBox::Ok);
+
+            return;
+        }
+
+        if (ui->comboCondition->currentIndex() == 0)
+        {
+            QMessageBox::critical(NULL, tr("Condition"),
+                                  tr("Set a condition for the session."),
+                                  QMessageBox::Ok);
+
+            return;
+        }
+
+        if (ui->comboKeySet->currentIndex() == 0)
+        {
+            QMessageBox::critical(NULL, tr("Key Set"),
+                                  tr("Set a key set for the session."),
+                                  QMessageBox::Ok);
+
+            return;
+        }
+
+        if (ui->comboCollector->currentIndex() == 0 ||
+                ui->comboTherapist->currentIndex() == 0)
+        {
+            QMessageBox::critical(NULL, tr("Personnel"),
+                                  tr("Set the session therapist and the data recorder for the session."),
+                                  QMessageBox::Ok);
+
+            return;
+        }
+
+        if (ui->comboRole->currentIndex() == 0)
+        {
+            QMessageBox::critical(NULL, tr("Role"),
+                                  tr("Set whether this session will be coded as primary or reliability."),
+                                  QMessageBox::Ok);
+
+            return;
+        }
+
         CurrentKeySet.TotalSeconds = GetSessionDuration();
+
         CurrentKeySet.Session = GetSessionNumber();
 
-        if (CurrentKeySet.TotalSeconds == -1 || CurrentKeySet.Session == -1)
+        if (CurrentKeySet.TotalSeconds == -1 ||
+                CurrentKeySet.Session == -1 ||
+                ui->comboKeySet->currentIndex() == 0)
         {
             return;
         }

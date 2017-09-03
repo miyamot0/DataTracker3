@@ -190,4 +190,8 @@ DISTFILES += \
     License_BDataPro.txt \
     SNS.ico \
     source/DataTracker.tar \
-    SNS.icns
+    SNS.icns \
+    screencaps/EvaluationViewer.png \
+    screencaps/RecordingWindow.png \
+    screencaps/SessionDesigner.png \
+    screencaps/SessionViewer.png

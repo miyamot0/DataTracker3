@@ -37,8 +37,10 @@ TODO
 
 ### Usage
 ------
-
-...
+![Alt text](screencaps/EvaluationViewer.png?raw=true "Data Collection and Visualization")
+![Alt text](screencaps/SessionViewer.png?raw=true "Data Collection and Visualization")
+![Alt text](screencaps/SessionDesigner.png?raw=true "Data Collection and Visualization")
+![Alt text](screencaps/RecordingWindow.png?raw=true "Data Collection and Visualization")
 
 ### Referenced Works (F/OSS software)
 ------
