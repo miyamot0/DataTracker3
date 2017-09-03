@@ -3,12 +3,14 @@
 Data Tracker is a Qt-based application that assists researchers and clinicians in reliably measuring behavior of interest. This program can be used by multiple observers to record, and compare, behavior in real-time. Additionally, this tool provides multiples methods for assessing the reliability of measurements, session-by-session viewing and interpretation, and the automation of clinical responsibilities.
 
 Features include:
-  - Multi-rater observations with options for saving data in multiple locations and formats (JSON, xlsx)
-  - Calculation of reliability indices
-  - Customizable methods for designing measurement systems
-  - Automation of clinical responsibilities (compiling results, calculation of reliability metrics, charting, etc.)
   - Cross-platform support for Windows, Mac, and Linux (only Ubuntu tested)
-  - Saving figures in a range of common formats
+  - Customizable methods for designing measurement systems
+  - Real-time recording of behavior with multiple observers
+  - Tools for calculation of reliability indices
+  - Optionally automate reliability measures and reports as new data is added
+  - Automated update delivery, for keeping up to date with new features and bug fixes
+  - Options for saving behavioral data in multiple locations and formats (JSON, xlsx, etc.)
+  - Saving figures and reports in a range of common formats
 
 ### Version
 ------
