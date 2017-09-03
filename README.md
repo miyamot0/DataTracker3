@@ -35,16 +35,22 @@ Features include:
 ### Features/Usage
 ------
 Robust, customizable data collection options
-![Alt text](screencaps/SessionDesigner.png?raw=true "Data Collection and Visualization")
+![Alt text](screencaps/SessionDesigner.png?raw=true "Session Designer")
 
 Real-time data recording for multiple observers
-![Alt text](screencaps/RecordingWindow.png?raw=true "Data Collection and Visualization")
+![Alt text](screencaps/RecordingWindow.png?raw=true "Recording Window")
 
 Visualizations of behavior across conditions (e.g., baseline, treatment)
-![Alt text](screencaps/EvaluationViewer.png?raw=true "Data Collection and Visualization")
+![Alt text](screencaps/EvaluationViewer.png?raw=true "Evaluation Viewer")
 
 Within-session visualizations of responding during session
-![Alt text](screencaps/SessionViewer.png?raw=true "Data Collection and Visualization")
+![Alt text](screencaps/SessionViewer.png?raw=true "Session Viewer")
+
+Calculation of Reliability Indices
+![Alt text](screencaps/Reliability.png?raw=true "Reliability Calculator")
+
+Preparation of Reports
+![Alt text](screencaps/Report.png?raw=true "Evaluation Reports")
 
 ### Referenced Works (F/OSS software)
 ------

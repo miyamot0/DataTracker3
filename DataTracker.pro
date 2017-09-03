@@ -19,8 +19,8 @@
 TEST_FEATURES = 1
 
 VERSION_MAJOR = 0
-VERSION_MINOR = 4
-VERSION_BUILD = 1
+VERSION_MINOR = 5
+VERSION_BUILD = 0
 
 DEFINES += "VERSION_MAJOR=$$VERSION_MAJOR"\
        "VERSION_MINOR=$$VERSION_MINOR"\
@@ -194,4 +194,6 @@ DISTFILES += \
     screencaps/EvaluationViewer.png \
     screencaps/RecordingWindow.png \
     screencaps/SessionDesigner.png \
-    screencaps/SessionViewer.png
+    screencaps/SessionViewer.png \
+    screencaps/Reliability.png \
+    screencaps/Report.png
