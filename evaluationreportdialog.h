@@ -31,6 +31,7 @@
 #include "reliabilityparse.h"
 #include "directoryparse.h"
 #include "directorysearcher.h"
+#include "displaytablesdialog.h"
 
 namespace Ui {
 class EvaluationReportDialog;
@@ -65,6 +66,10 @@ private:
 
     QList<ReliabilityParse> PrimaryReliabilityObjects;
     QList<ReliabilityParse> SecondaryReliabilityObjects;
+
+    DisplayTablesDialog mDisplayDialog;
+
+    QList<QList<QStringList>> ReportResults;
 
     QJsonObject json;
     QTimer fadeTimer;

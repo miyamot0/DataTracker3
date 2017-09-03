@@ -392,7 +392,7 @@ void SessionViewerDialog::on_comboBoxEvaluation_currentIndexChanged(int index)
  * @brief SessionViewerDialog::on_comboBoxSchedule_currentIndexChanged
  * @param index
  */
-void SessionViewerDialog::on_comboBoxSchedule_currentIndexChanged(int index)
+void SessionViewerDialog::on_comboBoxSchedule_currentIndexChanged(int)
 {
     ui->comboBoxDimension->setCurrentIndex(0);
 }

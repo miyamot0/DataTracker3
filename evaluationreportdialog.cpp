@@ -25,6 +25,7 @@
 #include "ui_evaluationreportdialog.h"
 
 #include <QThread>
+#include <QDebug>
 
 #include "windowtools.h"
 #include "filetools.h"
@@ -397,10 +398,14 @@ void EvaluationReportDialog::on_pushButton_clicked()
                                                         ui->comboBoxIndividual->currentText(),
                                                         ui->comboBoxEvaluation->currentText(),
                                                         &frequencyKeyList,
-                                                        &durationKeyList);
+                                                        &durationKeyList,
+                                                        &ReportResults);
 
     ui->labelStatus->setText(writeReport ? "Report saved successfully." : "Report write failed.");
 
     fadeTimer.setSingleShot(true);
     fadeTimer.start(3000);
+
+    mDisplayDialog.InsertData(&ReportResults);
+    mDisplayDialog.exec();
 }

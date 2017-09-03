@@ -67,7 +67,7 @@ private slots:
     void DrawFrequencySeries(int index);
     void DrawDurationSeries(int index);
 
-    void on_comboBoxSchedule_currentIndexChanged(int index);
+    void on_comboBoxSchedule_currentIndexChanged(int);
 
 private:
     Ui::SessionViewerDialog *ui;

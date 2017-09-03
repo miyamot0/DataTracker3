@@ -31,6 +31,7 @@
 #include "directorysearcher.h"
 #include "reliabilityparse.h"
 #include "seriesselectdialog.h"
+#include "displaytablesdialog.h"
 
 namespace Ui {
 class EvaluationViewerDialog;
@@ -65,6 +66,8 @@ private:
     Ui::EvaluationViewerDialog *ui;
 
     SeriesSelectDialog mSeriesSelect;
+
+    DisplayTablesDialog resultsDisplay;
 
     DirectoryParse mCurrentDirectory;
     QString mWorkingDirectory;

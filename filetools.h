@@ -1274,10 +1274,14 @@ static bool WriteEvaluationReport(QList<ReliabilityParse> * PrimaryReliabilityOb
                                   QString Individual,
                                   QString Evaluation,
                                   QStringList * mFKeys,
-                                  QStringList * mDKeys)
+                                  QStringList * mDKeys,
+                                  QList<QList<QStringList>> * outputDisplay)
 {
     QJsonObject json;
     QJsonArray tempArray;
+
+    QStringList sheetNames;
+    sheetNames << "Case Report" << "Schedule One" << "Schedule Two" << "Schedule Three";
 
     int tempIndex;
 
@@ -1286,7 +1290,7 @@ static bool WriteEvaluationReport(QList<ReliabilityParse> * PrimaryReliabilityOb
     QXlsx::Document xlsx;
 
     int rowStart = 8;
-    xlsx.addSheet("Case Report");
+    xlsx.addSheet(sheetNames.at(0));
 
     // Main schedule
     for (int i(0); i<PrimaryReliabilityObjects->count(); i++)
@@ -1381,7 +1385,7 @@ static bool WriteEvaluationReport(QList<ReliabilityParse> * PrimaryReliabilityOb
     }
 
     rowStart = 8;
-    xlsx.addSheet("Schedule One");
+    xlsx.addSheet(sheetNames.at(1));
 
     // Schedule One
     for (int i(0); i<PrimaryReliabilityObjects->count(); i++)
@@ -1476,7 +1480,7 @@ static bool WriteEvaluationReport(QList<ReliabilityParse> * PrimaryReliabilityOb
     }
 
     rowStart = 8;
-    xlsx.addSheet("Schedule Two");
+    xlsx.addSheet(sheetNames.at(2));
 
     // Schedule Two
     for (int i(0); i<PrimaryReliabilityObjects->count(); i++)
@@ -1571,7 +1575,7 @@ static bool WriteEvaluationReport(QList<ReliabilityParse> * PrimaryReliabilityOb
     }
 
     rowStart = 8;
-    xlsx.addSheet("Schedule Three");
+    xlsx.addSheet(sheetNames.at(3));
 
     // Schedule Three
     for (int i(0); i<PrimaryReliabilityObjects->count(); i++)
@@ -1665,7 +1669,45 @@ static bool WriteEvaluationReport(QList<ReliabilityParse> * PrimaryReliabilityOb
         }
     }
 
-    xlsx.selectSheet("Case Report");
+    if (outputDisplay != NULL)
+    {
+        QStringList mTempStringList;
+        QList<QStringList> listHolder;
+        QString holder;
+
+        for (int i(0); i<4; i++)
+        {
+            xlsx.selectSheet(sheetNames.at(i));
+
+            listHolder.clear();
+
+            for (int r(0); r < rowStart; r++)
+            {
+                mTempStringList.clear();
+
+                for (int c(0); c < 7 + keyIndex.count() * 2; c++)
+                {
+                    if (xlsx.cellAt(r, c) == NULL)
+                    {
+                        holder = "";
+                    }
+                    else
+                    {
+                        holder = xlsx.cellAt(r, c)->value().toString();
+                    }
+
+                    mTempStringList <<  holder;
+
+                }
+
+                listHolder.append(mTempStringList);
+            }
+
+            outputDisplay->append(listHolder);
+        }
+    }
+
+    xlsx.selectSheet(sheetNames.at(0));
 
     QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, Group);
     mKeyPath = FileTools::pathAppend(mKeyPath, Individual);
@@ -1683,7 +1725,7 @@ static bool WriteEvaluationReport(QList<ReliabilityParse> * PrimaryReliabilityOb
             .arg(Individual.mid(0, 2))
             .arg(Evaluation.mid(0, 3));
 
-    QString path = FileTools::pathAppend(mKeyPath, mFileName);
+    QString path = FileTools::pathAppend(mKeyPath, mFileName);   
 
     return xlsx.saveAs(path);
 }
