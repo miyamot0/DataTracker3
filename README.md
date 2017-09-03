@@ -10,11 +10,6 @@ Features include:
   - Cross-platform support for Windows, Mac, and Linux (only Ubuntu tested)
   - Saving figures in a range of common formats
 
-TODO
-  - Reli Checks
-  - Charting
-  - Session Viewer
-
 ### Version
 ------
 0.4.0 (beta)
