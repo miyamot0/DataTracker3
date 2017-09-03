@@ -35,12 +35,19 @@ TODO
  * 0.0.2 - Calculation of reliability
  * 0.0.1 - Barebones framework
 
-### Usage
+### Features/Usage
 ------
-![Alt text](screencaps/EvaluationViewer.png?raw=true "Data Collection and Visualization")
-![Alt text](screencaps/SessionViewer.png?raw=true "Data Collection and Visualization")
+Robust, customizable data collection options
 ![Alt text](screencaps/SessionDesigner.png?raw=true "Data Collection and Visualization")
+
+Real-time data recording for multiple observers
 ![Alt text](screencaps/RecordingWindow.png?raw=true "Data Collection and Visualization")
+
+Visualizations of behavior across conditions (e.g., baseline, treatment)
+![Alt text](screencaps/EvaluationViewer.png?raw=true "Data Collection and Visualization")
+
+Within-session visualizations of responding during session
+![Alt text](screencaps/SessionViewer.png?raw=true "Data Collection and Visualization")
 
 ### Referenced Works (F/OSS software)
 ------
