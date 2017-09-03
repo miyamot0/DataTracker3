@@ -38,32 +38,46 @@ DisplayTableDialog::DisplayTableDialog(QWidget *parent) :
 
     setWindowTitle(tr("Results Table"));
 
-    saveAction = new QAction(tr("&Save"));
-    saveAction->setShortcuts(QKeySequence::Save);
-    saveAction->setStatusTip(tr("Save results to file"));
-
-    closeAction = new QAction(tr("&Close"));
-    closeAction->setShortcuts(QKeySequence::Close);
-
-    connect(saveAction, &QAction::triggered, this, &DisplayTableDialog::SaveToFile);
-    connect(closeAction, &QAction::triggered, this, &DisplayTableDialog::close);
-
-    menuBar = new QMenuBar(0);
-
-    fileMenu = menuBar->addMenu(tr("&File"));
-    fileMenu->addAction(saveAction);
-    fileMenu->addSeparator();
-    fileMenu->addAction(closeAction);
-
-    layout()->setMenuBar(menuBar);
-
     WindowTools::SetDialogFixedMaximize(this);
 }
 
 /**
- * @brief DisplayTableDialog::SaveToFile
+ * @brief DisplayTableDialog::InsertData
+ * @param data
  */
-void DisplayTableDialog::SaveToFile()
+void DisplayTableDialog::InsertData(QList<QStringList> data)
+{
+    ui->tableWidget->clear();
+    ui->tableWidget->setRowCount(0);
+    ui->tableWidget->setColumnCount(0);
+
+    QStringList temp;
+
+    for (int i(0); i<data.length(); i++)
+    {
+        temp = data.at(i);
+        ui->tableWidget->insertRow(ui->tableWidget->rowCount());
+
+        for (int j(0); j<temp.length(); j++)
+        {
+
+            if(j >= ui->tableWidget->columnCount())
+            {
+                ui->tableWidget->insertColumn(ui->tableWidget->columnCount());
+            }
+
+            // Less one to adjust for Excel-style coordinates
+            ui->tableWidget->setItem(i - 1, j - 1, new QTableWidgetItem(temp.at(j)));
+        }
+    }
+}
+
+DisplayTableDialog::~DisplayTableDialog()
+{
+    delete ui;
+}
+
+void DisplayTableDialog::on_pushButtonSave_clicked()
 {
     QString file_name;
     QString fileFilter = "Spreadsheet (*.xlsx)";
@@ -114,40 +128,4 @@ void DisplayTableDialog::SaveToFile()
 
         QApplication::restoreOverrideCursor();
     }
-}
-
-/**
- * @brief DisplayTableDialog::InsertData
- * @param data
- */
-void DisplayTableDialog::InsertData(QList<QStringList> data)
-{
-    ui->tableWidget->clear();
-    ui->tableWidget->setRowCount(0);
-    ui->tableWidget->setColumnCount(0);
-
-    QStringList temp;
-
-    for (int i(0); i<data.length(); i++)
-    {
-        temp = data.at(i);
-        ui->tableWidget->insertRow(ui->tableWidget->rowCount());
-
-        for (int j(0); j<temp.length(); j++)
-        {
-
-            if(j >= ui->tableWidget->columnCount())
-            {
-                ui->tableWidget->insertColumn(ui->tableWidget->columnCount());
-            }
-
-            // Less one to adjust for Excel-style coordinates
-            ui->tableWidget->setItem(i - 1, j - 1, new QTableWidgetItem(temp.at(j)));
-        }
-    }
-}
-
-DisplayTableDialog::~DisplayTableDialog()
-{
-    delete ui;
 }

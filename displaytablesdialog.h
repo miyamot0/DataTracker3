@@ -2,8 +2,6 @@
 #define DISPLAYTABLESDIALOG_H
 
 #include <QDialog>
-#include <QMenu>
-#include <QMenuBar>
 
 namespace Ui {
 class DisplayTablesDialog;
@@ -19,17 +17,11 @@ public:
     void InsertData(QList<QList<QStringList>> * data);
     ~DisplayTablesDialog();
 
+private slots:
+    void on_pushButtonSave_clicked();
+
 private:
     Ui::DisplayTablesDialog *ui;
-
-    QMenuBar *menuBar;
-    QMenu *fileMenu;
-    QMenu *closeMenu;
-
-    QAction *saveAction;
-    QAction *closeAction;
-
-    void SaveToFile();
 };
 
 #endif // DISPLAYTABLESDIALOG_H

@@ -15,32 +15,54 @@ DisplayTablesDialog::DisplayTablesDialog(QWidget *parent) :
 
     setWindowTitle(tr("Results Table"));
 
-    saveAction = new QAction(tr("&Save"));
-    saveAction->setShortcuts(QKeySequence::Save);
-    saveAction->setStatusTip(tr("Save results to file"));
-
-    closeAction = new QAction(tr("&Close"));
-    closeAction->setShortcuts(QKeySequence::Close);
-
-    connect(saveAction, &QAction::triggered, this, &DisplayTablesDialog::SaveToFile);
-    connect(closeAction, &QAction::triggered, this, &DisplayTablesDialog::close);
-
-    menuBar = new QMenuBar(0);
-
-    fileMenu = menuBar->addMenu(tr("&File"));
-    fileMenu->addAction(saveAction);
-    fileMenu->addSeparator();
-    fileMenu->addAction(closeAction);
-
-    layout()->setMenuBar(menuBar);
-
     WindowTools::SetDialogFixedMaximize(this);
 }
 
+DisplayTablesDialog::~DisplayTablesDialog()
+{
+    delete ui;
+}
+
 /**
- * @brief DisplayTablesDialog::SaveToFile
+ * @brief DisplayTablesDialog::InsertData
+ * @param data
  */
-void DisplayTablesDialog::SaveToFile()
+void DisplayTablesDialog::InsertData(QList<QList<QStringList>> * data)
+{
+    QList<QTableWidget *> mTables;
+    mTables.append(ui->tableWidgetOverall);
+    mTables.append(ui->tableWidgetOne);
+    mTables.append(ui->tableWidgetTwo);
+    mTables.append(ui->tableWidgetThree);
+
+    for (int i(0); i<mTables.count(); i++)
+    {
+        mTables.at(i)->clear();
+        mTables.at(i)->setRowCount(0);
+        mTables.at(i)->setColumnCount(0);
+
+        QStringList temp;
+
+        for (int tableNumberRows(0); tableNumberRows < data->at(i).count(); tableNumberRows++)
+        {
+            temp = data->at(i).at(tableNumberRows);
+            mTables.at(i)->insertRow(mTables.at(i)->rowCount());
+
+            for (int tableNumberCols(0); tableNumberCols < data->at(i).at(tableNumberRows).count(); tableNumberCols++)
+            {
+                if(tableNumberCols >= mTables.at(i)->columnCount())
+                {
+                    mTables.at(i)->insertColumn(mTables.at(i)->columnCount());
+                }
+
+                // Less one to adjust for Excel-style coordinates
+                mTables.at(i)->setItem(tableNumberRows - 1, tableNumberCols - 1, new QTableWidgetItem(temp.at(tableNumberCols)));
+            }
+        }
+    }
+}
+
+void DisplayTablesDialog::on_pushButtonSave_clicked()
 {
     QString file_name;
     QString fileFilter = "Spreadsheet (*.xlsx)";
@@ -106,49 +128,5 @@ void DisplayTablesDialog::SaveToFile()
         xlsx.saveAs(file_name);
 
         QApplication::restoreOverrideCursor();
-    }
-}
-
-DisplayTablesDialog::~DisplayTablesDialog()
-{
-    delete ui;
-}
-
-/**
- * @brief DisplayTablesDialog::InsertData
- * @param data
- */
-void DisplayTablesDialog::InsertData(QList<QList<QStringList>> * data)
-{
-    QList<QTableWidget *> mTables;
-    mTables.append(ui->tableWidgetOverall);
-    mTables.append(ui->tableWidgetOne);
-    mTables.append(ui->tableWidgetTwo);
-    mTables.append(ui->tableWidgetThree);
-
-    for (int i(0); i<mTables.count(); i++)
-    {
-        mTables.at(i)->clear();
-        mTables.at(i)->setRowCount(0);
-        mTables.at(i)->setColumnCount(0);
-
-        QStringList temp;
-
-        for (int tableNumberRows(0); tableNumberRows < data->at(i).count(); tableNumberRows++)
-        {
-            temp = data->at(i).at(tableNumberRows);
-            mTables.at(i)->insertRow(mTables.at(i)->rowCount());
-
-            for (int tableNumberCols(0); tableNumberCols < data->at(i).at(tableNumberRows).count(); tableNumberCols++)
-            {
-                if(tableNumberCols >= mTables.at(i)->columnCount())
-                {
-                    mTables.at(i)->insertColumn(mTables.at(i)->columnCount());
-                }
-
-                // Less one to adjust for Excel-style coordinates
-                mTables.at(i)->setItem(tableNumberRows - 1, tableNumberCols - 1, new QTableWidgetItem(temp.at(tableNumberCols)));
-            }
-        }
     }
 }

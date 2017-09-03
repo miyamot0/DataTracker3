@@ -415,7 +415,7 @@ void StartWindow::on_actionBDataPro_triggered()
             runDirectory.cd("Resources");
             mFilePath = runDirectory.path() + "/";
 
-            mFilePath = mFilePath + "License_Tango.txt";
+            mFilePath = mFilePath + "License_BDataPro.txt";
 
     #endif
 

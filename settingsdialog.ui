@@ -6,20 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>516</width>
-    <height>300</height>
+    <width>444</width>
+    <height>325</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>0</width>
-    <height>300</height>
+    <height>325</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>16777215</width>
-    <height>300</height>
+    <height>325</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -51,10 +51,10 @@
       <enum>QLayout::SetNoConstraint</enum>
      </property>
      <property name="fieldGrowthPolicy">
-      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      <enum>QFormLayout::ExpandingFieldsGrow</enum>
      </property>
      <property name="verticalSpacing">
-      <number>15</number>
+      <number>13</number>
      </property>
      <item row="0" column="0">
       <widget class="QLabel" name="labelAlternate">
@@ -85,7 +85,7 @@
      <item row="1" column="1">
       <widget class="QComboBox" name="comboTheme">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -202,19 +202,31 @@
      </item>
      <item row="0" column="1">
       <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="spacing">
+        <number>5</number>
+       </property>
        <property name="sizeConstraint">
-        <enum>QLayout::SetNoConstraint</enum>
+        <enum>QLayout::SetDefaultConstraint</enum>
        </property>
        <item>
         <widget class="QLineEdit" name="editSaveLocation">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <sizepolicy hsizetype="Expanding" vsizetype="Ignored">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="frame">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
