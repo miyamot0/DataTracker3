@@ -25,6 +25,8 @@
 #define DISPLAYTABLEDIALOG_H
 
 #include <QDialog>
+#include <QMenuBar>
+#include <QMenu>
 
 namespace Ui {
 class DisplayTableDialog;
@@ -42,6 +44,15 @@ public:
 
 private:
     Ui::DisplayTableDialog *ui;
+
+    QMenuBar *menuBar;
+    QMenu *fileMenu;
+    QMenu *closeMenu;
+
+    QAction *saveAction;
+    QAction *closeAction;
+
+    void SaveToFile();
 };
 
 #endif // DISPLAYTABLEDIALOG_H
