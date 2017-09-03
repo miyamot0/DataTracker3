@@ -43,6 +43,7 @@ public:
     bool displayDark = false;
     bool autoReli = false;
     bool autoMigrate = false;
+    bool autoUpdate = true;
 
     void SetSaveLocation(QString location);
     void SetSpreadsheetOption(bool value);
@@ -50,6 +51,7 @@ public:
     void SetThemeDark(bool value);
     void SetAutoReli(bool value);
     void SetAutoMigrate(bool value);
+    void SetAutoUpdateCheck(bool value);
 
     QString GetSaveLocation();
     bool GetSpreadsheetOption();
@@ -57,12 +59,12 @@ public:
     bool GetThemeDark();
     bool GetAutoReli();
     bool GetAutoMigrate();
+    bool GetAutoUpdate();
 
     ~SettingsDialog();
 
 private slots:
     void on_pushButton_clicked();
-
     void on_setSaveLocation_clicked();
 
 private:

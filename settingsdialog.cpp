@@ -110,6 +110,16 @@ void SettingsDialog::SetAutoMigrate(bool value)
 }
 
 /**
+ * @brief SettingsDialog::SetAutoUpdateCheck
+ * @param value
+ */
+void SettingsDialog::SetAutoUpdateCheck(bool value)
+{
+    autoUpdate = value;
+    ui->checkBoxAutoUpdate->setChecked(value);
+}
+
+/**
  * @brief SettingsDialog::GetSaveLocation
  * @return
  */
@@ -163,6 +173,15 @@ bool SettingsDialog::GetAutoMigrate()
     return (ui->checkBoxAutoMigrate->isChecked());
 }
 
+/**
+ * @brief SettingsDialog::GetAutoUpdate
+ * @return
+ */
+bool SettingsDialog::GetAutoUpdate()
+{
+    return (ui->checkBoxAutoUpdate->isChecked());
+}
+
 SettingsDialog::~SettingsDialog()
 {
     delete ui;
@@ -179,6 +198,7 @@ void SettingsDialog::on_pushButton_clicked()
     displayDark = GetDisplayOption();
     autoReli = GetAutoReli();
     autoMigrate = GetAutoMigrate();
+    autoUpdate = GetAutoUpdate();
 
     QDir mDir(alternateSaveLocation);
 

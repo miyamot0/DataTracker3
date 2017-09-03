@@ -70,14 +70,17 @@ StartWindow::StartWindow(QWidget *parent) :
 
     WindowTools::SetWindowFixed(this);
 
-    manager = new QNetworkAccessManager(this);
-    connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(downloadedFile(QNetworkReply*)) );
+    if (autoUpdateCheck)
+    {
+        manager = new QNetworkAccessManager(this);
+        connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(downloadedFile(QNetworkReply*)) );
 
-    #ifdef _WIN32
-        manager->get(QNetworkRequest(QUrl("http://www.smallnstats.com/DataTrackerRepository/Updates.xml")));
-    #elif TARGET_OS_MAC
-        manager->get(QNetworkRequest(QUrl("http://www.smallnstats.com/DataTrackerRepositoryMac/Updates.xml")));
-    #endif
+        #ifdef _WIN32
+            manager->get(QNetworkRequest(QUrl("http://www.smallnstats.com/DataTrackerRepository/Updates.xml")));
+        #elif TARGET_OS_MAC
+            manager->get(QNetworkRequest(QUrl("http://www.smallnstats.com/DataTrackerRepositoryMac/Updates.xml")));
+        #endif
+    }
 
     QPixmap source(":/images/BackgroundScaled.png");
 
@@ -191,7 +194,7 @@ StartWindow::~StartWindow()
 /** Save Settings
  * @brief StartWindow::SaveSettings
  */
-void StartWindow::SaveSettings(QString savedLocation, bool plots, bool dark, bool sheets, bool reli, bool migrate)
+void StartWindow::SaveSettings(QString savedLocation, bool plots, bool dark, bool sheets, bool reli, bool migrate, bool updateCheck)
 {
     QSettings settings;
 
@@ -202,6 +205,7 @@ void StartWindow::SaveSettings(QString savedLocation, bool plots, bool dark, boo
         settings.setValue(QLatin1String("outputSheets"), sheets);
         settings.setValue(QLatin1String("autoReli"), reli);
         settings.setValue(QLatin1String("autoMigrate"), migrate);
+        settings.setValue(QLatin1String("autoUpdateCheck"), updateCheck);
     settings.endGroup();
 }
 
@@ -216,7 +220,8 @@ void StartWindow::closeEvent(QCloseEvent *)
                  displayDark,
                  outputSheets,
                  autoReli,
-                 autoMigrate);
+                 autoMigrate,
+                 autoUpdateCheck);
 }
 
 /** Load Settings
@@ -233,6 +238,7 @@ void StartWindow::LoadSettings()
     outputSheets = settings.value(QLatin1String("outputSheets"), true).toBool();
     autoReli = settings.value(QLatin1String("autoReli"), true).toBool();
     autoMigrate = settings.value(QLatin1String("autoMigrate"), false).toBool();
+    autoUpdateCheck = settings.value(QLatin1String("autoUpdateCheck"), true).toBool();
 
     settings.endGroup();
 }
@@ -265,14 +271,15 @@ void StartWindow::on_actionSettings_2_triggered()
     settingsDialog.SetThemeDark(displayDark);
     settingsDialog.SetAutoReli(autoReli);
     settingsDialog.SetAutoMigrate(autoMigrate);
+    settingsDialog.SetAutoUpdateCheck(autoUpdateCheck);
 
     settingsDialog.exec();
 
-    if (displayDark != settingsDialog.GetThemeDark())
+    if (displayDark != settingsDialog.GetThemeDark() || autoUpdateCheck != settingsDialog.GetAutoUpdate())
     {
         QMessageBox::information(NULL,
-                                 tr("Theme Updated"),
-                                 tr("Restart for theme changes to take effect."),
+                                 tr("Settings Updated"),
+                                 tr("Restart for changes to take effect."),
                                  QMessageBox::Ok);
     }
 
@@ -282,13 +289,15 @@ void StartWindow::on_actionSettings_2_triggered()
     displayDark = settingsDialog.GetThemeDark();
     autoReli = settingsDialog.GetAutoReli();
     autoMigrate = settingsDialog.GetAutoMigrate();
+    autoUpdateCheck = settingsDialog.GetAutoUpdate();
 
     SaveSettings(backupSaveLocation,
                  displayPlots,
                  displayDark,
                  outputSheets,
                  autoReli,
-                 autoMigrate);
+                 autoMigrate,
+                 autoUpdateCheck);
 }
 
 /** Open License Window
@@ -391,6 +400,9 @@ void StartWindow::on_actionQDarkStyleSheet_triggered()
     licenseDialog->exec();
 }
 
+/** Open License Window
+ * @brief StartWindow::on_actionBDataPro_triggered
+ */
 void StartWindow::on_actionBDataPro_triggered()
 {
     QString mFilePath = "";
