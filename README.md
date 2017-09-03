@@ -12,10 +12,12 @@ Features include:
 
 ### Version
 ------
-0.4.0 (beta)
+0.5.0 (beta)
 
 ### Changelog
 ------
+ * 0.5.0 - Bump with latest for initial public beta
+ * 0.4.1 - Interface cleanup, for cross-platform compatibility
  * 0.4.0 - Differentiate series-based charting, more mac os fixes
  * 0.3.0 - Add in new charting
  * 0.2.0 - File migration fixes, updates to auto-scoring, results dialog for reli
