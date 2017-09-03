@@ -588,7 +588,7 @@ void EvaluationViewerDialog::DrawDurationPlot()
         }
         else if (dKeyShow[i] == true && !firstString)
         {
-            title.append("," + dKeyDesc[i]);
+            title.append("+" + dKeyDesc[i]);
 
             firstString = false;
         }
@@ -719,7 +719,7 @@ void EvaluationViewerDialog::DrawFrequencyPlot()
         }
         else if (fKeyShow[i] == true && !firstString)
         {
-            title.append("," + fKeyDesc[i]);
+            title.append("+" + fKeyDesc[i]);
 
             firstString = false;
         }
