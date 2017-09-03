@@ -3,6 +3,7 @@
 
 #include <QFileDialog>
 #include <QDir>
+#include <QtXlsx>
 
 #include "windowtools.h"
 
@@ -63,36 +64,48 @@ void DisplayTablesDialog::SaveToFile()
 
     if(!file_name.trimmed().isEmpty())
     {
-        /*
+        QList<QTableWidget *> mTables;
+        mTables.append(ui->tableWidgetOverall);
+        mTables.append(ui->tableWidgetOne);
+        mTables.append(ui->tableWidgetTwo);
+        mTables.append(ui->tableWidgetThree);
+
+        QStringList sheetNames;
+        sheetNames << "Case Report" << "Schedule One" << "Schedule Two" << "Schedule Three";
 
         QApplication::setOverrideCursor(Qt::WaitCursor);
 
         QXlsx::Document xlsx;
 
-        int rows = ui->tableWidget->rowCount();
-        int cols = ui->tableWidget->columnCount();
-
+        int rows, cols;
         QString temp;
 
-        for (int i=0; i<rows; i++)
+        for (int i(0); i<mTables.count(); i++)
         {
-            for (int j=0; j<cols; j++)
-            {
-                QTableWidgetItem *item = ui->tableWidget->item(i, j);
+            rows = mTables.at(i)->rowCount();
+            cols = mTables.at(i)->columnCount();
 
-                if (item != NULL && !item->text().isEmpty())
+            xlsx.addSheet(sheetNames.at(i));
+
+            for (int r=0; r<rows; r++)
+            {
+                for (int c=0; c<cols; c++)
                 {
-                    temp = ui->tableWidget->item(i, j)->data(Qt::DisplayRole).toString();
-                    xlsx.write(i + 1, j + 1, temp);
+                    QTableWidgetItem *item = mTables.at(i)->item(r, c);
+
+                    if (item != NULL && !item->text().isEmpty())
+                    {
+                        temp = mTables.at(i)->item(r, c)->data(Qt::DisplayRole).toString();
+                        xlsx.write(r + 1, c + 1, temp);
+                    }
                 }
             }
         }
 
+        xlsx.selectSheet(sheetNames.at(0));
         xlsx.saveAs(file_name);
 
         QApplication::restoreOverrideCursor();
-
-        */
     }
 }
 
