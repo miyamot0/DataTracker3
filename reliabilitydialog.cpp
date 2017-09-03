@@ -91,32 +91,40 @@ void ReliabilityDialog::on_comboGroup_currentIndexChanged(int index)
             ui->comboEvaluation->removeItem(1);
         }
 
+        ui->comboIndividual->setEnabled(false);
+        ui->comboEvaluation->setEnabled(false);
+
         ui->tableWidgetReli->setRowCount(0);
 
         return;
     }
+    else
+    {
+        workerThread = new QThread();
 
-    workerThread = new QThread();
+        mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
+        mCurrentDirectory.CurrentGroup = ui->comboGroup->currentText();
+        mCurrentDirectory.CurrentIndividual = "";
+        mCurrentDirectory.CurrentEvaluation = "";
+        mCurrentDirectory.CurrentCondition = "";
+        mCurrentDirectory.CurrentKeySet = "";
 
-    mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
-    mCurrentDirectory.CurrentGroup = ui->comboGroup->currentText();
-    mCurrentDirectory.CurrentIndividual = "";
-    mCurrentDirectory.CurrentEvaluation = "";
-    mCurrentDirectory.CurrentCondition = "";
-    mCurrentDirectory.CurrentKeySet = "";
+        worker = new DirectorySearcher(mCurrentDirectory);
 
-    worker = new DirectorySearcher(mCurrentDirectory);
+        worker->moveToThread(workerThread);
 
-    worker->moveToThread(workerThread);
+        connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
+        connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
+        connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
+        connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
+        connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
 
-    connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
-    connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
-    connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
-    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
-    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
+        workerThread->wait();
+        worker->startWork();
 
-    workerThread->wait();
-    worker->startWork();
+        ui->comboIndividual->setEnabled(true);
+        ui->comboEvaluation->setEnabled(false);
+    }
 }
 
 /**
@@ -132,32 +140,39 @@ void ReliabilityDialog::on_comboIndividual_currentIndexChanged(int index)
             ui->comboEvaluation->removeItem(1);
         }
 
+        ui->comboEvaluation->setEnabled(false);
+
         ui->tableWidgetReli->setRowCount(0);
 
         return;
     }
+    else
+    {
+        workerThread = new QThread();
 
-    workerThread = new QThread();
+        mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
+        mCurrentDirectory.CurrentGroup = ui->comboGroup->currentText();
+        mCurrentDirectory.CurrentIndividual = ui->comboIndividual->currentText();
+        mCurrentDirectory.CurrentEvaluation = "";
+        mCurrentDirectory.CurrentCondition = "";
+        mCurrentDirectory.CurrentKeySet = "";
 
-    mCurrentDirectory.WorkingDirectory = mWorkingDirectory;
-    mCurrentDirectory.CurrentGroup = ui->comboGroup->currentText();
-    mCurrentDirectory.CurrentIndividual = ui->comboIndividual->currentText();
-    mCurrentDirectory.CurrentEvaluation = "";
-    mCurrentDirectory.CurrentCondition = "";
-    mCurrentDirectory.CurrentKeySet = "";
+        worker = new DirectorySearcher(mCurrentDirectory);
 
-    worker = new DirectorySearcher(mCurrentDirectory);
+        worker->moveToThread(workerThread);
 
-    worker->moveToThread(workerThread);
+        connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
+        connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
+        connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
+        connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
+        connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
 
-    connect(worker, SIGNAL(workStarted()), workerThread, SLOT(start()));
-    connect(workerThread, SIGNAL(started()), worker, SLOT(working()));
-    connect(worker, SIGNAL(workingResult(QString)), this, SLOT(WorkUpdate(QString)));
-    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), workerThread, SLOT(quit()), Qt::DirectConnection);
-    connect(worker, SIGNAL(workFinished(DirectoryParse, ParseTypes::ParseAction)), this, SLOT(WorkFinished(DirectoryParse, ParseTypes::ParseAction)));
+        workerThread->wait();
+        worker->startWork();
 
-    workerThread->wait();
-    worker->startWork();
+        ui->comboEvaluation->setEnabled(true);
+    }
+
 }
 
 /**
