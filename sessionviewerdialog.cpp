@@ -21,7 +21,6 @@
 
   */
 
-#include <QDebug>
 #include <QThread>
 #include <QDir>
 #include <QDirIterator>
@@ -645,7 +644,7 @@ void SessionViewerDialog::DrawDurationPlot()
     QJsonArray durationArray;
     QString tempName;
 
-    dKeySeriesNames.clear();
+    dKeySeriesNames.clear();   
 
     if (PrimaryReliabilityObjects.count() > 0 && FileTools::ReadSessionFromJSON(PrimaryReliabilityObjects.at(0).PrimaryFilePath, &json))
     {
@@ -741,12 +740,6 @@ void SessionViewerDialog::DrawFrequencySeries(int index)
         foreach (const QJsonValue collector, pressedKeysJson) {
             QJsonObject mObj = collector.toObject();
 
-            SessionEvent mEntry;
-            mEntry.KeyEntered.KeyCode = mObj["KeyCode"].toInt();
-            mEntry.KeyEntered.KeyDescription = mObj["KeyDescription"].toString();
-            mEntry.KeyEntered.KeyName = mObj["KeyName"].toString();
-            mEntry.TimePressed = QDateTime(QDateTime::fromString(mObj["TimePressed"].toString()));
-
             int fIndex = fKeyDesc.indexOf(mObj["KeyDescription"].toString());
 
             if (fIndex != -1 && fKeyShow[fIndex] == true)
@@ -825,9 +818,9 @@ void SessionViewerDialog::DrawDurationSeries(int index)
 
         QString tempKeyCode;
 
-        for (int i(0); i<dKeyDesc.count(); i++)
+        for (int i(0); i<dKeySeriesNames.count(); i++)
         {
-            tempKeyCode = dKeyDesc.at(i);
+            tempKeyCode = dKeySeriesNames.at(i);
             waitingForNext = false;
             runningSum = 0;
 
@@ -859,6 +852,7 @@ void SessionViewerDialog::DrawDurationSeries(int index)
                         prev = QDateTime(QDateTime::fromString(mObj["TimePressed"].toString()));
                         waitingForNext = true;
                     }
+
                 }
             }
 
@@ -884,7 +878,7 @@ void SessionViewerDialog::DrawDurationSeries(int index)
         }
 
         axisY->setMax(max + 1);
-        axisX->setMax(totalSecs);
+        axisX->setMax(totalSecs + 1);
 
         max = 0;
     }
