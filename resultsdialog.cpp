@@ -96,7 +96,7 @@ void ResultsDialog::SetKeySet(KeySet currKeySet)
     CurrentKeySet = currKeySet;
 }
 
-/**
+/** Set Title
  * @brief ResultsDialog::SetTitle
  * @param title
  */
