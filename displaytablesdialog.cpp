@@ -121,23 +121,20 @@ void DisplayTablesDialog::InsertData(QList<QList<QStringList>> * data)
 
         QStringList temp;
 
-        for (int tableNumber(0); tableNumber<data->count(); tableNumber++)
+        for (int tableNumberRows(0); tableNumberRows < data->at(i).count(); tableNumberRows++)
         {
-            for (int tableNumberRows(0); tableNumberRows < data->at(tableNumber).count(); tableNumberRows++)
+            temp = data->at(i).at(tableNumberRows);
+            mTables.at(i)->insertRow(mTables.at(i)->rowCount());
+
+            for (int tableNumberCols(0); tableNumberCols < data->at(i).at(tableNumberRows).count(); tableNumberCols++)
             {
-                temp = data->at(tableNumber).at(tableNumberRows);
-                mTables.at(i)->insertRow(mTables.at(i)->rowCount());
-
-                for (int tableNumberCols(0); tableNumberCols < data->at(tableNumber).at(tableNumberRows).count(); tableNumberCols++)
+                if(tableNumberCols >= mTables.at(i)->columnCount())
                 {
-                    if(tableNumberCols >= mTables.at(i)->columnCount())
-                    {
-                        mTables.at(i)->insertColumn(mTables.at(i)->columnCount());
-                    }
-
-                    // Less one to adjust for Excel-style coordinates
-                    mTables.at(i)->setItem(tableNumberRows - 1, tableNumberCols - 1, new QTableWidgetItem(temp.at(tableNumberCols)));
+                    mTables.at(i)->insertColumn(mTables.at(i)->columnCount());
                 }
+
+                // Less one to adjust for Excel-style coordinates
+                mTables.at(i)->setItem(tableNumberRows - 1, tableNumberCols - 1, new QTableWidgetItem(temp.at(tableNumberCols)));
             }
         }
     }

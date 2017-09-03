@@ -1245,27 +1245,32 @@ static bool WriteReliSpreadsheet(QString mWorkingDirectory, QString Group, QStri
 
             outputDisplay->append(mTempStringList);
         }
+
+        return true;
     }
-
-    QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, Group);
-    mKeyPath = FileTools::pathAppend(mKeyPath, Individual);
-    mKeyPath = FileTools::pathAppend(mKeyPath, Evaluation);
-
-    QDir dir(mKeyPath);
-
-    if (!dir.exists())
+    else
     {
-        dir.mkpath(mKeyPath);
+        QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, Group);
+        mKeyPath = FileTools::pathAppend(mKeyPath, Individual);
+        mKeyPath = FileTools::pathAppend(mKeyPath, Evaluation);
+
+        QDir dir(mKeyPath);
+
+        if (!dir.exists())
+        {
+            dir.mkpath(mKeyPath);
+        }
+
+        QString mFileName = QString("Reli_%1%2%3.xlsx")
+                .arg(Group.mid(0, 3))
+                .arg(Individual.mid(0, 3))
+                .arg(Evaluation.mid(0, 3));
+
+        QString path = FileTools::pathAppend(mKeyPath, mFileName);
+
+        return xlsx.saveAs(path);
     }
 
-    QString mFileName = QString("Reli_%1%2%3.xlsx")
-            .arg(Group.mid(0, 3))
-            .arg(Individual.mid(0, 3))
-            .arg(Evaluation.mid(0, 3));
-
-    QString path = FileTools::pathAppend(mKeyPath, mFileName);
-
-    return xlsx.saveAs(path);
 }
 
 static bool WriteEvaluationReport(QList<ReliabilityParse> * PrimaryReliabilityObjects,
@@ -1705,29 +1710,34 @@ static bool WriteEvaluationReport(QList<ReliabilityParse> * PrimaryReliabilityOb
 
             outputDisplay->append(listHolder);
         }
+
+        return true;
     }
-
-    xlsx.selectSheet(sheetNames.at(0));
-
-    QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, Group);
-    mKeyPath = FileTools::pathAppend(mKeyPath, Individual);
-    mKeyPath = FileTools::pathAppend(mKeyPath, Evaluation);
-
-    QDir dir(mKeyPath);
-
-    if (!dir.exists())
+    else
     {
-        dir.mkpath(mKeyPath);
+        xlsx.selectSheet(sheetNames.at(0));
+
+        QString mKeyPath = FileTools::pathAppend(mWorkingDirectory, Group);
+        mKeyPath = FileTools::pathAppend(mKeyPath, Individual);
+        mKeyPath = FileTools::pathAppend(mKeyPath, Evaluation);
+
+        QDir dir(mKeyPath);
+
+        if (!dir.exists())
+        {
+            dir.mkpath(mKeyPath);
+        }
+
+        QString mFileName = QString("Report_%1%2%3.xlsx")
+                .arg(Group.mid(0, 2))
+                .arg(Individual.mid(0, 2))
+                .arg(Evaluation.mid(0, 3));
+
+        QString path = FileTools::pathAppend(mKeyPath, mFileName);
+
+        return xlsx.saveAs(path);
     }
 
-    QString mFileName = QString("Report_%1%2%3.xlsx")
-            .arg(Group.mid(0, 2))
-            .arg(Individual.mid(0, 2))
-            .arg(Evaluation.mid(0, 3));
-
-    QString path = FileTools::pathAppend(mKeyPath, mFileName);   
-
-    return xlsx.saveAs(path);
 }
 
 /**
