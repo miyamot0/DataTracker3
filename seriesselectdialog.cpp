@@ -70,3 +70,14 @@ SeriesSelectDialog::~SeriesSelectDialog()
 {
     delete ui;
 }
+
+/**
+ * @brief SeriesSelectDialog::on_pushButtonSelectAll_clicked
+ */
+void SeriesSelectDialog::on_pushButtonSelectAll_clicked()
+{
+    for (int i(0); i<ui->listWidget->count(); i++)
+    {
+        ui->listWidget->item(i)->setCheckState(Qt::Checked);
+    }
+}

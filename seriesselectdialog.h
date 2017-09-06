@@ -40,6 +40,9 @@ public:
     QList<bool> GetBoolList();
     ~SeriesSelectDialog();
 
+private slots:
+    void on_pushButtonSelectAll_clicked();
+
 private:
     Ui::SeriesSelectDialog *ui;
 };
