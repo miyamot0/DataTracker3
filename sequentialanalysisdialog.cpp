@@ -636,3 +636,11 @@ void SequentialAnalysisDialog::on_tableWidget_currentCellChanged(int rowChanged,
         ChartYule(rowChanged);
     }
 }
+
+/**
+ * @brief SequentialAnalysisDialog::on_pushButtonKeys_clicked
+ */
+void SequentialAnalysisDialog::on_pushButtonKeys_clicked()
+{
+    on_comboBoxWindow_currentIndexChanged(ui->comboBoxWindow->currentIndex());
+}

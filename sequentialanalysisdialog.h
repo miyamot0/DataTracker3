@@ -67,6 +67,8 @@ private slots:
     int GetWindowSpan();
     QColor GetColorMapping(QString value);
 
+    void on_pushButtonKeys_clicked();
+
 private:
     Ui::SequentialAnalysisDialog *ui;
 
