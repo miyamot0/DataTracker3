@@ -43,6 +43,7 @@
 #include "sessionviewerdialog.h"
 #include "evaluationviewerdialog.h"
 #include "evaluationreportdialog.h"
+#include "sequentialanalysisdialog.h"
 
 namespace Ui {
 class StartWindow;
@@ -74,6 +75,7 @@ private slots:
     void on_actionEvaluation_Report_triggered();
     void on_actionContact_triggered();
     void on_actionAbout_triggered();
+    void on_actionSequential_Analyses_triggered();
     void on_buttonStart_clicked();
 
     void WorkFinished(QString value);
@@ -92,8 +94,8 @@ private:
     EvaluationViewerDialog * evaluationViewerDialog;
     EvaluationReportDialog * evaluationReportDialog;
     FAQDialog faqDialog;
-
     ReliabilityDialog * reliabilityDialog;
+    SequentialAnalysisDialog * sequenceDialog;
 
     SessionWindow * sessionWindow;
 

@@ -209,7 +209,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -251,6 +251,7 @@
     </property>
     <addaction name="actionSession_Visual_Analysis"/>
     <addaction name="actionEvaluation_Visual_Analysis"/>
+    <addaction name="actionSequential_Analyses"/>
    </widget>
    <widget class="QMenu" name="menuReports">
     <property name="title">
@@ -410,6 +411,15 @@
    </property>
    <property name="text">
     <string>Evaluation Report</string>
+   </property>
+  </action>
+  <action name="actionSequential_Analyses">
+   <property name="icon">
+    <iconset resource="resourcefile.qrc">
+     <normaloff>:/images/applications-system.png</normaloff>:/images/applications-system.png</iconset>
+   </property>
+   <property name="text">
+    <string>Sequential Analyses</string>
    </property>
   </action>
  </widget>

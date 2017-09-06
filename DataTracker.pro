@@ -20,7 +20,7 @@ TEST_FEATURES = 1
 
 VERSION_MAJOR = 0
 VERSION_MINOR = 5
-VERSION_BUILD = 1
+VERSION_BUILD = 2
 
 DEFINES += "VERSION_MAJOR=$$VERSION_MAJOR"\
        "VERSION_MINOR=$$VERSION_MINOR"\
@@ -69,7 +69,8 @@ SOURCES += main.cpp\
     displaytabledialog.cpp \
     seriesselectdialog.cpp \
     evaluationreportdialog.cpp \
-    displaytablesdialog.cpp
+    displaytablesdialog.cpp \
+    sequentialanalysisdialog.cpp
 
 HEADERS  += startwindow.h \
     sessionwindow.h \
@@ -104,7 +105,9 @@ HEADERS  += startwindow.h \
     displaytabledialog.h \
     seriesselectdialog.h \
     evaluationreportdialog.h \
-    displaytablesdialog.h
+    displaytablesdialog.h \
+    lagcoding.h \
+    sequentialanalysisdialog.h
 
 FORMS    += startwindow.ui \
     sessionwindow.ui \
@@ -124,7 +127,8 @@ FORMS    += startwindow.ui \
     displaytabledialog.ui \
     seriesselectdialog.ui \
     evaluationreportdialog.ui \
-    displaytablesdialog.ui
+    displaytablesdialog.ui \
+    sequentialanalysisdialog.ui
 
 RESOURCES += \
     resourcefile.qrc \

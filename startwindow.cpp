@@ -434,6 +434,12 @@ void StartWindow::on_actionSession_Visual_Analysis_triggered()
     sessionViewerDialog->exec();
 }
 
+void StartWindow::on_actionSequential_Analyses_triggered()
+{
+    sequenceDialog = new SequentialAnalysisDialog(workingDirectory, this);
+    sequenceDialog->exec();
+}
+
 /** Open Session Viewer Dialog
  * @brief StartWindow::on_actionEvaluation_Visual_Analysis_triggered
  */

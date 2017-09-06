@@ -42,9 +42,174 @@
 #include "reliabilitymeasure.h"
 #include "reliabilityparse.h"
 
+#include "lagcoding.h"
+
 class FileTools
 {
 public:
+
+static void CreateContingencyTables(QString filePath, QStringList keyList, QList<QStringList> * mResults, int code, int binSize = 1, int windowSize = 4)
+{
+    QFile mSession(filePath);
+    QJsonObject json;
+
+    int sessionDuration;
+    int secs;
+    int binCount;
+    int fKeyCount;
+
+    mResults->clear();
+
+    QList<QList<int>> frequencyBins;
+
+    QDateTime startTime, endTime;
+
+    if (mSession.exists())
+    {
+        if (mSession.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            QString sessionData = mSession.readAll();
+            mSession.close();
+
+            QJsonDocument loadSession = QJsonDocument::fromJson(sessionData.toUtf8());
+            json = loadSession.object();
+
+            sessionDuration = (json["SessionDuration"].toInt() / 1000);
+            startTime = QDateTime(QDateTime::fromString(json["StartTime"].toString()));
+
+            binCount = sessionDuration / binSize;
+
+            fKeyCount = keyList.count();
+
+            for (int i(0); i< fKeyCount; i++)
+            {
+                frequencyBins.append(QList<int>());
+
+                for (int j(0); j < binCount; j++)
+                {
+                    frequencyBins[i].append(0);
+                }
+            }
+
+            QJsonArray pressedKeysJson = json["PressedKeys"].toArray();
+            foreach (const QJsonValue keyObj, pressedKeysJson) {
+                QJsonObject mObj = keyObj.toObject();
+
+                int fIndex = keyList.indexOf(mObj["KeyDescription"].toString());
+
+                if (fIndex != -1)
+                {
+                    secs = startTime.secsTo(QDateTime::fromString(mObj["TimePressed"].toString()));
+                    int locationInArray = secs / binSize;
+
+                    frequencyBins[fIndex][locationInArray] = 1;
+                }
+            }
+        }
+
+        QStringList temp;
+
+        for (int i(0); i<keyList.count(); i++)
+        {
+            temp.clear();
+
+            for (int j(0); j<keyList.count(); j++)
+            {
+                if (i == j)
+                {
+                    temp << QString("---");
+                }
+                else
+                {
+                    temp << QString::number(FileTools::CountObjects(frequencyBins[i], frequencyBins[j], &windowSize, code));
+                    //qDebug() << frequencyBins[i] << " " << frequencyBins[j] << endl;
+                }
+            }
+
+            mResults->append(temp);
+        }
+    }
+}
+
+static double CountObjects(QList<int> preLagList, QList<int> postLagList, int * windowSize, int code)
+{
+    LagCoding hasBxLag;
+    LagCoding noBxLag;
+
+    int remainingLags = 0;
+    bool inWindow = false;
+
+    for (int i(0); i<preLagList.count() - 3; i++)
+    {
+        inWindow = (remainingLags > 0);
+
+        if (inWindow)
+        {
+            if (postLagList.at(i) == 1)
+            {
+                hasBxLag.InsideWindow++;
+            }
+            else
+            {
+                noBxLag.InsideWindow++;
+            }
+        }
+        else
+        {
+            if (postLagList.at(i) == 1)
+            {
+                hasBxLag.OutsideWindow++;
+            }
+            else
+            {
+                noBxLag.OutsideWindow++;
+            }
+        }
+
+        remainingLags--;
+
+        if (remainingLags < 0)
+        {
+            remainingLags = 0;
+        }
+
+        if (preLagList.at(i) == 1)
+        {
+            remainingLags = *windowSize;
+        }
+    }
+
+    //qDebug() << "passed end";
+
+    int A = hasBxLag.InsideWindow;
+    int B = noBxLag.InsideWindow;
+    int C = hasBxLag.OutsideWindow;
+    int D = noBxLag.OutsideWindow;
+
+    qDebug() << "A: " << A <<
+                "B: " << B <<
+                "C: " << C <<
+                "D: " << D;
+
+    if (code == 0)
+    {
+        double OR = ((double) A / (double) B) / ((double) C / (double) D);
+
+        if (isinf(OR))
+        {
+            OR = ((double) A * (double) D) / ((double) B * (double) C);
+        }
+
+        return OR;
+    }
+    else
+    {
+        double Q = (((double) A * (double) D) - ((double) B * (double) C)) /
+                   (((double) A * (double) D) + ((double) B * (double) C));
+
+        return Q;
+    }
+}
 
 /**
  * @brief ReadToLocal
