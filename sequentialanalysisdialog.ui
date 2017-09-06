@@ -118,11 +118,6 @@
               </item>
               <item>
                <property name="text">
-                <string>Simple Sequence</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
                 <string>Temporal Window</string>
                </property>
               </item>
@@ -150,6 +145,11 @@
               <item>
                <property name="text">
                 <string>3 Seconds</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>4 Seconds</string>
                </property>
               </item>
               <item>
@@ -232,7 +232,14 @@
         </widget>
        </item>
        <item>
-        <widget class="QTableWidget" name="tableWidgetOutputs"/>
+        <widget class="QTableWidget" name="tableWidgetOutputs">
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>true</bool>
+         </attribute>
+        </widget>
        </item>
       </layout>
      </item>

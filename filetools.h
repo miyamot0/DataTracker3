@@ -48,7 +48,7 @@ class FileTools
 {
 public:
 
-static void CreateContingencyTables(QString filePath, QStringList keyList, QList<QStringList> * mResults, int code, int binSize = 1, int windowSize = 4)
+static void CreateContingencyTables(QString filePath, QList<QPair<QString, int>> keyScoreList, QList<QStringList> * mResults, int code, int binSize = 1, int windowSize = 4)
 {
     QFile mSession(filePath);
     QJsonObject json;
@@ -56,13 +56,21 @@ static void CreateContingencyTables(QString filePath, QStringList keyList, QList
     int sessionDuration;
     int secs;
     int binCount;
-    int fKeyCount;
+    int keyCount;
+
+    QStringList temp;
+    double holder;
 
     mResults->clear();
 
-    QList<QList<int>> frequencyBins;
-
+    QList<QList<int>> scoringBins;
     QDateTime startTime, endTime;
+    QStringList tempKeyLookups;
+
+    for (int i(0); i<keyScoreList.count(); i++)
+    {
+        tempKeyLookups << keyScoreList.at(i).first;
+    }
 
     if (mSession.exists())
     {
@@ -76,44 +84,88 @@ static void CreateContingencyTables(QString filePath, QStringList keyList, QList
 
             sessionDuration = (json["SessionDuration"].toInt() / 1000);
             startTime = QDateTime(QDateTime::fromString(json["StartTime"].toString()));
-
             binCount = sessionDuration / binSize;
+            keyCount = keyScoreList.count();
 
-            fKeyCount = keyList.count();
-
-            for (int i(0); i< fKeyCount; i++)
+            for (int i(0); i< keyCount; i++)
             {
-                frequencyBins.append(QList<int>());
+                scoringBins.append(QList<int>());
 
                 for (int j(0); j < binCount; j++)
                 {
-                    frequencyBins[i].append(0);
+                    scoringBins[i].append(0);
                 }
             }
 
+            // Frequencies here
             QJsonArray pressedKeysJson = json["PressedKeys"].toArray();
             foreach (const QJsonValue keyObj, pressedKeysJson) {
                 QJsonObject mObj = keyObj.toObject();
 
-                int fIndex = keyList.indexOf(mObj["KeyDescription"].toString());
+                int fIndex = tempKeyLookups.indexOf(mObj["KeyDescription"].toString());
 
-                if (fIndex != -1)
+                if (fIndex != -1 && keyScoreList.at(fIndex).second == 1)
                 {
                     secs = startTime.secsTo(QDateTime::fromString(mObj["TimePressed"].toString()));
                     int locationInArray = secs / binSize;
 
-                    frequencyBins[fIndex][locationInArray] = 1;
+                    scoringBins[fIndex][locationInArray] = 1;
+                }
+            }
+
+            // durations here
+
+            bool waitingForNext = false;
+            int prev, after;
+
+            for (int i(0); i<keyScoreList.count(); i++)
+            {
+                // Is a duration key
+                if (keyScoreList.at(i).second == 2)
+                {
+                    foreach (const QJsonValue keyObj, pressedKeysJson) {
+                        QJsonObject mObj = keyObj.toObject();
+
+                        if (mObj["KeyDescription"].toString() == keyScoreList.at(i).first)
+                        {
+                            if (waitingForNext)
+                            {
+                                after = startTime.secsTo(QDateTime::fromString(mObj["TimePressed"].toString())) / binSize;
+                                waitingForNext = false;
+
+                                int fIndex = tempKeyLookups.indexOf(mObj["KeyDescription"].toString());
+
+                                for (int k(prev); k <= after; k++)
+                                {
+                                    scoringBins[fIndex][k] = 1;
+                                }
+                            }
+                            else
+                            {
+                                prev = startTime.secsTo(QDateTime::fromString(mObj["TimePressed"].toString())) / binSize;
+                                waitingForNext = true;
+                            }
+                        }
+                    }
+
+                    if (waitingForNext)
+                    {
+                        int fIndex = tempKeyLookups.indexOf(keyScoreList.at(i).first);
+
+                        for (int k(prev); k < scoringBins[fIndex].count(); k++)
+                        {
+                            scoringBins[fIndex][k] = 1;
+                        }
+                    }
                 }
             }
         }
 
-        QStringList temp;
-
-        for (int i(0); i<keyList.count(); i++)
+        for (int i(0); i<keyScoreList.count(); i++)
         {
             temp.clear();
 
-            for (int j(0); j<keyList.count(); j++)
+            for (int j(0); j<keyScoreList.count(); j++)
             {
                 if (i == j)
                 {
@@ -121,8 +173,8 @@ static void CreateContingencyTables(QString filePath, QStringList keyList, QList
                 }
                 else
                 {
-                    temp << QString::number(FileTools::CountObjects(frequencyBins[i], frequencyBins[j], &windowSize, code));
-                    //qDebug() << frequencyBins[i] << " " << frequencyBins[j] << endl;
+                    holder = FileTools::CountObjects(scoringBins[i], scoringBins[j], &windowSize, code);
+                    temp << QString::number(holder);
                 }
             }
 
@@ -139,7 +191,7 @@ static double CountObjects(QList<int> preLagList, QList<int> postLagList, int * 
     int remainingLags = 0;
     bool inWindow = false;
 
-    for (int i(0); i<preLagList.count() - 3; i++)
+    for (int i(0); i<preLagList.count() - (*windowSize - 1); i++)
     {
         inWindow = (remainingLags > 0);
 
@@ -179,17 +231,10 @@ static double CountObjects(QList<int> preLagList, QList<int> postLagList, int * 
         }
     }
 
-    //qDebug() << "passed end";
-
     int A = hasBxLag.InsideWindow;
     int B = noBxLag.InsideWindow;
     int C = hasBxLag.OutsideWindow;
     int D = noBxLag.OutsideWindow;
-
-    qDebug() << "A: " << A <<
-                "B: " << B <<
-                "C: " << C <<
-                "D: " << D;
 
     if (code == 0)
     {
