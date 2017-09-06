@@ -19,8 +19,8 @@
 TEST_FEATURES = 1
 
 VERSION_MAJOR = 0
-VERSION_MINOR = 5
-VERSION_BUILD = 2
+VERSION_MINOR = 6
+VERSION_BUILD = 0
 
 DEFINES += "VERSION_MAJOR=$$VERSION_MAJOR"\
        "VERSION_MINOR=$$VERSION_MINOR"\
@@ -200,4 +200,5 @@ DISTFILES += \
     screencaps/SessionDesigner.png \
     screencaps/SessionViewer.png \
     screencaps/Reliability.png \
-    screencaps/Report.png
+    screencaps/Report.png \
+    screencaps/SequentialAnalyses.png

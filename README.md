@@ -14,10 +14,13 @@ Features include:
 
 ### Version
 ------
-0.5.0 (beta)
+0.6.0 (beta)
 
 ### Changelog
 ------
+ * 0.6.0 - Time window-based lag sequential analyses (and adjustable window size) for sessions
+ * 0.5.2 - Missing dependency
+ * 0.5.1 - Compatability fix
  * 0.5.0 - Bump with latest for initial public beta
  * 0.4.1 - Interface cleanup, for cross-platform compatibility
  * 0.4.0 - Differentiate series-based charting, more mac os fixes
@@ -45,6 +48,9 @@ Real-time data recording for multiple observers
 Visualizations of behavior across conditions (e.g., baseline, treatment)
 ![Alt text](screencaps/EvaluationViewer.png?raw=true "Evaluation Viewer")
 
+Session-by-session Sequental Analyses (e.g., Prompts -> Target Behavior statistics)
+![Alt text](screencaps/SequentialAnalyses.png?raw=true "Sequential Analyses")
+
 Within-session visualizations of responding during session
 ![Alt text](screencaps/SessionViewer.png?raw=true "Session Viewer")
 
@@ -60,7 +66,7 @@ Preparation of Reports
  * Tango icon set - Public Domain Licensed. Copyright (C) 2009, "Tango Desktop Project" [Site](http://tango.freedesktop.org/Tango_Desktop_Project)
  * QtXlsx - MIT Licensed. Copyright (C) 2013, Debao Zhang <hello@debao.me> [Github](https://github.com/dbzhang800/QtXlsxWriter)
  * QDarkStyleSheet - MIT Licensed. Copyright (C) 2013-2017, Colin Duquesnoy <colin.duquesnoy@gmail.com> [Github](https://github.com/ColinDuquesnoy/QDarkStyleSheet)
- * BDataPro - GPL-3+. Copyright (C) 2017, Chris Bullock. [Site](https://www.kennedykrieger.org/patient-care/patient-care-programs/inpatient-programs/neurobehavioral-unit-nbu/bdatapro-software-for-real-time-behavior-data-collection).
+ * BDataPro - GPL-v3. Copyright (C) 2017, Chris Bullock. [Site](https://www.kennedykrieger.org/patient-care/patient-care-programs/inpatient-programs/neurobehavioral-unit-nbu/bdatapro-software-for-real-time-behavior-data-collection).
 
 ### Referenced Works (academic works)
 ------
