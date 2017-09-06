@@ -93,6 +93,12 @@ void SequentialAnalysisDialog::on_comboBoxGroup_currentIndexChanged(int index)
         keyList.clear();
         ui->tableWidgetOutputs->clear();
 
+        ui->comboBoxIndividual->setEnabled(false);
+        ui->comboBoxEvaluation->setEnabled(false);
+        ui->comboBoxAnalysis->setEnabled(false);
+        ui->comboBoxWindow->setEnabled(false);
+        ui->labelTitle->setText(QString("<html><head/><body><p align='center'><span style='font-size:10pt; font-weight:600;'>Sequential Analyses</span></p></body></html>"));
+
         return;
     }
     else
@@ -121,6 +127,8 @@ void SequentialAnalysisDialog::on_comboBoxGroup_currentIndexChanged(int index)
 
         ui->comboBoxIndividual->setEnabled(true);
         ui->comboBoxEvaluation->setEnabled(false);
+        ui->comboBoxAnalysis->setEnabled(false);
+        ui->comboBoxWindow->setEnabled(false);
     }
 }
 
@@ -144,6 +152,10 @@ void SequentialAnalysisDialog::on_comboBoxIndividual_currentIndexChanged(int ind
 
         keyList.clear();
         ui->tableWidgetOutputs->clear();
+        ui->comboBoxEvaluation->setEnabled(false);
+        ui->comboBoxAnalysis->setEnabled(false);
+        ui->comboBoxWindow->setEnabled(false);
+        ui->labelTitle->setText(QString("<html><head/><body><p align='center'><span style='font-size:10pt; font-weight:600;'>Sequential Analyses</span></p></body></html>"));
 
         return;
     }
@@ -172,6 +184,8 @@ void SequentialAnalysisDialog::on_comboBoxIndividual_currentIndexChanged(int ind
         worker->startWork();
 
         ui->comboBoxEvaluation->setEnabled(true);
+        ui->comboBoxAnalysis->setEnabled(false);
+        ui->comboBoxWindow->setEnabled(false);
     }
 }
 
@@ -187,6 +201,9 @@ void SequentialAnalysisDialog::on_comboBoxEvaluation_currentIndexChanged(int ind
 
         keyList.clear();
         ui->tableWidgetOutputs->clear();
+        ui->comboBoxAnalysis->setEnabled(false);
+        ui->comboBoxWindow->setEnabled(false);
+        ui->labelTitle->setText(QString("<html><head/><body><p align='center'><span style='font-size:10pt; font-weight:600;'>Sequential Analyses</span></p></body></html>"));
 
         return;
     }
@@ -200,6 +217,9 @@ void SequentialAnalysisDialog::on_comboBoxEvaluation_currentIndexChanged(int ind
         mCurrentDirectory.CurrentEvaluation = ui->comboBoxEvaluation->currentText();
         mCurrentDirectory.CurrentCondition = "";
         mCurrentDirectory.CurrentKeySet = "";
+
+        ui->comboBoxAnalysis->setEnabled(true);
+        ui->comboBoxWindow->setEnabled(false);
 
         QString mFilePath = FileTools::pathAppend(mWorkingDirectory, ui->comboBoxGroup->currentText());
         mFilePath = FileTools::pathAppend(mFilePath, ui->comboBoxIndividual->currentText());
@@ -289,13 +309,16 @@ void SequentialAnalysisDialog::on_comboBoxAnalysis_currentIndexChanged(int index
     if (index == 0)
     {
         ui->comboBoxWindow->setCurrentIndex(0);
+        ui->comboBoxWindow->setEnabled(false);
 
         keyList.clear();
         ui->tableWidgetOutputs->clear();
+        ui->labelTitle->setText(QString("<html><head/><body><p align='center'><span style='font-size:10pt; font-weight:600;'>Sequential Analyses</span></p></body></html>"));
     }
     else if (index == 1)
     {
         ui->comboBoxWindow->setCurrentIndex(0);
+        ui->comboBoxWindow->setEnabled(true);
     }
 }
 
@@ -461,6 +484,8 @@ void SequentialAnalysisDialog::ChartYule(int index)
     {
         return;
     }
+
+    ui->labelTitle->setText(QString("<html><head/><body><p align='center'><span style='font-size:10pt; font-weight:600;'>Sequential Analyses (Session #: %1)</span></p></body></html>").arg(ui->tableWidget->item(index, 0)->text()));
 
     QList<QStringList> mResults;
     mResults.clear();

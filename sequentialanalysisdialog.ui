@@ -79,6 +79,9 @@
             </item>
             <item row="1" column="1">
              <widget class="QComboBox" name="comboBoxIndividual">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <item>
                <property name="text">
                 <string>Select Individual</string>
@@ -95,6 +98,9 @@
             </item>
             <item row="2" column="1">
              <widget class="QComboBox" name="comboBoxEvaluation">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <item>
                <property name="text">
                 <string>Select Evaluation</string>
@@ -111,6 +117,9 @@
             </item>
             <item row="3" column="1">
              <widget class="QComboBox" name="comboBoxAnalysis">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <item>
                <property name="text">
                 <string>Select Analysis</string>
@@ -132,6 +141,9 @@
             </item>
             <item row="4" column="1">
              <widget class="QComboBox" name="comboBoxWindow">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <item>
                <property name="text">
                 <string>Select Window Length</string>
@@ -211,6 +223,19 @@
            </widget>
           </item>
           <item>
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Directions:&lt;br/&gt;&lt;/span&gt;Selecting sessions and keys will allow the program to compute Yule's Q, a statistic that ranges from 1 to -1 (e.g., similar Pearson correlation). Yule's Q is calculated using the keys selected and the supplied time-window to determine how like certain events follow other events, with +1 suggesting event 1 frequent precedes event 2 and -1 suggesting that event 1 very rarely or never precedes event 2, in the window length supplied.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::NoTextInteraction</set>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="pushButtonKeys">
             <property name="text">
              <string>Select Keys for Analysis</string>
@@ -225,7 +250,7 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QLabel" name="label_7">
+        <widget class="QLabel" name="labelTitle">
          <property name="text">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Session Outcomes&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
