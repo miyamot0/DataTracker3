@@ -90,12 +90,6 @@ private:
 
     int totalSecs;
 
-    QList<KeySetEntry> FrequencyKeys;
-    QJsonArray frequencyArray;
-
-    QList<KeySetEntry> DurationKeys;
-    QJsonArray durationArray;
-
     QList<SessionEvent> PressedKeys;
     QJsonArray pressedKeysJson;
 
