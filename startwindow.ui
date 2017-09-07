@@ -253,12 +253,20 @@
      <property name="title">
       <string>Visual Analysis</string>
      </property>
+     <property name="icon">
+      <iconset resource="resourcefile.qrc">
+       <normaloff>:/images/applications-system.png</normaloff>:/images/applications-system.png</iconset>
+     </property>
      <addaction name="actionSession_Visual_Analysis"/>
      <addaction name="actionEvaluation_Visual_Analysis"/>
     </widget>
     <widget class="QMenu" name="menuStructural_Analyses">
      <property name="title">
       <string>Structural Analyses</string>
+     </property>
+     <property name="icon">
+      <iconset resource="resourcefile.qrc">
+       <normaloff>:/images/applications-system.png</normaloff>:/images/applications-system.png</iconset>
      </property>
      <addaction name="actionSequential_Analyses"/>
      <addaction name="actionCondition_Sequential_Analysis"/>

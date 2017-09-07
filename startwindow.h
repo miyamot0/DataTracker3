@@ -44,6 +44,7 @@
 #include "evaluationviewerdialog.h"
 #include "evaluationreportdialog.h"
 #include "sequentialanalysisdialog.h"
+#include "sequentialconditionanalysisdialog.h"
 
 namespace Ui {
 class StartWindow;
@@ -97,6 +98,7 @@ private:
     FAQDialog faqDialog;
     ReliabilityDialog * reliabilityDialog;
     SequentialAnalysisDialog * sequenceDialog;
+    SequentialConditionAnalysisDialog * sequenceConditionDialog;
 
     SessionWindow * sessionWindow;
 

@@ -445,7 +445,8 @@ void StartWindow::on_actionSequential_Analyses_triggered()
 
 void StartWindow::on_actionCondition_Sequential_Analysis_triggered()
 {
-
+    sequenceConditionDialog = new SequentialConditionAnalysisDialog(workingDirectory, this);
+    sequenceConditionDialog->exec();
 }
 
 /** Open Session Viewer Dialog
