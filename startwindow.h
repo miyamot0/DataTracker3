@@ -76,6 +76,7 @@ private slots:
     void on_actionContact_triggered();
     void on_actionAbout_triggered();
     void on_actionSequential_Analyses_triggered();
+    void on_actionCondition_Sequential_Analysis_triggered();
     void on_buttonStart_clicked();
 
     void WorkFinished(QString value);

@@ -249,9 +249,22 @@
     <property name="title">
      <string>Analysis</string>
     </property>
-    <addaction name="actionSession_Visual_Analysis"/>
-    <addaction name="actionEvaluation_Visual_Analysis"/>
-    <addaction name="actionSequential_Analyses"/>
+    <widget class="QMenu" name="menuVisual_Analysis">
+     <property name="title">
+      <string>Visual Analysis</string>
+     </property>
+     <addaction name="actionSession_Visual_Analysis"/>
+     <addaction name="actionEvaluation_Visual_Analysis"/>
+    </widget>
+    <widget class="QMenu" name="menuStructural_Analyses">
+     <property name="title">
+      <string>Structural Analyses</string>
+     </property>
+     <addaction name="actionSequential_Analyses"/>
+     <addaction name="actionCondition_Sequential_Analysis"/>
+    </widget>
+    <addaction name="menuVisual_Analysis"/>
+    <addaction name="menuStructural_Analyses"/>
    </widget>
    <widget class="QMenu" name="menuReports">
     <property name="title">
@@ -419,7 +432,26 @@
      <normaloff>:/images/applications-system.png</normaloff>:/images/applications-system.png</iconset>
    </property>
    <property name="text">
-    <string>Sequential Analyses</string>
+    <string>Session Sequential Analyses</string>
+   </property>
+  </action>
+  <action name="actionblank">
+   <property name="text">
+    <string>blank</string>
+   </property>
+  </action>
+  <action name="actionblank_2">
+   <property name="text">
+    <string>blank</string>
+   </property>
+  </action>
+  <action name="actionCondition_Sequential_Analysis">
+   <property name="icon">
+    <iconset resource="resourcefile.qrc">
+     <normaloff>:/images/applications-system.png</normaloff>:/images/applications-system.png</iconset>
+   </property>
+   <property name="text">
+    <string>Condition Sequential Analysis</string>
    </property>
   </action>
  </widget>

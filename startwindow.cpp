@@ -434,10 +434,18 @@ void StartWindow::on_actionSession_Visual_Analysis_triggered()
     sessionViewerDialog->exec();
 }
 
+/**
+ * @brief StartWindow::on_actionSequential_Analyses_triggered
+ */
 void StartWindow::on_actionSequential_Analyses_triggered()
 {
     sequenceDialog = new SequentialAnalysisDialog(workingDirectory, this);
     sequenceDialog->exec();
+}
+
+void StartWindow::on_actionCondition_Sequential_Analysis_triggered()
+{
+
 }
 
 /** Open Session Viewer Dialog
