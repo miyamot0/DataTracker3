@@ -1,12 +1,32 @@
+/**
+   Copyright 2017 Shawn Gilroy
+
+   This file is part of Data Tracker, Qt port.
+
+   Data Tracker is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, version 3.
+
+   Data Tracker is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Data Tracker.  If not, see http://www.gnu.org/licenses/.
+
+   The Data Tracker is a tool to assist researchers in behavior economics.
+
+   Email: shawn(dot)gilroy(at)temple.edu
+
+  */
+
 #include "sequentialconditionanalysisdialog.h"
 #include "ui_sequentialconditionanalysisdialog.h"
-
 #include "windowtools.h"
 #include "parsetypes.h"
-
 #include "filetools.h"
-
-#include <QDebug>
+#include "probabilitytools.h"
 
 SequentialConditionAnalysisDialog::SequentialConditionAnalysisDialog(QString mCurrentWorkingDirectory, QWidget *parent) :
     QDialog(parent),
@@ -440,6 +460,10 @@ void SequentialConditionAnalysisDialog::GetKeys()
     }
 }
 
+/**
+ * @brief SequentialConditionAnalysisDialog::on_comboBoxWindowSize_currentIndexChanged
+ * @param index
+ */
 void SequentialConditionAnalysisDialog::on_comboBoxWindowSize_currentIndexChanged(int index)
 {
     if (index > 0)
@@ -466,6 +490,9 @@ void SequentialConditionAnalysisDialog::on_comboBoxWindowSize_currentIndexChange
     }
 }
 
+/**
+ * @brief SequentialConditionAnalysisDialog::ChartYule
+ */
 void SequentialConditionAnalysisDialog::ChartYule()
 {
     int windowSpan = GetWindowSpan();
@@ -475,12 +502,6 @@ void SequentialConditionAnalysisDialog::ChartYule()
         return;
     }
     ui->labelTitle->setText(QString("<html><head/><body><p align='center'><span style='font-size:10pt; font-weight:600;'>Sequential Analyses (Condition: %1)</span></p></body></html>").arg(ui->comboBoxCondition->currentText()));
-
-    qDebug() << " in yule ";
-
-    //temp = PrimaryReliabilityObjects.at(index);
-    //result = FileTools::ReadSessionFromJSON(temp.PrimaryFilePath, &json);
-
 
     QList<QList<QPair<LagCoding, LagCoding>>> tableConstruction;
 
@@ -497,16 +518,12 @@ void SequentialConditionAnalysisDialog::ChartYule()
         tableConstruction.append(temp);
     }
 
-
-
     QTableWidgetItem * tempItem;
 
     QList<QStringList> mResults;
     mResults.clear();
 
-    FileTools::FillMetaContingencyTable(&PrimaryReliabilityObjects, &mResults, keyList, mScoreKey, tableConstruction, 1, 4);
-
-    qDebug() << mResults;
+    ProbabilityTools::FillMetaContingencyTable(&PrimaryReliabilityObjects, &mResults, keyList, mScoreKey, tableConstruction, 1, 4);
 
     ui->tableWidgetOutputs->clearContents();
     ui->tableWidgetOutputs->setRowCount(0);

@@ -24,13 +24,13 @@
 #include "sequentialanalysisdialog.h"
 #include "ui_sequentialanalysisdialog.h"
 
-#include "windowtools.h"
-
 #include <QDirIterator>
 #include <QFile>
 #include <QJsonDocument>
 
+#include "probabilitytools.h"
 #include "filetools.h"
+#include "windowtools.h"
 
 SequentialAnalysisDialog::SequentialAnalysisDialog(QString mCurrentWorkingDirectory, QWidget *parent) :
     QDialog(parent),
@@ -490,7 +490,7 @@ void SequentialAnalysisDialog::ChartYule(int index)
     QList<QStringList> mResults;
     mResults.clear();
 
-    FileTools::CreateContingencyTables(temp.PrimaryFilePath, mScoreKey, &mResults, 1, 1, windowSpan);
+    ProbabilityTools::CreateContingencyTables(temp.PrimaryFilePath, mScoreKey, &mResults, 1, 1, windowSpan);
 
     ui->tableWidgetOutputs->clearContents();
     ui->tableWidgetOutputs->setRowCount(0);

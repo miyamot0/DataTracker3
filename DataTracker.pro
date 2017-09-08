@@ -109,7 +109,8 @@ HEADERS  += startwindow.h \
     displaytablesdialog.h \
     lagcoding.h \
     sequentialanalysisdialog.h \
-    sequentialconditionanalysisdialog.h
+    sequentialconditionanalysisdialog.h \
+    probabilitytools.h
 
 FORMS    += startwindow.ui \
     sessionwindow.ui \
