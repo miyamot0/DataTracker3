@@ -48,6 +48,173 @@ class FileTools
 {
 public:
 
+static void FillMetaContingencyTable(QList<ReliabilityParse> * PrimaryReliabilityObjects, QList<QStringList> * mResults, QStringList keyList, QList<QPair<QString, int>> mScoreKey,
+                                     QList<QList<QPair<LagCoding, LagCoding>>> tableConstruction, int binSize = 1, int windowSize = 4)
+{
+    QJsonObject json;
+
+    int sessionDuration;
+    int secs;
+    int binCount;
+
+    QStringList temp;
+
+    QList<QList<int>> scoringBins;
+    QDateTime startTime, endTime;
+
+    //Loop
+    for (int i(0); i<PrimaryReliabilityObjects->count(); i++)
+    {
+        // each is a session here
+        QFile mSession(PrimaryReliabilityObjects->at(i).PrimaryFilePath);
+
+        if (mSession.exists())
+        {
+            if (mSession.open(QIODevice::ReadOnly | QIODevice::Text))
+            {
+
+                QString sessionData = mSession.readAll();
+                mSession.close();
+
+                QJsonDocument loadSession = QJsonDocument::fromJson(sessionData.toUtf8());
+                json = loadSession.object();
+
+                sessionDuration = (json["SessionDuration"].toInt() / 1000);
+                startTime = QDateTime(QDateTime::fromString(json["StartTime"].toString()));
+                binCount = sessionDuration / binSize;
+
+                scoringBins.clear();
+
+                for (int i(0); i< keyList.count(); i++)
+                {
+                    QList<int> temp;
+
+                    for (int j(0); j < binCount; j++)
+                    {
+                        temp << 0;
+                    }
+
+                    scoringBins.append(temp);
+                }
+
+                //qDebug() << keyList;
+
+                // Frequencies here
+                QJsonArray pressedKeysJson = json["PressedKeys"].toArray();
+                foreach (const QJsonValue keyObj, pressedKeysJson) {
+                    QJsonObject mObj = keyObj.toObject();
+
+                    int fIndex = keyList.indexOf(mObj["KeyDescription"].toString());
+
+                    if (fIndex != -1 && mScoreKey[fIndex].second == 1)
+                    {
+                        secs = startTime.secsTo(QDateTime::fromString(mObj["TimePressed"].toString()));
+                        int locationInArray = secs / binSize;
+
+                        scoringBins[fIndex][locationInArray] = 1;
+                    }
+                }
+
+                // durations here
+                bool waitingForNext = false;
+                int prev, after;
+
+                for (int i(0); i<mScoreKey.count(); i++)
+                {
+                    // Is a duration key
+                    if (mScoreKey.at(i).second == 2)
+                    {
+                        foreach (const QJsonValue keyObj, pressedKeysJson) {
+                            QJsonObject mObj = keyObj.toObject();
+
+                            if (mObj["KeyDescription"].toString() == mScoreKey.at(i).first)
+                            {
+                                if (waitingForNext)
+                                {
+                                    after = startTime.secsTo(QDateTime::fromString(mObj["TimePressed"].toString())) / binSize;
+                                    waitingForNext = false;
+
+                                    int fIndex = keyList.indexOf(mObj["KeyDescription"].toString());
+
+                                    for (int k(prev); k <= after; k++)
+                                    {
+                                        scoringBins[fIndex][k] = 1;
+                                    }
+                                }
+                                else
+                                {
+                                    prev = startTime.secsTo(QDateTime::fromString(mObj["TimePressed"].toString())) / binSize;
+                                    waitingForNext = true;
+                                }
+                            }
+                        }
+
+                        if (waitingForNext)
+                        {
+                            int fIndex = keyList.indexOf(mScoreKey.at(i).first);
+
+                            for (int k(prev); k < scoringBins[fIndex].count(); k++)
+                            {
+                                scoringBins[fIndex][k] = 1;
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (int i(0); i<mScoreKey.count(); i++)
+            {
+                for (int j(0); j<mScoreKey.count(); j++)
+                {
+                    if (i == j)
+                    {
+                        // necro
+                    }
+                    else
+                    {
+                        QPair<LagCoding, LagCoding> lag;
+
+                        ScoreLagCodings(scoringBins[i], scoringBins[j], &windowSize, &lag);
+
+                        tableConstruction[i][j].first.InsideWindow += lag.first.InsideWindow;
+                        tableConstruction[i][j].first.OutsideWindow += lag.first.OutsideWindow;
+                        tableConstruction[i][j].second.InsideWindow += lag.second.InsideWindow;
+                        tableConstruction[i][j].second.OutsideWindow += lag.second.OutsideWindow;
+                    }
+                }
+            }
+        }
+    }
+
+    for (int i(0); i<tableConstruction.count(); i++)
+    {
+        temp.clear();
+
+        for (int j(0); j<tableConstruction[i].count(); j++)
+        {
+            if (i == j)
+            {
+                temp << QString("---");
+            }
+            else
+            {
+                int A = tableConstruction[i][j].first.InsideWindow;
+                int B = tableConstruction[i][j].second.InsideWindow;
+                int C = tableConstruction[i][j].first.OutsideWindow;
+                int D = tableConstruction[i][j].second.OutsideWindow;
+
+                double Q = (((double) A * (double) D) - ((double) B * (double) C)) /
+                           (((double) A * (double) D) + ((double) B * (double) C));
+
+                temp << QString::number(Q);
+            }
+        }
+
+        mResults->append(temp);
+    }
+
+}
+
 static void CreateContingencyTables(QString filePath, QList<QPair<QString, int>> keyScoreList, QList<QStringList> * mResults, int code, int binSize = 1, int windowSize = 4)
 {
     QFile mSession(filePath);
@@ -114,7 +281,6 @@ static void CreateContingencyTables(QString filePath, QList<QPair<QString, int>>
             }
 
             // durations here
-
             bool waitingForNext = false;
             int prev, after;
 
@@ -179,6 +345,53 @@ static void CreateContingencyTables(QString filePath, QList<QPair<QString, int>>
             }
 
             mResults->append(temp);
+        }
+    }
+}
+
+static void ScoreLagCodings(QList<int> preLagList, QList<int> postLagList, int * windowSize, QPair<LagCoding, LagCoding> * pair)
+{
+    //, LagCoding * hasBxLag, LagCoding * noBxLag
+    int remainingLags = 0;
+    bool inWindow = false;
+
+    for (int i(0); i<preLagList.count() - (*windowSize - 1); i++)
+    {
+        inWindow = (remainingLags > 0);
+
+        if (inWindow)
+        {
+            if (postLagList.at(i) == 1)
+            {
+                pair->first.InsideWindow++;
+            }
+            else
+            {
+                pair->second.InsideWindow++;
+            }
+        }
+        else
+        {
+            if (postLagList.at(i) == 1)
+            {
+                pair->first.OutsideWindow++;
+            }
+            else
+            {
+                pair->second.OutsideWindow++;
+            }
+        }
+
+        remainingLags--;
+
+        if (remainingLags < 0)
+        {
+            remainingLags = 0;
+        }
+
+        if (preLagList.at(i) == 1)
+        {
+            remainingLags = *windowSize;
         }
     }
 }

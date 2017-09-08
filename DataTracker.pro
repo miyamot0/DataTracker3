@@ -70,7 +70,8 @@ SOURCES += main.cpp\
     seriesselectdialog.cpp \
     evaluationreportdialog.cpp \
     displaytablesdialog.cpp \
-    sequentialanalysisdialog.cpp
+    sequentialanalysisdialog.cpp \
+    sequentialconditionanalysisdialog.cpp
 
 HEADERS  += startwindow.h \
     sessionwindow.h \
@@ -107,7 +108,8 @@ HEADERS  += startwindow.h \
     evaluationreportdialog.h \
     displaytablesdialog.h \
     lagcoding.h \
-    sequentialanalysisdialog.h
+    sequentialanalysisdialog.h \
+    sequentialconditionanalysisdialog.h
 
 FORMS    += startwindow.ui \
     sessionwindow.ui \
@@ -128,7 +130,8 @@ FORMS    += startwindow.ui \
     seriesselectdialog.ui \
     evaluationreportdialog.ui \
     displaytablesdialog.ui \
-    sequentialanalysisdialog.ui
+    sequentialanalysisdialog.ui \
+    sequentialconditionanalysisdialog.ui
 
 RESOURCES += \
     resourcefile.qrc \
