@@ -463,24 +463,24 @@ static double CountObjects(QList<int> preLagList, QList<int> postLagList, int * 
     int C = hasBxLag.OutsideWindow;
     int D = noBxLag.OutsideWindow;
 
-    if (code == 0)
-    {
-        double OR = ((double) A / (double) B) / ((double) C / (double) D);
-
-        if (isinf(OR))
-        {
-            OR = ((double) A * (double) D) / ((double) B * (double) C);
-        }
-
-        return OR;
-    }
-    else
-    {
+    //if (code == 0)
+    //{
+    //    double OR = ((double) A / (double) B) / ((double) C / (double) D);
+    //
+    //    if (std::isinf(OR))
+    //    {
+    //        OR = ((double) A * (double) D) / ((double) B * (double) C);
+    //    }
+    //
+    //   return OR;
+    //}
+    //else
+    //{
         double Q = (((double) A * (double) D) - ((double) B * (double) C)) /
                    (((double) A * (double) D) + ((double) B * (double) C));
 
         return Q;
-    }
+    //}
 }
 
 };
