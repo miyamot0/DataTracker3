@@ -14,10 +14,11 @@ Features include:
 
 ### Version
 ------
-0.6.0 (beta)
+0.6.1 (beta)
 
 ### Changelog
 ------
+ * 0.6.1 - Bump for update release
  * 0.6.0 - Time window-based lag sequential analyses (and adjustable window size) for sessions
  * 0.5.2 - Missing dependency
  * 0.5.1 - Compatability fix
