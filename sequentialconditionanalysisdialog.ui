@@ -295,7 +295,7 @@
         <item>
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Directions:&lt;br/&gt;&lt;/span&gt;Selecting a condition will will allow the program to compute an omnibus version of Yule's Q, a statistic that ranges from 1 to -1 (e.g., similar Pearson correlation), combining the information learned from all of the sessions in a similar condition. Yule's Q is calculated using the keys selected and the supplied time-window to determine how like certain events follow other events, overall, with +1 suggesting event 1 frequent precedes event 2 and -1 suggesting that event 1 very rarely or never precedes event 2, in the window length supplied.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Directions:&lt;br/&gt;&lt;/span&gt;Selecting a condition will will allow the program to compute an omnibus version of either the Yule's Q, the Operant Contingency Value (or Risk Difference), or the Odds Ratio.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="wordWrap">
            <bool>true</bool>
