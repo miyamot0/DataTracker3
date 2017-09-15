@@ -34,6 +34,7 @@
 #include "reliabilityparse.h"
 #include "sessionevent.h"
 #include "seriesselectdialog.h"
+#include "probabilitytools.h"
 
 namespace Ui {
 class SequentialConditionAnalysisDialog;
@@ -56,14 +57,17 @@ private slots:
     void on_comboBoxIndividual_currentIndexChanged(int index);
     void on_comboBoxEvaluation_currentIndexChanged(int index);
     void on_comboBoxCondition_currentIndexChanged(int index);
-    void on_comboBoxWindowSize_currentIndexChanged(int index);
+    void on_comboBoxWindowSize_currentIndexChanged(int *);
+    void on_comboBoxMetric_currentIndexChanged(int *);
 
     void on_pushButton_clicked();
 
     void GetKeys();
-    void ChartYule();
+    void ChartMetric();
     int GetWindowSpan();
     QColor GetColorMapping(QString value);
+
+    ProbabilityTools::ProbabilityType GetMetric();
 
 private:
     Ui::SequentialConditionAnalysisDialog *ui;

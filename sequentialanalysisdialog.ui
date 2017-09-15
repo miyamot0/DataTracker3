@@ -130,43 +130,13 @@
              </widget>
             </item>
             <item row="3" column="0">
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>Analysis:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QComboBox" name="comboBoxAnalysis">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <item>
-               <property name="text">
-                <string>Select Analysis</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Temporal Window</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="4" column="0">
              <widget class="QLabel" name="label_5">
               <property name="text">
                <string>Window Size:</string>
               </property>
              </widget>
             </item>
-            <item row="4" column="1">
+            <item row="3" column="1">
              <widget class="QComboBox" name="comboBoxWindow">
               <property name="enabled">
                <bool>false</bool>
@@ -215,6 +185,40 @@
               <item>
                <property name="text">
                 <string>30 Seconds</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="labelMetric">
+              <property name="text">
+               <string>Metric:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QComboBox" name="comboBoxMetric">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <item>
+               <property name="text">
+                <string>Select Metric</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Yule's Q</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Operant Contingency Value</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Odds Ratio</string>
                </property>
               </item>
              </widget>

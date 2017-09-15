@@ -171,6 +171,7 @@ void SequentialConditionAnalysisDialog::on_comboBoxGroup_currentIndexChanged(int
         ui->comboBoxEvaluation->setEnabled(false);
         ui->comboBoxCondition->setEnabled(false);
         ui->comboBoxWindowSize->setEnabled(false);
+        ui->comboBoxMetric->setEnabled(false);
 
         ui->tableWidget->setRowCount(0);
 
@@ -204,6 +205,7 @@ void SequentialConditionAnalysisDialog::on_comboBoxGroup_currentIndexChanged(int
         ui->comboBoxEvaluation->setEnabled(false);
         ui->comboBoxCondition->setEnabled(false);
         ui->comboBoxWindowSize->setEnabled(false);
+        ui->comboBoxMetric->setEnabled(false);
     }
 }
 
@@ -225,6 +227,7 @@ void SequentialConditionAnalysisDialog::on_comboBoxIndividual_currentIndexChange
         ui->comboBoxEvaluation->setEnabled(false);
         ui->comboBoxCondition->setEnabled(false);
         ui->comboBoxWindowSize->setEnabled(false);
+        ui->comboBoxMetric->setEnabled(false);
 
         return;
     }
@@ -255,6 +258,7 @@ void SequentialConditionAnalysisDialog::on_comboBoxIndividual_currentIndexChange
         ui->comboBoxEvaluation->setEnabled(true);
         ui->comboBoxCondition->setEnabled(false);
         ui->comboBoxWindowSize->setEnabled(false);
+        ui->comboBoxMetric->setEnabled(false);
     }
 }
 
@@ -270,6 +274,7 @@ void SequentialConditionAnalysisDialog::on_comboBoxEvaluation_currentIndexChange
 
         ui->comboBoxCondition->setEnabled(false);
         ui->comboBoxWindowSize->setEnabled(false);
+        ui->comboBoxMetric->setEnabled(false);
 
         return;
     }
@@ -298,6 +303,7 @@ void SequentialConditionAnalysisDialog::on_comboBoxEvaluation_currentIndexChange
 
     ui->comboBoxCondition->setEnabled(true);
     ui->comboBoxWindowSize->setEnabled(false);
+    ui->comboBoxMetric->setEnabled(false);
 }
 
 /**
@@ -310,12 +316,14 @@ void SequentialConditionAnalysisDialog::on_comboBoxCondition_currentIndexChanged
     {
         ui->tableWidget->setRowCount(0);
         ui->comboBoxWindowSize->setEnabled(false);
+        ui->comboBoxMetric->setEnabled(false);
 
         return;
     }
 
 
     ui->comboBoxWindowSize->setEnabled(true);
+    ui->comboBoxMetric->setEnabled(true);
 
     QString mFilePath = FileTools::pathAppend(mWorkingDirectory, ui->comboBoxGroup->currentText());
     mFilePath = FileTools::pathAppend(mFilePath, ui->comboBoxIndividual->currentText());
@@ -410,11 +418,6 @@ void SequentialConditionAnalysisDialog::on_comboBoxCondition_currentIndexChanged
                                  new QTableWidgetItem(QString("%1").arg(PrimaryReliabilityObjects.at(i).Collector)));
     }
 
-
-
-
-
-
 }
 
 /**
@@ -464,36 +467,18 @@ void SequentialConditionAnalysisDialog::GetKeys()
  * @brief SequentialConditionAnalysisDialog::on_comboBoxWindowSize_currentIndexChanged
  * @param index
  */
-void SequentialConditionAnalysisDialog::on_comboBoxWindowSize_currentIndexChanged(int index)
+void SequentialConditionAnalysisDialog::on_comboBoxWindowSize_currentIndexChanged(int *)
 {
-    if (index > 0)
+    if (ui->comboBoxWindowSize->currentIndex() > 0 && ui->comboBoxMetric->currentIndex() > 0)
     {
-        GetKeys();
-
-        mSeriesSelect.setWindowTitle(tr("Select Keys to Analyze"));
-        mSeriesSelect.AddOptions(keyList);
-
-        if (mSeriesSelect.exec() != QDialog::Rejected)
-        {
-            keyShowList = mSeriesSelect.GetBoolList();
-
-            for (int i = keyShowList.count() - 1; i >= 0; i--)
-            {
-                if (keyShowList[i] == false)
-                {
-                    mScoreKey.removeAt(i);
-                }
-            }
-
-            ChartYule();
-        }
+        on_pushButton_clicked();
     }
 }
 
 /**
  * @brief SequentialConditionAnalysisDialog::ChartYule
  */
-void SequentialConditionAnalysisDialog::ChartYule()
+void SequentialConditionAnalysisDialog::ChartMetric()
 {
     int windowSpan = GetWindowSpan();
 
@@ -501,7 +486,20 @@ void SequentialConditionAnalysisDialog::ChartYule()
     {
         return;
     }
-    ui->labelTitle->setText(QString("<html><head/><body><p align='center'><span style='font-size:10pt; font-weight:600;'>Sequential Analyses (Condition: %1)</span></p></body></html>").arg(ui->comboBoxCondition->currentText()));
+
+    ProbabilityTools::ProbabilityType analysisType = GetMetric();
+
+    if (analysisType == ProbabilityTools::Blank)
+    {
+        return;
+    }
+
+    QString mAnalysis = (analysisType == ProbabilityTools::OddsRatio ? "Odds Ratio" :
+                                                                       analysisType == ProbabilityTools::YulesQ ? "Yules Q" : "Operant Contingency Value");
+
+    ui->labelTitle->setText(QString("<html><head/><body><p align='center'><span style='font-size:10pt; font-weight:600;'>%1 (Condition: %2)</span></p></body></html>")
+                            .arg(mAnalysis)
+                            .arg(ui->comboBoxCondition->currentText()));
 
     QList<QList<QPair<LagCoding, LagCoding>>> tableConstruction;
 
@@ -523,7 +521,13 @@ void SequentialConditionAnalysisDialog::ChartYule()
     QList<QStringList> mResults;
     mResults.clear();
 
-    ProbabilityTools::FillMetaContingencyTable(&PrimaryReliabilityObjects, &mResults, keyList, mScoreKey, tableConstruction, 1, 4);
+    ProbabilityTools::FillMetaContingencyTable(&PrimaryReliabilityObjects,
+                                               &mResults,
+                                               keyList,
+                                               mScoreKey,
+                                               tableConstruction,
+                                               analysisType,
+                                               1, 4);
 
     ui->tableWidgetOutputs->clearContents();
     ui->tableWidgetOutputs->setRowCount(0);
@@ -544,7 +548,9 @@ void SequentialConditionAnalysisDialog::ChartYule()
         {
             tempItem = new QTableWidgetItem(mResults.at(i).at(j));
             tempItem->setToolTip(QString("%1 followed by %2").arg(mScoreKey.at(i).first).arg(mScoreKey.at(j).first));
-            tempItem->setBackgroundColor(GetColorMapping(mResults.at(i).at(j)));
+
+            // Remove for now
+            //tempItem->setBackgroundColor(GetColorMapping(mResults.at(i).at(j)));
             ui->tableWidgetOutputs->setItem(i, j, tempItem);
             ui->tableWidgetOutputs->setVerticalHeaderItem(j,
                                                           new QTableWidgetItem(QString("%1 -> ...").arg(mScoreKey.at(j).first)));
@@ -655,9 +661,63 @@ int SequentialConditionAnalysisDialog::GetWindowSpan()
 }
 
 /**
+ * @brief SequentialConditionAnalysisDialog::GetMetric
+ * @return
+ */
+ProbabilityTools::ProbabilityType SequentialConditionAnalysisDialog::GetMetric()
+{
+    if (ui->comboBoxMetric->currentIndex() == 1)
+    {
+        return ProbabilityTools::YulesQ;
+    }
+    else if (ui->comboBoxMetric->currentIndex() == 2)
+    {
+        return ProbabilityTools::OperantContingencyValue;
+    }
+    else if (ui->comboBoxMetric->currentIndex() == 3)
+    {
+        return ProbabilityTools::OddsRatio;
+    }
+    else
+    {
+        return ProbabilityTools::Blank;
+    }
+}
+
+/**
  * @brief SequentialConditionAnalysisDialog::on_pushButton_clicked
  */
 void SequentialConditionAnalysisDialog::on_pushButton_clicked()
 {
-    on_comboBoxWindowSize_currentIndexChanged(ui->comboBoxWindowSize->currentIndex());
+    GetKeys();
+
+    mSeriesSelect.setWindowTitle(tr("Select Keys to Analyze"));
+    mSeriesSelect.AddOptions(keyList);
+
+    if (mSeriesSelect.exec() != QDialog::Rejected)
+    {
+        keyShowList = mSeriesSelect.GetBoolList();
+
+        for (int i = keyShowList.count() - 1; i >= 0; i--)
+        {
+            if (keyShowList[i] == false)
+            {
+                mScoreKey.removeAt(i);
+            }
+        }
+
+        ChartMetric();
+    }
+}
+
+/**
+ * @brief SequentialConditionAnalysisDialog::on_comboBoxMetric_currentIndexChanged
+ * @param index
+ */
+void SequentialConditionAnalysisDialog::on_comboBoxMetric_currentIndexChanged(int *)
+{
+    if (ui->comboBoxWindowSize->currentIndex() > 0 && ui->comboBoxMetric->currentIndex() > 0)
+    {
+        on_pushButton_clicked();
+    }
 }

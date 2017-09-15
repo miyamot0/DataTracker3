@@ -209,7 +209,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -262,7 +262,7 @@
     </widget>
     <widget class="QMenu" name="menuStructural_Analyses">
      <property name="title">
-      <string>Structural Analyses</string>
+      <string>Sequential Analyses</string>
      </property>
      <property name="icon">
       <iconset resource="resourcefile.qrc">

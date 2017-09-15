@@ -95,8 +95,8 @@ void SequentialAnalysisDialog::on_comboBoxGroup_currentIndexChanged(int index)
 
         ui->comboBoxIndividual->setEnabled(false);
         ui->comboBoxEvaluation->setEnabled(false);
-        ui->comboBoxAnalysis->setEnabled(false);
         ui->comboBoxWindow->setEnabled(false);
+        ui->comboBoxMetric->setEnabled(false);
         ui->labelTitle->setText(QString("<html><head/><body><p align='center'><span style='font-size:10pt; font-weight:600;'>Sequential Analyses</span></p></body></html>"));
 
         return;
@@ -127,8 +127,8 @@ void SequentialAnalysisDialog::on_comboBoxGroup_currentIndexChanged(int index)
 
         ui->comboBoxIndividual->setEnabled(true);
         ui->comboBoxEvaluation->setEnabled(false);
-        ui->comboBoxAnalysis->setEnabled(false);
         ui->comboBoxWindow->setEnabled(false);
+        ui->comboBoxMetric->setEnabled(false);
     }
 }
 
@@ -138,7 +138,6 @@ void SequentialAnalysisDialog::on_comboBoxGroup_currentIndexChanged(int index)
  */
 void SequentialAnalysisDialog::on_comboBoxIndividual_currentIndexChanged(int index)
 {
-
     if (index == 0)
     {
         while (ui->comboBoxEvaluation->count() > 1)
@@ -153,8 +152,8 @@ void SequentialAnalysisDialog::on_comboBoxIndividual_currentIndexChanged(int ind
         keyList.clear();
         ui->tableWidgetOutputs->clear();
         ui->comboBoxEvaluation->setEnabled(false);
-        ui->comboBoxAnalysis->setEnabled(false);
         ui->comboBoxWindow->setEnabled(false);
+        ui->comboBoxMetric->setEnabled(false);
         ui->labelTitle->setText(QString("<html><head/><body><p align='center'><span style='font-size:10pt; font-weight:600;'>Sequential Analyses</span></p></body></html>"));
 
         return;
@@ -184,8 +183,8 @@ void SequentialAnalysisDialog::on_comboBoxIndividual_currentIndexChanged(int ind
         worker->startWork();
 
         ui->comboBoxEvaluation->setEnabled(true);
-        ui->comboBoxAnalysis->setEnabled(false);
         ui->comboBoxWindow->setEnabled(false);
+        ui->comboBoxMetric->setEnabled(false);
     }
 }
 
@@ -201,8 +200,8 @@ void SequentialAnalysisDialog::on_comboBoxEvaluation_currentIndexChanged(int ind
 
         keyList.clear();
         ui->tableWidgetOutputs->clear();
-        ui->comboBoxAnalysis->setEnabled(false);
         ui->comboBoxWindow->setEnabled(false);
+        ui->comboBoxMetric->setEnabled(false);
         ui->labelTitle->setText(QString("<html><head/><body><p align='center'><span style='font-size:10pt; font-weight:600;'>Sequential Analyses</span></p></body></html>"));
 
         return;
@@ -218,8 +217,8 @@ void SequentialAnalysisDialog::on_comboBoxEvaluation_currentIndexChanged(int ind
         mCurrentDirectory.CurrentCondition = "";
         mCurrentDirectory.CurrentKeySet = "";
 
-        ui->comboBoxAnalysis->setEnabled(true);
-        ui->comboBoxWindow->setEnabled(false);
+        ui->comboBoxWindow->setEnabled(true);
+        ui->comboBoxMetric->setEnabled(true);
 
         QString mFilePath = FileTools::pathAppend(mWorkingDirectory, ui->comboBoxGroup->currentText());
         mFilePath = FileTools::pathAppend(mFilePath, ui->comboBoxIndividual->currentText());
@@ -310,6 +309,7 @@ void SequentialAnalysisDialog::on_comboBoxAnalysis_currentIndexChanged(int index
     {
         ui->comboBoxWindow->setCurrentIndex(0);
         ui->comboBoxWindow->setEnabled(false);
+        ui->comboBoxMetric->setEnabled(false);
 
         keyList.clear();
         ui->tableWidgetOutputs->clear();
@@ -319,6 +319,7 @@ void SequentialAnalysisDialog::on_comboBoxAnalysis_currentIndexChanged(int index
     {
         ui->comboBoxWindow->setCurrentIndex(0);
         ui->comboBoxWindow->setEnabled(true);
+        ui->comboBoxMetric->setEnabled(false);
     }
 }
 
@@ -326,30 +327,18 @@ void SequentialAnalysisDialog::on_comboBoxAnalysis_currentIndexChanged(int index
  * @brief SequentialAnalysisDialog::on_comboBoxWindow_currentIndexChanged
  * @param index
  */
-void SequentialAnalysisDialog::on_comboBoxWindow_currentIndexChanged(int index)
+void SequentialAnalysisDialog::on_comboBoxWindow_currentIndexChanged(int *)
 {
-    if (index > 0)
-    {
-        GetKeys();
+    on_pushButtonKeys_clicked();
+}
 
-        mSeriesSelect.setWindowTitle(tr("Select Keys to Analyze"));
-        mSeriesSelect.AddOptions(keyList);
-
-        if (mSeriesSelect.exec() != QDialog::Rejected)
-        {
-            keyShowList = mSeriesSelect.GetBoolList();
-
-            for (int i = keyShowList.count() - 1; i >= 0; i--)
-            {
-                if (keyShowList[i] == false)
-                {
-                    mScoreKey.removeAt(i);
-                }
-            }
-
-            ChartYule(0);
-        }
-    }
+/**
+ * @brief SequentialAnalysisDialog::on_comboBoxMetric_currentIndexChanged
+ * @param index
+ */
+void SequentialAnalysisDialog::on_comboBoxMetric_currentIndexChanged(int *)
+{
+    on_pushButtonKeys_clicked();
 }
 
 /**
@@ -485,12 +474,24 @@ void SequentialAnalysisDialog::ChartYule(int index)
         return;
     }
 
-    ui->labelTitle->setText(QString("<html><head/><body><p align='center'><span style='font-size:10pt; font-weight:600;'>Sequential Analyses (Session #: %1)</span></p></body></html>").arg(ui->tableWidget->item(index, 0)->text()));
+    ProbabilityTools::ProbabilityType analysisType = GetMetric();
+
+    if (analysisType == ProbabilityTools::Blank)
+    {
+        return;
+    }
+
+    QString mAnalysis = (analysisType == ProbabilityTools::OddsRatio ? "Odds Ratio" :
+                                                                       analysisType == ProbabilityTools::YulesQ ? "Yules Q" : "Operant Contingency Value");
+
+    ui->labelTitle->setText(QString("<html><head/><body><p align='center'><span style='font-size:10pt; font-weight:600;'>%1 (Session #: %2)</span></p></body></html>")
+                            .arg(mAnalysis)
+                            .arg(ui->tableWidget->item(index, 0)->text()));
 
     QList<QStringList> mResults;
     mResults.clear();
 
-    ProbabilityTools::CreateContingencyTables(temp.PrimaryFilePath, mScoreKey, &mResults, 1, 1, windowSpan);
+    ProbabilityTools::CreateContingencyTables(temp.PrimaryFilePath, mScoreKey, &mResults, analysisType, 1, windowSpan);
 
     ui->tableWidgetOutputs->clearContents();
     ui->tableWidgetOutputs->setRowCount(0);
@@ -511,7 +512,9 @@ void SequentialAnalysisDialog::ChartYule(int index)
         {
             tempItem = new QTableWidgetItem(mResults.at(i).at(j));
             tempItem->setToolTip(QString("%1 followed by %2").arg(mScoreKey.at(i).first).arg(mScoreKey.at(j).first));
-            tempItem->setBackgroundColor(GetColorMapping(mResults.at(i).at(j)));
+
+            // Remove temporarily
+            //tempItem->setBackgroundColor(GetColorMapping(mResults.at(i).at(j)));
             ui->tableWidgetOutputs->setItem(i, j, tempItem);
             ui->tableWidgetOutputs->setVerticalHeaderItem(j,
                                                           new QTableWidgetItem(QString("%1 -> ...").arg(mScoreKey.at(j).first)));
@@ -622,16 +625,43 @@ int SequentialAnalysisDialog::GetWindowSpan()
 }
 
 /**
+ * @brief SequentialConditionAnalysisDialog::GetMetric
+ * @return
+ */
+ProbabilityTools::ProbabilityType SequentialAnalysisDialog::GetMetric()
+{
+    if (ui->comboBoxMetric->currentIndex() == 1)
+    {
+        return ProbabilityTools::YulesQ;
+    }
+    else if (ui->comboBoxMetric->currentIndex() == 2)
+    {
+        return ProbabilityTools::OperantContingencyValue;
+    }
+    else if (ui->comboBoxMetric->currentIndex() == 3)
+    {
+        return ProbabilityTools::OddsRatio;
+    }
+    else
+    {
+        return ProbabilityTools::Blank;
+    }
+}
+
+/**
  * @brief SequentialAnalysisDialog::on_tableWidget_currentCellChanged
  * @param rowChanged
  */
 void SequentialAnalysisDialog::on_tableWidget_currentCellChanged(int rowChanged, int, int, int)
-{        
-    if (ui->comboBoxAnalysis->currentIndex() == 0 || keyList.count() == 0)
+{
+    if (ui->comboBoxMetric->currentIndex() == 0 ||
+        ui->comboBoxWindow->currentIndex() == 0 ||
+        keyList.count() == 0)
     {
         return;
     }
-    else if (ui->comboBoxAnalysis->currentIndex() == 1)
+    else if (ui->comboBoxMetric->currentIndex() > 0 &&
+             ui->comboBoxWindow->currentIndex() > 0)
     {
         ChartYule(rowChanged);
     }
@@ -642,5 +672,26 @@ void SequentialAnalysisDialog::on_tableWidget_currentCellChanged(int rowChanged,
  */
 void SequentialAnalysisDialog::on_pushButtonKeys_clicked()
 {
-    on_comboBoxWindow_currentIndexChanged(ui->comboBoxWindow->currentIndex());
+    if (ui->comboBoxWindow->currentIndex() > 0 && ui->comboBoxMetric->currentIndex() > 0)
+    {
+        GetKeys();
+
+        mSeriesSelect.setWindowTitle(tr("Select Keys to Analyze"));
+        mSeriesSelect.AddOptions(keyList);
+
+        if (mSeriesSelect.exec() != QDialog::Rejected)
+        {
+            keyShowList = mSeriesSelect.GetBoolList();
+
+            for (int i = keyShowList.count() - 1; i >= 0; i--)
+            {
+                if (keyShowList[i] == false)
+                {
+                    mScoreKey.removeAt(i);
+                }
+            }
+
+            ChartYule(0);
+        }
+    }
 }

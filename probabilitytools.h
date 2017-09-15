@@ -24,6 +24,7 @@
 #ifndef PROBABILITYTOOLS_H
 #define PROBABILITYTOOLS_H
 
+#include <QFile>
 #include <QObject>
 #include <QJsonDocument>
 #include <QJsonArray>
@@ -32,9 +33,19 @@
 #include "reliabilityparse.h"
 #include "lagcoding.h"
 
+#include <QDebug>
+
 class ProbabilityTools
 {
 public:
+
+enum ProbabilityType
+{
+    OddsRatio,
+    YulesQ,
+    OperantContingencyValue,
+    Blank
+};
 
 /**
  * @brief FillMetaContingencyTable
@@ -46,8 +57,14 @@ public:
  * @param binSize
  * @param windowSize
  */
-static void FillMetaContingencyTable(QList<ReliabilityParse> * PrimaryReliabilityObjects, QList<QStringList> * mResults, QStringList keyList, QList<QPair<QString, int>> mScoreKey,
-                                     QList<QList<QPair<LagCoding, LagCoding>>> tableConstruction, int binSize = 1, int windowSize = 4)
+static void FillMetaContingencyTable(QList<ReliabilityParse> * PrimaryReliabilityObjects,
+                                     QList<QStringList> * mResults,
+                                     QStringList keyList,
+                                     QList<QPair<QString, int>> mScoreKey,
+                                     QList<QList<QPair<LagCoding, LagCoding>>> tableConstruction,
+                                     ProbabilityType analysisType,
+                                     int binSize = 1,
+                                     int windowSize = 4)
 {
     QJsonObject json;
 
@@ -190,15 +207,45 @@ static void FillMetaContingencyTable(QList<ReliabilityParse> * PrimaryReliabilit
             }
             else
             {
-                int A = tableConstruction[i][j].first.InsideWindow;
-                int B = tableConstruction[i][j].second.InsideWindow;
-                int C = tableConstruction[i][j].first.OutsideWindow;
-                int D = tableConstruction[i][j].second.OutsideWindow;
+                if (analysisType == ProbabilityType::YulesQ)
+                {
+                    int A = tableConstruction[i][j].first.InsideWindow;
+                    int B = tableConstruction[i][j].second.InsideWindow;
+                    int C = tableConstruction[i][j].first.OutsideWindow;
+                    int D = tableConstruction[i][j].second.OutsideWindow;
 
-                double Q = (((double) A * (double) D) - ((double) B * (double) C)) /
-                           (((double) A * (double) D) + ((double) B * (double) C));
+                    double Q = (((double) A * (double) D) - ((double) B * (double) C)) /
+                               (((double) A * (double) D) + ((double) B * (double) C));
 
-                temp << QString::number(Q);
+                    temp << QString::number(Q);
+                }
+                else if (analysisType == ProbabilityType::OperantContingencyValue)
+                {
+                    int A = tableConstruction[i][j].first.InsideWindow;
+                    int B = tableConstruction[i][j].second.InsideWindow;
+                    int C = tableConstruction[i][j].first.OutsideWindow;
+                    int D = tableConstruction[i][j].second.OutsideWindow;
+
+                    double OCV = (((double) A / ((double) A + (double) B)) -
+                                  ((double) C / ((double) C + (double) D)));
+
+                    temp << QString::number(OCV);
+                }
+                else if (analysisType == ProbabilityType::OddsRatio)
+                {
+                    int A = tableConstruction[i][j].first.InsideWindow;
+                    int B = tableConstruction[i][j].second.InsideWindow;
+                    int C = tableConstruction[i][j].first.OutsideWindow;
+                    int D = tableConstruction[i][j].second.OutsideWindow;
+
+                    double OR = (((double) A * (double) D) / ((double) B * (double) C));
+
+                    temp << QString::number(OR);
+                }
+                else
+                {
+                    temp << QString("---");
+                }
             }
         }
 
@@ -215,7 +262,10 @@ static void FillMetaContingencyTable(QList<ReliabilityParse> * PrimaryReliabilit
  * @param binSize
  * @param windowSize
  */
-static void CreateContingencyTables(QString filePath, QList<QPair<QString, int>> keyScoreList, QList<QStringList> * mResults, int code, int binSize = 1, int windowSize = 4)
+static void CreateContingencyTables(QString filePath,
+                                    QList<QPair<QString, int>> keyScoreList,
+                                    QList<QStringList> * mResults,
+                                    ProbabilityType analysisType, int binSize = 1, int windowSize = 4)
 {
     QFile mSession(filePath);
     QJsonObject json;
@@ -339,7 +389,7 @@ static void CreateContingencyTables(QString filePath, QList<QPair<QString, int>>
                 }
                 else
                 {
-                    holder = ProbabilityTools::CountObjects(scoringBins[i], scoringBins[j], &windowSize, code);
+                    holder = ProbabilityTools::CountObjects(scoringBins[i], scoringBins[j], &windowSize, analysisType);
                     temp << QString::number(holder);
                 }
             }
@@ -367,6 +417,18 @@ static void ScoreLagCodings(QList<int> preLagList, QList<int> postLagList, int *
 
         if (inWindow)
         {
+            // A = A represents the number of seconds in which the ?target? occurred within the specified time window
+            //int A = tableConstruction[i][j].first.InsideWindow;
+
+            // B represents the number of seconds within the specified time window that did not also contain a ?target? code
+            //int B = tableConstruction[i][j].second.InsideWindow;
+
+            // C represents the number of seconds in which the ?target? code occurred outside the specified window,
+            //int C = tableConstruction[i][j].first.OutsideWindow;
+
+            // D represents the number of seconds in which neither the ?target? code nor the window code occurred
+            //int D = tableConstruction[i][j].second.OutsideWindow;
+
             if (postLagList.at(i) == 1)
             {
                 pair->first.InsideWindow++;
@@ -410,7 +472,7 @@ static void ScoreLagCodings(QList<int> preLagList, QList<int> postLagList, int *
  * @param code
  * @return
  */
-static double CountObjects(QList<int> preLagList, QList<int> postLagList, int * windowSize, int code)
+static double CountObjects(QList<int> preLagList, QList<int> postLagList, int * windowSize, ProbabilityType analysisType)
 {
     LagCoding hasBxLag;
     LagCoding noBxLag;
@@ -463,24 +525,30 @@ static double CountObjects(QList<int> preLagList, QList<int> postLagList, int * 
     int C = hasBxLag.OutsideWindow;
     int D = noBxLag.OutsideWindow;
 
-    //if (code == 0)
-    //{
-    //    double OR = ((double) A / (double) B) / ((double) C / (double) D);
-    //
-    //    if (std::isinf(OR))
-    //    {
-    //        OR = ((double) A * (double) D) / ((double) B * (double) C);
-    //    }
-    //
-    //   return OR;
-    //}
-    //else
-    //{
+    if (analysisType == ProbabilityType::OddsRatio)
+    {
+        double OR = (((double) A * (double) D) / ((double) B * (double) C));
+
+        return OR;
+    }
+    else if (analysisType == ProbabilityType::YulesQ)
+    {
         double Q = (((double) A * (double) D) - ((double) B * (double) C)) /
                    (((double) A * (double) D) + ((double) B * (double) C));
 
         return Q;
-    //}
+    }
+    else if (analysisType == ProbabilityType::OperantContingencyValue)
+    {
+        double OCV = (((double) A / ((double) A + (double) B)) -
+                      ((double) C / ((double) C + (double) D)));
+
+        return OCV;
+    }
+    else
+    {
+        return -1;
+    }
 }
 
 };

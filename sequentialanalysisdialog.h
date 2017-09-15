@@ -38,6 +38,8 @@
 #include "keysetentry.h"
 #include "sessionevent.h"
 
+#include "probabilitytools.h"
+
 namespace Ui {
 class SequentialAnalysisDialog;
 }
@@ -55,7 +57,7 @@ private slots:
     void on_comboBoxIndividual_currentIndexChanged(int index);
     void on_comboBoxEvaluation_currentIndexChanged(int index);
     void on_comboBoxAnalysis_currentIndexChanged(int index);
-    void on_comboBoxWindow_currentIndexChanged(int index);
+    void on_comboBoxWindow_currentIndexChanged(int *);
 
     void on_tableWidget_currentCellChanged(int rowChanged, int, int, int);
 
@@ -66,8 +68,11 @@ private slots:
     void ChartYule(int index);
     int GetWindowSpan();
     QColor GetColorMapping(QString value);
+    ProbabilityTools::ProbabilityType GetMetric();
 
     void on_pushButtonKeys_clicked();
+
+    void on_comboBoxMetric_currentIndexChanged(int *);
 
 private:
     Ui::SequentialAnalysisDialog *ui;
