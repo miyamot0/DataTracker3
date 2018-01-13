@@ -347,7 +347,7 @@ void SequentialAnalysisDialog::on_comboBoxMetric_currentIndexChanged(int *)
  */
 void SequentialAnalysisDialog::WorkUpdate(QString update)
 {
-    qDebug() << "WORK_UPDATE: " << update;
+    //qDebug() << "WORK_UPDATE: " << update;
 }
 
 /**

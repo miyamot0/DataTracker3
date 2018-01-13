@@ -291,7 +291,7 @@ void EvaluationReportDialog::on_comboBoxEvaluation_currentIndexChanged(int index
  */
 void EvaluationReportDialog::WorkUpdate(QString update)
 {
-    qDebug() << "WORK_UPDATE: " << update;
+    //qDebug() << "WORK_UPDATE: " << update;
 }
 
 /**

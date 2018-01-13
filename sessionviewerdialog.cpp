@@ -119,7 +119,7 @@ SessionViewerDialog::~SessionViewerDialog()
  */
 void SessionViewerDialog::WorkUpdate(QString update)
 {
-    qDebug() << "WORK_UPDATE: " << update;
+    //qDebug() << "WORK_UPDATE: " << update;
 }
 
 /**

@@ -887,7 +887,7 @@ void SessionWindow::PrepareEvaluation(int index)
  */
 void SessionWindow::WorkUpdate(QString update)
 {
-    qDebug() << "WORK_UPDATE: " << update;
+    //qDebug() << "WORK_UPDATE: " << update;
 }
 
 /**

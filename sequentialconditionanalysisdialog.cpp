@@ -70,7 +70,7 @@ SequentialConditionAnalysisDialog::~SequentialConditionAnalysisDialog()
  */
 void SequentialConditionAnalysisDialog::WorkUpdate(QString update)
 {
-    qDebug() << "WORK_UPDATE: " << update;
+    //qDebug() << "WORK_UPDATE: " << update;
 }
 
 /**

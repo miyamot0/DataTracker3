@@ -115,7 +115,7 @@ EvaluationViewerDialog::~EvaluationViewerDialog()
  */
 void EvaluationViewerDialog::WorkUpdate(QString update)
 {
-    qDebug() << "WORK_UPDATE: " << update;
+    //qDebug() << "WORK_UPDATE: " << update;
 }
 
 /**
