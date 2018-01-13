@@ -23,6 +23,7 @@
 
 #include <QFileDialog>
 #include <QStandardPaths>
+#include <QMessageBox>
 
 #include "settingsdialog.h"
 #include "ui_settingsdialog.h"
@@ -221,13 +222,6 @@ void SettingsDialog::on_setSaveLocation_clicked()
                                                        tr("Pick Alternate Save Location"),
                                                        QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)[0],
                                                        QFileDialog::ShowDirsOnly);
-
-
-        if (mLocation.contains("DataTracker3", Qt::CaseInsensitive))
-        {
-            mLocation = mLocation.replace("DataTracker3", "");
-        }
-
 #elif TARGET_OS_MAC
         mLocation = QFileDialog::getExistingDirectory (this,
                                                        tr("Pick Alternate Save Location"),
@@ -242,18 +236,17 @@ void SettingsDialog::on_setSaveLocation_clicked()
                                                        tr("Pick Alternate Save Location"),
                                                        ui->editSaveLocation->text(),
                                                        QFileDialog::ShowDirsOnly);
-
-        if (mLocation.contains("DataTracker3", Qt::CaseInsensitive))
-        {
-            mLocation = mLocation.replace("DataTracker3", "");
-        }
-
 #elif TARGET_OS_MAC
         mLocation = QFileDialog::getExistingDirectory (this,
                                                        tr("Pick Alternate Save Location"),
                                                        ui->editSaveLocation->text(),
                                                        QFileDialog::ShowDirsOnly | QFileDialog::DontUseNativeDialog);
 #endif
+    }
+
+    if (mLocation.contains("DataTracker3", Qt::CaseInsensitive))
+    {
+        mLocation = mLocation.replace("DataTracker3", "");
     }
 
     QDir mPotentialDir(mLocation);
