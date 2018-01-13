@@ -60,6 +60,7 @@ SessionWindow::SessionWindow(QString mCurrentWorkingDirectory, QWidget *parent) 
 
     connect(&delayTimer, SIGNAL(timeout()), this, SLOT(ForceMigration()));
     connect(&fadeTimer, SIGNAL(timeout()), this, SLOT(ClearStatus()));
+
 }
 
 /**
