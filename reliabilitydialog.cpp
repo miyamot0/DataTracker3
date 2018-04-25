@@ -34,7 +34,6 @@
 #include "reliabilitymeasure.h"
 
 #include <QObject>
-#include <QDebug>
 #include <QThread>
 #include <QJsonObject>
 
@@ -363,12 +362,18 @@ void ReliabilityDialog::on_pushButton_clicked()
 {
     mOutput.clear();
 
-    ReliabilityScoring::PerformReliabilityCheck(mWorkingDirectory,
-                                                ui->comboGroup->currentText(),
-                                                ui->comboIndividual->currentText(),
-                                                ui->comboEvaluation->currentText(),
-                                                &mOutput);
+    try
+    {
+        ReliabilityScoring::PerformReliabilityCheck(mWorkingDirectory,
+                                                    ui->comboGroup->currentText(),
+                                                    ui->comboIndividual->currentText(),
+                                                    ui->comboEvaluation->currentText(),
+                                                    &mOutput);
 
-    tableDialog.InsertData(mOutput);
-    tableDialog.exec();
+        tableDialog.InsertData(mOutput);
+        tableDialog.exec();
+    }
+    catch(std::exception)
+    {
+    }
 }

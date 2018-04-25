@@ -124,8 +124,6 @@ static bool PerformReliabilityCheck(QString mWorkingDirectory, QString Group, QS
     bool mPrimaryCheck = false,
          mReliCheck = false;
 
-    QDateTime startTime, endTime;
-
     ReliResults.clear();
 
     for(int i(0); i<PrimaryReliabilityObjects.count(); i++)
@@ -302,18 +300,17 @@ static void CompareObservers(QJsonObject mPrimary, QJsonObject mSecondary, Relia
 
     QList<QList<int>> mPrimaryFrequencyBins = ReliabilityScoring::GetFrequencyBins(bins, SharedParseFrequencyKeySet, startTime, PrimaryPressedKeys);
     QList<QList<double>> mPrimaryDurationBins = ReliabilityScoring::GetDurationBins(bins, SharedParseDurationKeySet, startTime, endTime, PrimaryPressedKeys);
-
     QList<QList<int>> mSecondaryFrequencyBins   = ReliabilityScoring::GetFrequencyBins(bins, SharedParseFrequencyKeySet, startTime, ReliPressedKeys);
     QList<QList<double>> mSecondaryDurationBins = ReliabilityScoring::GetDurationBins(bins, SharedParseDurationKeySet, startTime, endTime, ReliPressedKeys);
 
     for (int i(0); i<PrimaryFrequencyKeys.count(); i++)
     {
-        mMeasure->fEIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getFrequencyEIA(&mPrimaryFrequencyBins[i], &mSecondaryFrequencyBins[i])));
-        mMeasure->fPIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getFrequencyPIA(&mPrimaryFrequencyBins[i], &mSecondaryFrequencyBins[i])));
-        mMeasure->fTIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getFrequencyTIA(&mPrimaryFrequencyBins[i], &mSecondaryFrequencyBins[i])));
-        mMeasure->fOIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getFrequencyOIA(&mPrimaryFrequencyBins[i], &mSecondaryFrequencyBins[i])));
-        mMeasure->fNIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getFrequencyNIA(&mPrimaryFrequencyBins[i], &mSecondaryFrequencyBins[i])));
-        mMeasure->fPMA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getFrequencyPMA(&mPrimaryFrequencyBins[i], &mSecondaryFrequencyBins[i])));
+        mMeasure->fEIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getFrequencyEIA(mPrimaryFrequencyBins[i], mSecondaryFrequencyBins[i])));
+        mMeasure->fPIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getFrequencyPIA(mPrimaryFrequencyBins[i], mSecondaryFrequencyBins[i])));
+        mMeasure->fTIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getFrequencyTIA(mPrimaryFrequencyBins[i], mSecondaryFrequencyBins[i])));
+        mMeasure->fOIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getFrequencyOIA(mPrimaryFrequencyBins[i], mSecondaryFrequencyBins[i])));
+        mMeasure->fNIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getFrequencyNIA(mPrimaryFrequencyBins[i], mSecondaryFrequencyBins[i])));
+        mMeasure->fPMA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getFrequencyPMA(mPrimaryFrequencyBins[i], mSecondaryFrequencyBins[i])));
     }
 
     for (int i(0); i<PrimaryDurationKeys.count(); i++)
@@ -365,7 +362,16 @@ static QList<QList<int>> GetFrequencyBins(int bins, QList<KeySetEntry> Frequency
         {
             if (event.KeyEntered.KeyCode == temp.KeyCode)
             {
-                timeHolder = startTime.secsTo(event.TimePressed) / 10;
+                timeHolder = round(startTime.msecsTo(event.TimePressed) / 1000) / 10;
+
+                qDebug() << "Starttime: " << startTime.toString("dd:hh ss")
+                         << "Endtime: " << event.TimePressed.toString("dd:hh ss");
+
+                qDebug() << "Key Press: " << QString::number(event.KeyEntered.KeyCode)
+                         << "Key Name: " << event.KeyEntered.KeyDescription
+                         << "Time: " << event.TimePressed.toString("dd:hh ss")
+                         << "TimeHolder: " << QString::number(timeHolder);
+
                 mFrequencyBins[i][timeHolder] = mFrequencyBins[i][timeHolder] + 1;
             }
         }
@@ -389,6 +395,8 @@ static QList<QList<double>> GetDurationBins(int bins, QList<KeySetEntry> Duratio
     int dKeys = DurationKeys.count();
 
     QList<double> tempList;
+
+    qDebug() << "Duration bins";
 
     for (int i(0); i<dKeys; i++)
     {
@@ -476,6 +484,8 @@ static QList<QList<double>> GetDurationBins(int bins, QList<KeySetEntry> Duratio
         }
     }
 
+    qDebug() << "Completed Dir bins";
+
     return mDurationBins;
 }
 
@@ -487,9 +497,9 @@ static QList<QList<double>> GetDurationBins(int bins, QList<KeySetEntry> Duratio
  */
 static int GetLengthCompare(QList<double> * mPrimary, QList<double> * mSecondary)
 {
-    return (mPrimary->count() == mSecondary->count() ?
-                mPrimary->count() : (mPrimary->count() > mSecondary->count()) ?
-                    mSecondary->count() : mPrimary->count());
+    return (mPrimary->length() == mSecondary->length() ?
+                mPrimary->length() : (mPrimary->length() > mSecondary->length()) ?
+                    mSecondary->length() : mPrimary->length());
 }
 
 /**
@@ -500,9 +510,9 @@ static int GetLengthCompare(QList<double> * mPrimary, QList<double> * mSecondary
  */
 static int GetLengthCompare(QList<int> * mPrimary, QList<int> * mSecondary)
 {
-    return (mPrimary->count() == mSecondary->count() ?
-                mPrimary->count() : (mPrimary->count() > mSecondary->count()) ?
-                    mSecondary->count() : mPrimary->count());
+    return (mPrimary->length() == mSecondary->length() ?
+                mPrimary->length() : (mPrimary->length() > mSecondary->length()) ?
+                    mSecondary->length() : mPrimary->length());
 }
 
 /**
@@ -529,26 +539,26 @@ static QString formatResult(double sum, double count)
  * @param mSecondary
  * @return
  */
-static QString getFrequencyEIA(QList<int> * mPrimary, QList<int> * mSecondary)
+static QString getFrequencyEIA(QList<int> mPrimary, QList<int> mSecondary)
 {
-    if ((mPrimary->count() == 0))
+    if ((mPrimary.length() == 0))
     {
         return QString("NaN");
     }
 
-    if ((mSecondary->count() == 0))
+    if ((mSecondary.length() == 0))
     {
         return QString("NaN");
     }
 
-    int runLength = GetLengthCompare(mPrimary, mSecondary);
+    int runLength = GetLengthCompare(&mPrimary, &mSecondary);
 
     int count = 0;
     int sum = 0;
 
     for (int i(0); i<runLength; i++)
     {
-        if (mPrimary[i] == mSecondary[i])
+        if (mPrimary.at(i) == mSecondary.at(i))
         {
             sum ++;
         }
@@ -556,7 +566,6 @@ static QString getFrequencyEIA(QList<int> * mPrimary, QList<int> * mSecondary)
     }
 
     return formatResult((double) sum, (double) count);
-    //return ((double) sum / (double) count) * 100;
 }
 
 /**
@@ -600,19 +609,19 @@ static QString getDurationEIA(QList<double> mPrimary, QList<double> mSecondary)
  * @param mSecondary
  * @return
  */
-static QString getFrequencyPIA(QList<int> * mPrimary, QList<int> * mSecondary)
+static QString getFrequencyPIA(QList<int> mPrimary, QList<int> mSecondary)
 {
-    if ((mPrimary->count() == 0))
+    if ((mPrimary.count() == 0))
     {
         return QString("NaN");
     }
 
-    if ((mSecondary->count() == 0))
+    if ((mSecondary.count() == 0))
     {
         return QString("NaN");
     }
 
-    int runLength = GetLengthCompare(mPrimary, mSecondary);
+    int runLength = GetLengthCompare(&mPrimary, &mSecondary);
 
     double higher, lower;
 
@@ -627,8 +636,8 @@ static QString getFrequencyPIA(QList<int> * mPrimary, QList<int> * mSecondary)
         }
         else
         {
-            higher = (mPrimary[i] > mSecondary[i]) ? mPrimary->at(i) : mSecondary->at(i);
-            lower = (mPrimary[i] > mSecondary[i]) ? mSecondary->at(i) : mPrimary->at(i);
+            higher = (mPrimary[i] > mSecondary[i]) ? mPrimary.at(i) : mSecondary.at(i);
+            lower = (mPrimary[i] > mSecondary[i]) ? mSecondary.at(i) : mPrimary.at(i);
 
             sum += (lower / higher);
         }
@@ -637,7 +646,6 @@ static QString getFrequencyPIA(QList<int> * mPrimary, QList<int> * mSecondary)
     }
 
     return formatResult(sum, (double) count);
-    //return ((double) sum / (double) count) * 100;
 }
 
 /**
@@ -691,30 +699,30 @@ static QString getDurationPIA(QList<double> mPrimary, QList<double> mSecondary)
  * @param mSecondary
  * @return
  */
-static QString getFrequencyTIA(QList<int> * mPrimary, QList<int> * mSecondary)
+static QString getFrequencyTIA(QList<int> mPrimary, QList<int> mSecondary)
 {
-    if ((mPrimary->count() == 0))
+    if ((mPrimary.count() == 0))
     {
         return QString("NaN");
     }
 
-    if ((mSecondary->count() == 0))
+    if ((mSecondary.count() == 0))
     {
         return QString("NaN");
     }
 
-    int runLength = GetLengthCompare(mPrimary, mSecondary);
+    int runLength = GetLengthCompare(&mPrimary, &mSecondary);
 
     int count = 0;
     double sum = 0.0;
 
     for (int i(0); i < runLength; i++)
     {
-        if (mPrimary->at(i) == 0 && mSecondary->at(i) == 0)
+        if (mPrimary.at(i) == 0 && mSecondary.at(i) == 0)
         {
             sum += 1.0;
         }
-        else if (mPrimary->at(i) > 0 && mSecondary->at(i) > 0)
+        else if (mPrimary.at(i) > 0 && mSecondary.at(i) > 0)
         {
             sum += 1.0;
         }
@@ -723,7 +731,6 @@ static QString getFrequencyTIA(QList<int> * mPrimary, QList<int> * mSecondary)
     }
 
     return formatResult(sum, (double) count);
-    //return ((double) sum / (double) count) * 100;
 }
 
 /**
@@ -772,32 +779,32 @@ static QString getDurationTIA(QList<double> mPrimary, QList<double> mSecondary)
  * @param mSecondary
  * @return
  */
-static QString getFrequencyOIA(QList<int> * mPrimary, QList<int> * mSecondary)
+static QString getFrequencyOIA(QList<int> mPrimary, QList<int> mSecondary)
 {
-    if ((mPrimary->count() == 0))
+    if ((mPrimary.count() == 0))
     {
         return QString("NaN");
     }
 
-    if ((mSecondary->count() == 0))
+    if ((mSecondary.count() == 0))
     {
         return QString("NaN");
     }
 
-    int runLength = GetLengthCompare(mPrimary, mSecondary);
+    int runLength = GetLengthCompare(&mPrimary, &mSecondary);
 
     int count = 0;
     double sum = 0.0;
 
     for (int i(0); i < runLength; i++)
     {
-        if (mPrimary->at(i) > 0 || mSecondary->at(i) > 0)
+        if (mPrimary.at(i) > 0 || mSecondary.at(i) > 0)
         {
-            if (mPrimary->at(i) == 0 && mSecondary->at(i) == 0)
+            if (mPrimary.at(i) == 0 && mSecondary.at(i) == 0)
             {
                 sum += 1.0;
             }
-            else if (mPrimary->at(i) > 0 && mSecondary->at(i) > 0)
+            else if (mPrimary.at(i) > 0 && mSecondary.at(i) > 0)
             {
                 sum += 1.0;
             }
@@ -806,7 +813,6 @@ static QString getFrequencyOIA(QList<int> * mPrimary, QList<int> * mSecondary)
     }
 
     return formatResult(sum, (double) count);
-    //return ((double) sum / (double) count) * 100;
 }
 
 /**
@@ -858,32 +864,32 @@ static QString getDurationOIA(QList<double> mPrimary, QList<double> mSecondary)
  * @param mSecondary
  * @return
  */
-static QString getFrequencyNIA(QList<int> * mPrimary, QList<int> * mSecondary)
+static QString getFrequencyNIA(QList<int> mPrimary, QList<int> mSecondary)
 {
-    if ((mPrimary->count() == 0))
+    if ((mPrimary.count() == 0))
     {
         return QString("NaN");
     }
 
-    if ((mSecondary->count() == 0))
+    if ((mSecondary.count() == 0))
     {
         return QString("NaN");
     }
 
-    int runLength = GetLengthCompare(mPrimary, mSecondary);
+    int runLength = GetLengthCompare(&mPrimary, &mSecondary);
 
     int count = 0;
     double sum = 0.0;
 
     for (int i(0); i < runLength; i++)
     {
-        if (mPrimary->at(i) < 1 || mSecondary->at(i) < 1)
+        if (mPrimary.at(i) < 1 || mSecondary.at(i) < 1)
         {
-            if (mPrimary->at(i) == 0 && mSecondary->at(i) == 0)
+            if (mPrimary.at(i) == 0 && mSecondary.at(i) == 0)
             {
                 sum += 1.0;
             }
-            else if (mPrimary->at(i) > 0 && mSecondary->at(i) > 0)
+            else if (mPrimary.at(i) > 0 && mSecondary.at(i) > 0)
             {
                 sum += 1.0;
             }
@@ -892,7 +898,6 @@ static QString getFrequencyNIA(QList<int> * mPrimary, QList<int> * mSecondary)
     }
 
     return formatResult(sum, (double) count);
-    //return ((double) sum / (double) count) * 100;
 }
 
 /**
@@ -944,19 +949,19 @@ static QString getDurationNIA(QList<double> mPrimary, QList<double> mSecondary)
  * @param mSecondary
  * @return
  */
-static QString getFrequencyPMA(QList<int> * mPrimary, QList<int> * mSecondary)
+static QString getFrequencyPMA(QList<int> mPrimary, QList<int> mSecondary)
 {
-    if ((mPrimary->count() == 0))
+    if ((mPrimary.count() == 0))
     {
         return QString("NaN");
     }
 
-    if ((mSecondary->count() == 0))
+    if ((mSecondary.count() == 0))
     {
         return QString("NaN");
     }
 
-    int runLength = GetLengthCompare(mPrimary, mSecondary);
+    int runLength = GetLengthCompare(&mPrimary, &mSecondary);
 
     int count = 0,
         innerCount = 0;
@@ -969,8 +974,8 @@ static QString getFrequencyPMA(QList<int> * mPrimary, QList<int> * mSecondary)
 
     for (int i(0); i < runLength; i++)
     {
-        innerPrim += mPrimary->at(i);
-        innerReli += mSecondary->at(i);
+        innerPrim += mPrimary.at(i);
+        innerReli += mSecondary.at(i);
 
         innerCount++;
 

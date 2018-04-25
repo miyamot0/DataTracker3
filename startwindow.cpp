@@ -53,6 +53,11 @@ StartWindow::StartWindow(QWidget *parent) :
 
     if (QDir(backupSaveLocation).exists())
     {
+        /*
+         *
+         * Disable for now
+         *
+         *
         migraterThread = new QThread();
         migrater = new FileMigrater(workingDirectory, backupSaveLocation, folderTitle);
         migrater->moveToThread(migraterThread);
@@ -64,6 +69,7 @@ StartWindow::StartWindow(QWidget *parent) :
 
         migraterThread->wait();
         migrater->startWork();
+        */
     }
 
     statusBar()->setSizeGripEnabled(false);
