@@ -58,7 +58,8 @@ SessionWindow::SessionWindow(QString mCurrentWorkingDirectory, QWidget *parent) 
 
     ui->editSessionDuration->installEventFilter(this);
 
-    connect(&delayTimer, SIGNAL(timeout()), this, SLOT(ForceMigration()));
+    //Disable forced migration
+    //connect(&delayTimer, SIGNAL(timeout()), this, SLOT(ForceMigration()));
     connect(&fadeTimer, SIGNAL(timeout()), this, SLOT(ClearStatus()));
 
 }
