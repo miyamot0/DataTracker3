@@ -34,7 +34,6 @@
 #include "filewriter.h"
 
 #include <QtWidgets>
-#include <QDebug>
 #include <QSettings>
 
 SessionWindow::SessionWindow(QString mCurrentWorkingDirectory, QWidget *parent) :
