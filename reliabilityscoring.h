@@ -146,6 +146,8 @@ static bool PerformReliabilityCheck(QString mWorkingDirectory, QString Group, QS
             if (mPrimaryCheck && mReliCheck)
             {
                 ReliabilityScoring::CompareObservers(mPrimary, mReli, &mMeasure);
+                qDebug() << mMeasure.fTIA;
+                qDebug() << mMeasure.dTIA;
             }
 
             ReliResults.append(mMeasure);
@@ -300,6 +302,7 @@ static void CompareObservers(QJsonObject mPrimary, QJsonObject mSecondary, Relia
 
     QList<QList<int>> mPrimaryFrequencyBins = ReliabilityScoring::GetFrequencyBins(bins, SharedParseFrequencyKeySet, startTime, PrimaryPressedKeys);
     QList<QList<double>> mPrimaryDurationBins = ReliabilityScoring::GetDurationBins(bins, SharedParseDurationKeySet, startTime, endTime, PrimaryPressedKeys);
+
     QList<QList<int>> mSecondaryFrequencyBins   = ReliabilityScoring::GetFrequencyBins(bins, SharedParseFrequencyKeySet, startTime, ReliPressedKeys);
     QList<QList<double>> mSecondaryDurationBins = ReliabilityScoring::GetDurationBins(bins, SharedParseDurationKeySet, startTime, endTime, ReliPressedKeys);
 
@@ -315,12 +318,12 @@ static void CompareObservers(QJsonObject mPrimary, QJsonObject mSecondary, Relia
 
     for (int i(0); i<PrimaryDurationKeys.count(); i++)
     {
-        mMeasure->dEIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getDurationEIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
-        mMeasure->dPIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getDurationPIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
-        mMeasure->dTIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getDurationTIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
-        mMeasure->dOIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getDurationOIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
-        mMeasure->dNIA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getDurationNIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
-        mMeasure->dPMA.append(QPair<QString,QString>(PrimaryFrequencyKeys[i].KeyName, getDurationPMA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
+        mMeasure->dEIA.append(QPair<QString,QString>(PrimaryDurationKeys[i].KeyName, getDurationEIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
+        mMeasure->dPIA.append(QPair<QString,QString>(PrimaryDurationKeys[i].KeyName, getDurationPIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
+        mMeasure->dTIA.append(QPair<QString,QString>(PrimaryDurationKeys[i].KeyName, getDurationTIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
+        mMeasure->dOIA.append(QPair<QString,QString>(PrimaryDurationKeys[i].KeyName, getDurationOIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
+        mMeasure->dNIA.append(QPair<QString,QString>(PrimaryDurationKeys[i].KeyName, getDurationNIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
+        mMeasure->dPMA.append(QPair<QString,QString>(PrimaryDurationKeys[i].KeyName, getDurationPMA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
     }
 }
 
@@ -364,6 +367,10 @@ static QList<QList<int>> GetFrequencyBins(int bins, QList<KeySetEntry> Frequency
             {
                 timeHolder = round(startTime.msecsTo(event.TimePressed) / 1000) / 10;
 
+                if (timeHolder >= bins) continue;
+                /*
+                qDebug() << (startTime.msecsTo(event.TimePressed) / 1000);
+
                 qDebug() << "Starttime: " << startTime.toString("dd:hh ss")
                          << "Endtime: " << event.TimePressed.toString("dd:hh ss");
 
@@ -372,6 +379,8 @@ static QList<QList<int>> GetFrequencyBins(int bins, QList<KeySetEntry> Frequency
                          << "Time: " << event.TimePressed.toString("dd:hh ss")
                          << "TimeHolder: " << QString::number(timeHolder);
 
+                qDebug() << "I: " << i << " timeHolder: " << timeHolder;
+                */
                 mFrequencyBins[i][timeHolder] = mFrequencyBins[i][timeHolder] + 1;
             }
         }
@@ -395,8 +404,6 @@ static QList<QList<double>> GetDurationBins(int bins, QList<KeySetEntry> Duratio
     int dKeys = DurationKeys.count();
 
     QList<double> tempList;
-
-    qDebug() << "Duration bins";
 
     for (int i(0); i<dKeys; i++)
     {
@@ -428,6 +435,8 @@ static QList<QList<double>> GetDurationBins(int bins, QList<KeySetEntry> Duratio
         {
             if (event.KeyEntered.KeyCode == temp.KeyCode)
             {
+
+
                 if (waitingForNext)
                 {
                     after = event.TimePressed;
@@ -461,6 +470,12 @@ static QList<QList<double>> GetDurationBins(int bins, QList<KeySetEntry> Duratio
                 index2--;
             }
 
+            // Means that reli over shot
+            if (index1 >= bins || index2 >= bins)
+            {
+                continue;
+            }
+
             if (index1 == index2)
             {
                 mDurationBins[i][index1] = mDurationBins[i][index1] + ((double)(stop - start))/1000;
@@ -483,8 +498,6 @@ static QList<QList<double>> GetDurationBins(int bins, QList<KeySetEntry> Duratio
             }
         }
     }
-
-    qDebug() << "Completed Dir bins";
 
     return mDurationBins;
 }

@@ -14,10 +14,11 @@ Features include:
 
 ### Version
 ------
-0.7.1 (beta)
+0.7.2 (beta)
 
 ### Changelog
 ------
+ * 0.7.2 - More reliability fixes
  * 0.7.1 - Fix for reli issues
  * 0.7.0 - Visuals
  * 0.6.1 - Bump for update release
