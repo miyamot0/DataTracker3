@@ -1061,10 +1061,13 @@ static bool WriteSessionSpreadsheet(QString mWorkingDirectory, KeySet CurrentKey
 
     foreach(SessionEvent event, *PressedKeys)
     {
+
+        qDebug() << event.TimePressed;
+
         xlsx.write(row, 1, event.KeyEntered.KeyCode);
         xlsx.write(row, 2, event.KeyEntered.KeyName);
         xlsx.write(row, 3, event.KeyEntered.KeyDescription);
-        xlsx.write(row, 4, event.TimePressed.toString());
+        xlsx.write(row, 4, event.TimePressed.toString("dd-MMM-yy HH:mm:ss.zzz"));
         xlsx.write(row, 5, formatSchedule(event.ScheduleType));
         xlsx.write(row, 6, formatMeasurement(event.MeasurementType));
 
@@ -1223,7 +1226,7 @@ static bool WriteReliSpreadsheet(QString mWorkingDirectory, QString Group, QStri
         row++;
     }
 
-    if (outputDisplay != NULL)
+    if (outputDisplay != nullptr)
     {
         QStringList mTempStringList;
         QString holder;
@@ -1233,7 +1236,7 @@ static bool WriteReliSpreadsheet(QString mWorkingDirectory, QString Group, QStri
             mTempStringList.clear();
             for (int j(0); j < spacer; j++)
             {
-                if (xlsx.cellAt(i, j) == NULL)
+                if (xlsx.cellAt(i, j) == nullptr)
                 {
                     holder = "";
                 }

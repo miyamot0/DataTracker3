@@ -39,7 +39,7 @@ class ResultsDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ResultsDialog(QWidget *parent = 0);
+    explicit ResultsDialog(QWidget *parent = nullptr);
 
     qint64 TimeOverall;
     qint64 TimeOne;

@@ -488,7 +488,7 @@ void ResultsDialog::BuildNarrative(QList<SessionEvent> * PressedKeys, QDateTime 
                          PressedKeys->at(i).KeyEntered.KeyDescription);
     }
 
-    QStringListModel *listModel = new QStringListModel(*mEntries, NULL);
+    QStringListModel *listModel = new QStringListModel(*mEntries, nullptr);
     listModel->setStringList(*mEntries);
     ui->listView->setModel(listModel);
 }
