@@ -53,7 +53,7 @@ public:
     Measurement MeasurementType;
 
 #ifdef _WIN32
-    SessionEvent& SessionEvent::operator=( const SessionEvent& other ) {
+    SessionEvent& operator=( const SessionEvent& other ) {
         KeyEntered = other.KeyEntered;
         TimePressed = other.TimePressed;
         ScheduleType = other.ScheduleType;

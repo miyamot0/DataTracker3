@@ -45,7 +45,7 @@ public:
     KeySet();
 
 #ifdef _WIN32
-    KeySet& KeySet::operator=( const KeySet& other ) {
+    KeySet& operator=( const KeySet& other ) {
         KeySetName = other.KeySetName;
         FrequencyKeys = other.FrequencyKeys;
         DurationKeys = other.DurationKeys;
