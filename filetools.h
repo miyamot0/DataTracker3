@@ -1061,9 +1061,6 @@ static bool WriteSessionSpreadsheet(QString mWorkingDirectory, KeySet CurrentKey
 
     foreach(SessionEvent event, *PressedKeys)
     {
-
-        qDebug() << event.TimePressed;
-
         xlsx.write(row, 1, event.KeyEntered.KeyCode);
         xlsx.write(row, 2, event.KeyEntered.KeyName);
         xlsx.write(row, 3, event.KeyEntered.KeyDescription);

@@ -58,7 +58,7 @@ void DisplayTableDialog::InsertData(QList<QStringList> data)
         temp = data.at(i);
         ui->tableWidget->insertRow(ui->tableWidget->rowCount());
 
-        qDebug() << temp;
+        //qDebug() << temp;
 
         for (int j(0); j<temp.length(); j++)
         {

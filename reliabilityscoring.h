@@ -146,8 +146,8 @@ static bool PerformReliabilityCheck(QString mWorkingDirectory, QString Group, QS
             if (mPrimaryCheck && mReliCheck)
             {
                 ReliabilityScoring::CompareObservers(mPrimary, mReli, &mMeasure);
-                qDebug() << mMeasure.fTIA;
-                qDebug() << mMeasure.dTIA;
+                //qDebug() << mMeasure.fTIA;
+                //qDebug() << mMeasure.dTIA;
             }
 
             ReliResults.append(mMeasure);
