@@ -186,6 +186,8 @@ macx {
     DT_FILES.path = Contents/Resources
 
     QMAKE_BUNDLE_DATA += DT_FILES
+
+    QMAKE_MAC_SDK = macosx10.13
 }
 
 DISTFILES += \

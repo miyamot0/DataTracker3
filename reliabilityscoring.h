@@ -166,6 +166,11 @@ static bool PerformReliabilityCheck(QString mWorkingDirectory, QString Group, QS
     return success;
 }
 
+static bool shouldRemove(KeySetEntry first, KeySetEntry second)
+{
+    return ( first.KeyName == second.KeyName && first.KeyCode == second.KeyCode );
+}
+
 /**
  * @brief CompareObservers
  * @param mPrimary
@@ -177,7 +182,7 @@ static void CompareObservers(QJsonObject mPrimary, QJsonObject mSecondary, Relia
     QDateTime startTime = QDateTime(QDateTime::fromString(mPrimary["StartTime"].toString()));
     QDateTime endTime = QDateTime(QDateTime::fromString(mPrimary["EndTime"].toString()));
 
-    int totalSecs = (int)((double) mPrimary["SessionDuration"].toInt() / 1000);
+    int totalSecs = (int)((double) mPrimary["SessionDuration"].toDouble() / 1000);
 
     int bins = totalSecs / 10;
     int overflow = ((totalSecs % 10) > 0) ? 1 : 0;
@@ -190,9 +195,9 @@ static void CompareObservers(QJsonObject mPrimary, QJsonObject mSecondary, Relia
         QJsonObject mObj = collector.toObject();
 
         KeySetEntry mEntry;
-        mEntry.KeyCode = mObj["Code"].toInt();
+        mEntry.KeyCode =        mObj["Code"].toInt();
         mEntry.KeyDescription = mObj["Description"].toString();
-        mEntry.KeyName = mObj["Name"].toString();
+        mEntry.KeyName =        mObj["Name"].toString();
 
         PrimaryFrequencyKeys.append(mEntry);
     }
@@ -298,6 +303,26 @@ static void CompareObservers(QJsonObject mPrimary, QJsonObject mSecondary, Relia
         }
     }
 
+    // Remove Dupes (freq)
+    std::list<KeySetEntry> vecSharedParseFrequencyKeySet = SharedParseFrequencyKeySet.toStdList();
+    vecSharedParseFrequencyKeySet.unique(shouldRemove);
+
+    SharedParseFrequencyKeySet.clear();
+    SharedParseFrequencyKeySet.reserve(vecSharedParseFrequencyKeySet.size());
+    std::copy(vecSharedParseFrequencyKeySet.begin(),
+              vecSharedParseFrequencyKeySet.end(),
+              std::back_inserter(SharedParseFrequencyKeySet));
+
+    // Remove Dupes (duration)
+    std::list<KeySetEntry> vecSharedParseDurationKeySet = SharedParseDurationKeySet.toStdList();
+    vecSharedParseDurationKeySet.unique(shouldRemove);
+
+    SharedParseDurationKeySet.clear();
+    SharedParseDurationKeySet.reserve(vecSharedParseDurationKeySet.size());
+    std::copy(vecSharedParseDurationKeySet.begin(),
+              vecSharedParseDurationKeySet.end(),
+              std::back_inserter(SharedParseDurationKeySet));
+
     // Keys sorted
 
     QList<QList<int>> mPrimaryFrequencyBins = ReliabilityScoring::GetFrequencyBins(bins, SharedParseFrequencyKeySet, startTime, PrimaryPressedKeys);
@@ -318,6 +343,9 @@ static void CompareObservers(QJsonObject mPrimary, QJsonObject mSecondary, Relia
 
     for (int i(0); i<PrimaryDurationKeys.count(); i++)
     {
+        //qDebug() << mPrimaryDurationBins[i];
+        //qDebug() << mSecondaryDurationBins[i];
+
         mMeasure->dEIA.append(QPair<QString,QString>(PrimaryDurationKeys[i].KeyName, getDurationEIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
         mMeasure->dPIA.append(QPair<QString,QString>(PrimaryDurationKeys[i].KeyName, getDurationPIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
         mMeasure->dTIA.append(QPair<QString,QString>(PrimaryDurationKeys[i].KeyName, getDurationTIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
