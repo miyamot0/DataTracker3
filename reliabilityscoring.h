@@ -182,7 +182,7 @@ static void CompareObservers(QJsonObject mPrimary, QJsonObject mSecondary, Relia
     QDateTime startTime = QDateTime(QDateTime::fromString(mPrimary["StartTime"].toString()));
     QDateTime endTime = QDateTime(QDateTime::fromString(mPrimary["EndTime"].toString()));
 
-    int totalSecs = (int)((double) mPrimary["SessionDuration"].toDouble() / 1000);
+    int totalSecs = static_cast<int>(mPrimary["SessionDuration"].toDouble() / 1000.0);
 
     int bins = totalSecs / 10;
     int overflow = ((totalSecs % 10) > 0) ? 1 : 0;
@@ -489,8 +489,8 @@ static QList<QList<double>> GetDurationBins(int bins, QList<KeySetEntry> Duratio
             start = runs[j].first;
             stop = runs[j].second;
 
-            int index1 = (int)(start / 10000);
-            int index2 = (int)(stop / 10000);
+            int index1 = static_cast<int>(start / 10000);
+            int index2 = static_cast<int>(stop / 10000);
 
             // !important In case overshot
             if (index2 == bins)
@@ -506,23 +506,23 @@ static QList<QList<double>> GetDurationBins(int bins, QList<KeySetEntry> Duratio
 
             if (index1 == index2)
             {
-                mDurationBins[i][index1] = mDurationBins[i][index1] + ((double)(stop - start))/1000;
+                mDurationBins[i][index1] = mDurationBins[i][index1] + (static_cast<double>(stop - start))/1000;
             }
             else if ((index2 - index1) == 1)
             {
-                mDurationBins[i][index1] = mDurationBins[i][index1] + ((double)(10000 - (start % 10000)))/1000;
-                mDurationBins[i][index2] = mDurationBins[i][index2] + ((double)(stop % 10000))/1000;
+                mDurationBins[i][index1] = mDurationBins[i][index1] + (static_cast<double>(10000 - (start % 10000)))/1000;
+                mDurationBins[i][index2] = mDurationBins[i][index2] + (static_cast<double>(stop % 10000))/1000;
             }
             else
             {
-                mDurationBins[i][index1] = mDurationBins[i][index1] + ((double)(10000 - (start % 10000)))/1000;
+                mDurationBins[i][index1] = mDurationBins[i][index1] + (static_cast<double>(10000 - (start % 10000)))/1000;
 
                 for (int k(index1 + 1); k < index2; k++)
                 {
                     mDurationBins[i][k] = mDurationBins[i][k] + 10;
                 }
 
-                mDurationBins[i][index2] = mDurationBins[i][index2] + ((double)(stop % 10000))/1000;
+                mDurationBins[i][index2] = mDurationBins[i][index2] + (static_cast<double>(stop % 10000))/1000;
             }
         }
     }
@@ -606,7 +606,7 @@ static QString getFrequencyEIA(QList<int> mPrimary, QList<int> mSecondary)
         count++;
     }
 
-    return formatResult((double) sum, (double) count);
+    return formatResult(static_cast<double>(sum), static_cast<double>(count));
 }
 
 /**
@@ -641,7 +641,7 @@ static QString getDurationEIA(QList<double> mPrimary, QList<double> mSecondary)
         count++;
     }
 
-    return formatResult((double) sum, (double) count);
+    return formatResult(static_cast<double>(sum), static_cast<double>(count));
 }
 
 /**
@@ -686,7 +686,7 @@ static QString getFrequencyPIA(QList<int> mPrimary, QList<int> mSecondary)
         count++;
     }
 
-    return formatResult(sum, (double) count);
+    return formatResult(static_cast<double>(sum), static_cast<double>(count));
 }
 
 /**
@@ -731,7 +731,7 @@ static QString getDurationPIA(QList<double> mPrimary, QList<double> mSecondary)
         count++;
     }
 
-    return formatResult(sum, (double) count);
+    return formatResult(static_cast<double>(sum), static_cast<double>(count));
 }
 
 /**
@@ -771,7 +771,7 @@ static QString getFrequencyTIA(QList<int> mPrimary, QList<int> mSecondary)
         count++;
     }
 
-    return formatResult(sum, (double) count);
+    return formatResult(static_cast<double>(sum), static_cast<double>(count));
 }
 
 /**
@@ -811,7 +811,7 @@ static QString getDurationTIA(QList<double> mPrimary, QList<double> mSecondary)
         count++;
     }
 
-    return formatResult(sum, (double) count);
+    return formatResult(static_cast<double>(sum), static_cast<double>(count));
 }
 
 /**
@@ -853,7 +853,7 @@ static QString getFrequencyOIA(QList<int> mPrimary, QList<int> mSecondary)
         }
     }
 
-    return formatResult(sum, (double) count);
+    return formatResult(static_cast<double>(sum), static_cast<double>(count));
 }
 
 /**
@@ -896,7 +896,7 @@ static QString getDurationOIA(QList<double> mPrimary, QList<double> mSecondary)
         }
     }
 
-    return formatResult(sum, (double) count);
+    return formatResult(static_cast<double>(sum), static_cast<double>(count));
 }
 
 /**
@@ -938,7 +938,7 @@ static QString getFrequencyNIA(QList<int> mPrimary, QList<int> mSecondary)
         }
     }
 
-    return formatResult(sum, (double) count);
+    return formatResult(static_cast<double>(sum), static_cast<double>(count));
 }
 
 /**
@@ -981,7 +981,7 @@ static QString getDurationNIA(QList<double> mPrimary, QList<double> mSecondary)
         }
     }
 
-    return formatResult(sum, (double) count);
+    return formatResult(static_cast<double>(sum), static_cast<double>(count));
 }
 
 /**
@@ -1040,7 +1040,7 @@ static QString getFrequencyPMA(QList<int> mPrimary, QList<int> mSecondary)
         }
     }
 
-    return formatResult(sum, (double) count);
+    return formatResult(static_cast<double>(sum), static_cast<double>(count));
 }
 
 /**
@@ -1100,7 +1100,7 @@ static QString getDurationPMA(QList<double> mPrimary, QList<double> mSecondary)
         }
     }
 
-    return formatResult(sum, (double) count);
+    return formatResult(static_cast<double>(sum), static_cast<double>(count));
 }
 
 
