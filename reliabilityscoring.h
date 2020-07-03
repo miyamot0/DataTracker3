@@ -126,6 +126,10 @@ static bool PerformReliabilityCheck(QString mWorkingDirectory, QString Group, QS
 
     ReliResults.clear();
 
+    std::sort(PrimaryReliabilityObjects.begin() , PrimaryReliabilityObjects.end(), [=]( const ReliabilityParse& a , const ReliabilityParse& b )->bool {
+        return a.SessionNumber < b.SessionNumber;
+    });
+
     for(int i(0); i<PrimaryReliabilityObjects.count(); i++)
     {
         if (PrimaryReliabilityObjects[i].CanScoreAsReli)
