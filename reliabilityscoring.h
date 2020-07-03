@@ -308,7 +308,7 @@ static void CompareObservers(QJsonObject mPrimary, QJsonObject mSecondary, Relia
     vecSharedParseFrequencyKeySet.unique(shouldRemove);
 
     SharedParseFrequencyKeySet.clear();
-    SharedParseFrequencyKeySet.reserve(vecSharedParseFrequencyKeySet.size());
+    SharedParseFrequencyKeySet.reserve(static_cast<int>(vecSharedParseFrequencyKeySet.size()));
     std::copy(vecSharedParseFrequencyKeySet.begin(),
               vecSharedParseFrequencyKeySet.end(),
               std::back_inserter(SharedParseFrequencyKeySet));
@@ -318,7 +318,7 @@ static void CompareObservers(QJsonObject mPrimary, QJsonObject mSecondary, Relia
     vecSharedParseDurationKeySet.unique(shouldRemove);
 
     SharedParseDurationKeySet.clear();
-    SharedParseDurationKeySet.reserve(vecSharedParseDurationKeySet.size());
+    SharedParseDurationKeySet.reserve(static_cast<int>(vecSharedParseFrequencyKeySet.size()));
     std::copy(vecSharedParseDurationKeySet.begin(),
               vecSharedParseDurationKeySet.end(),
               std::back_inserter(SharedParseDurationKeySet));
@@ -393,7 +393,7 @@ static QList<QList<int>> GetFrequencyBins(int bins, QList<KeySetEntry> Frequency
         {
             if (event.KeyEntered.KeyCode == temp.KeyCode)
             {
-                timeHolder = round(startTime.msecsTo(event.TimePressed) / 1000) / 10;
+                timeHolder = static_cast<int>(round(startTime.msecsTo(event.TimePressed) / 1000)) / 10;
 
                 if (timeHolder >= bins) continue;
                 /*
@@ -564,7 +564,7 @@ static int GetLengthCompare(QList<int> * mPrimary, QList<int> * mSecondary)
  */
 static QString formatResult(double sum, double count)
 {
-    if (count == 0)
+    if (qFuzzyCompare(0, count))
     {
         return QString("NaN");
     }
@@ -634,7 +634,7 @@ static QString getDurationEIA(QList<double> mPrimary, QList<double> mSecondary)
 
     for (int i(0); i<runLength; i++)
     {
-        if (mPrimary[i] == mSecondary[i])
+        if (qFuzzyCompare(mPrimary[i], mSecondary[i]))
         {
             sum ++;
         }
@@ -1022,7 +1022,7 @@ static QString getFrequencyPMA(QList<int> mPrimary, QList<int> mSecondary)
 
         if ((innerCount+1) % 6 == 0)
         {
-            if (innerPrim == innerReli)
+            if (qFuzzyCompare(innerPrim, innerReli))
             {
                 sum += 1.0;
             }
@@ -1081,7 +1081,7 @@ static QString getDurationPMA(QList<double> mPrimary, QList<double> mSecondary)
 
         if ((innerCount + 1) % 6 == 0)
         {
-            if (innerPrim == innerReli)
+            if (qFuzzyCompare(innerPrim, innerReli))
             {
                 sum += 1.0;
             }
