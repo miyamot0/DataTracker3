@@ -343,9 +343,6 @@ static void CompareObservers(QJsonObject mPrimary, QJsonObject mSecondary, Relia
 
     for (int i(0); i<PrimaryDurationKeys.count(); i++)
     {
-        //qDebug() << mPrimaryDurationBins[i];
-        //qDebug() << mSecondaryDurationBins[i];
-
         mMeasure->dEIA.append(QPair<QString,QString>(PrimaryDurationKeys[i].KeyName, getDurationEIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
         mMeasure->dPIA.append(QPair<QString,QString>(PrimaryDurationKeys[i].KeyName, getDurationPIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));
         mMeasure->dTIA.append(QPair<QString,QString>(PrimaryDurationKeys[i].KeyName, getDurationTIA(mPrimaryDurationBins[i], mSecondaryDurationBins[i])));

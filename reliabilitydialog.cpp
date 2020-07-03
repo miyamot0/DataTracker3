@@ -289,6 +289,7 @@ void ReliabilityDialog::on_comboEvaluation_currentIndexChanged(int index)
  */
 void ReliabilityDialog::WorkUpdate(QString update)
 {
+    Q_UNUSED(update)
     //qDebug() << "WORK_UPDATE: " << update;
 }
 
