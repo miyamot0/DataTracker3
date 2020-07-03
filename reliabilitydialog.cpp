@@ -272,6 +272,10 @@ void ReliabilityDialog::on_comboEvaluation_currentIndexChanged(int index)
 
     ui->tableWidgetReli->setRowCount(0);
 
+    std::sort(PrimaryReliabilityObjects.begin() , PrimaryReliabilityObjects.end(), [=]( const ReliabilityParse& a , const ReliabilityParse& b )->bool {
+        return a.SessionNumber < b.SessionNumber;
+    });
+
     for (int i(0); i<PrimaryReliabilityObjects.count(); i++)
     {
         ui->tableWidgetReli->insertRow(ui->tableWidgetReli->rowCount());
