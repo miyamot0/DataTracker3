@@ -48,7 +48,7 @@ class SessionWindow : public QDialog
     Q_OBJECT
 
 public:
-    explicit SessionWindow(QString mCurrentWorkingDirectory, QWidget *parent = 0);
+    explicit SessionWindow(QString mCurrentWorkingDirectory, QWidget *parent = nullptr);
     ~SessionWindow();
 
 private slots:

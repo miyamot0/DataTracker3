@@ -1396,6 +1396,9 @@
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QPushButton" name="pushButtonSync">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -1409,8 +1412,11 @@
      </item>
      <item>
       <widget class="QLabel" name="labelStatus">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
-        <string/>
+        <string>Sync functionality disabled.</string>
        </property>
       </widget>
      </item>

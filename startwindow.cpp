@@ -41,23 +41,25 @@ StartWindow::StartWindow(QWidget *parent) :
 
     QSettings settings(QSettings::UserScope, QLatin1String("Data Tracker"));
 
-    folderTitle = "DataTracker3";
     setWindowTitle(QString(tr("Data Tracker")) + " v" + QString("%1.%2.%3").arg(VERSION_MAJOR).arg(VERSION_MINOR).arg(VERSION_BUILD));
 
-    if (FileTools::CheckAndPrepDirectory(folderTitle))
+    folderTitle = "DataTracker3";
+
+    LoadSettings();
+
+    if (primarySaveLocation != nullptr && QDir(primarySaveLocation).exists()) {
+        workingDirectory = FileTools::pathAppend(primarySaveLocation, folderTitle);
+    }
+    else if (FileTools::CheckAndPrepDirectory(folderTitle))
     {
         workingDirectory = FileTools::pathAppend(QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)[0], folderTitle);
     }
 
-    LoadSettings();
-
+/**
+  * Stubbed out this functionality for now, collisions are an issue
+  *
     if (QDir(backupSaveLocation).exists())
     {
-        /*
-         *
-         * Disable for now
-         *
-         *
         migraterThread = new QThread();
         migrater = new FileMigrater(workingDirectory, backupSaveLocation, folderTitle);
         migrater->moveToThread(migraterThread);
@@ -69,8 +71,10 @@ StartWindow::StartWindow(QWidget *parent) :
 
         migraterThread->wait();
         migrater->startWork();
-        */
     }
+  *
+  *
+  */
 
     statusBar()->setSizeGripEnabled(false);
 
@@ -200,11 +204,12 @@ StartWindow::~StartWindow()
 /** Save Settings
  * @brief StartWindow::SaveSettings
  */
-void StartWindow::SaveSettings(QString savedLocation, bool plots, bool dark, bool sheets, bool reli, bool migrate, bool updateCheck)
+void StartWindow::SaveSettings(QString primaryLocation, QString savedLocation, bool plots, bool dark, bool sheets, bool reli, bool migrate, bool updateCheck)
 {
     QSettings settings;
 
     settings.beginGroup(QLatin1String("DTProgramSettings"));
+        settings.setValue(QLatin1String("primarySaveLocation"), primaryLocation);
         settings.setValue(QLatin1String("alternateSaveLocation"), savedLocation);
         settings.setValue(QLatin1String("displayPlots"), plots);
         settings.setValue(QLatin1String("displayDark"), dark);
@@ -221,7 +226,8 @@ void StartWindow::SaveSettings(QString savedLocation, bool plots, bool dark, boo
  */
 void StartWindow::closeEvent(QCloseEvent *)
 {
-    SaveSettings(backupSaveLocation,
+    SaveSettings(primarySaveLocation,
+                 backupSaveLocation,
                  displayPlots,
                  displayDark,
                  outputSheets,
@@ -238,6 +244,7 @@ void StartWindow::LoadSettings()
     QSettings settings;
 
     settings.beginGroup(QLatin1String("DTProgramSettings"));
+    primarySaveLocation = settings.value(QLatin1String("primarySaveLocation"), "").toString();
     backupSaveLocation = settings.value(QLatin1String("alternateSaveLocation"), "").toString();
     displayPlots = settings.value(QLatin1String("displayPlots"), false).toBool();
     displayDark = settings.value(QLatin1String("displayDark"), false).toBool();
@@ -271,6 +278,7 @@ void StartWindow::on_actionCalculate_Reliability_triggered()
  */
 void StartWindow::on_actionSettings_2_triggered()
 {
+    settingsDialog.SetPrimarySaveLocation(primarySaveLocation);
     settingsDialog.SetSaveLocation(backupSaveLocation);
     settingsDialog.SetSpreadsheetOption(outputSheets);
     settingsDialog.SetDisplayOption(displayPlots);
@@ -283,12 +291,13 @@ void StartWindow::on_actionSettings_2_triggered()
 
     if (displayDark != settingsDialog.GetThemeDark() || autoUpdateCheck != settingsDialog.GetAutoUpdate())
     {
-        QMessageBox::information(NULL,
+        QMessageBox::information(nullptr,
                                  tr("Settings Updated"),
                                  tr("Restart for changes to take effect."),
                                  QMessageBox::Ok);
     }
 
+    primarySaveLocation = settingsDialog.GetPrimarySaveLocation();
     backupSaveLocation = settingsDialog.GetSaveLocation();
     outputSheets = settingsDialog.GetSpreadsheetOption();
     displayPlots = settingsDialog.GetDisplayOption();
@@ -297,7 +306,8 @@ void StartWindow::on_actionSettings_2_triggered()
     autoMigrate = settingsDialog.GetAutoMigrate();
     autoUpdateCheck = settingsDialog.GetAutoUpdate();
 
-    SaveSettings(backupSaveLocation,
+    SaveSettings(primarySaveLocation,
+                 backupSaveLocation,
                  displayPlots,
                  displayDark,
                  outputSheets,
@@ -449,6 +459,9 @@ void StartWindow::on_actionSequential_Analyses_triggered()
     sequenceDialog->exec();
 }
 
+/**
+ * @brief StartWindow::on_actionCondition_Sequential_Analysis_triggered
+ */
 void StartWindow::on_actionCondition_Sequential_Analysis_triggered()
 {
     sequenceConditionDialog = new SequentialConditionAnalysisDialog(workingDirectory, this);
@@ -502,9 +515,6 @@ void StartWindow::on_actionAbout_triggered()
  */
 void StartWindow::on_buttonStart_clicked()
 {
-    if (FileTools::CheckAndPrepDirectory(folderTitle))
-    {
-        sessionWindow = new SessionWindow(workingDirectory, this);
-        sessionWindow->exec();
-    }
+    sessionWindow = new SessionWindow(workingDirectory, this);
+    sessionWindow->exec();
 }

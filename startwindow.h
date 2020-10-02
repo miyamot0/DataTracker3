@@ -55,10 +55,10 @@ class StartWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit StartWindow(QWidget *parent = 0);
+    explicit StartWindow(QWidget *parent = nullptr);
     ~StartWindow();
 
-    void SaveSettings(QString savedLocation, bool plots, bool dark, bool sheets, bool reli, bool migrate, bool updateCheck);
+    void SaveSettings(QString primaryLocation, QString savedLocation, bool plots, bool dark, bool sheets, bool reli, bool migrate, bool updateCheck);
     void LoadSettings();
 
 private slots:
@@ -106,6 +106,7 @@ private:
     bool foundFolder = false;
 
     QString workingDirectory;
+    QString primarySaveLocation;
     QString backupSaveLocation;
     bool displayPlots;
     bool displayDark;

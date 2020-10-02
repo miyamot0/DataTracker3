@@ -39,7 +39,6 @@ int main(int argc, char *argv[])
     qRegisterMetaType<ParseTypes::ParseAction>("ParseTypes::ParseAction");
 
     QSettings settings;
-
     settings.beginGroup(QLatin1String("DTProgramSettings"));
     bool displayDark = settings.value(QLatin1String("displayDark"), false).toBool();
     settings.endGroup();

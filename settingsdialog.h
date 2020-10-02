@@ -35,8 +35,9 @@ class SettingsDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SettingsDialog(QWidget *parent = 0);
+    explicit SettingsDialog(QWidget *parent = nullptr);
 
+    QString primarySaveLocation;
     QString alternateSaveLocation;
     bool spreadsheetOutput = true;
     bool displayPlots = false;
@@ -45,6 +46,7 @@ public:
     bool autoMigrate = false;
     bool autoUpdate = true;
 
+    void SetPrimarySaveLocation(QString location);
     void SetSaveLocation(QString location);
     void SetSpreadsheetOption(bool value);
     void SetDisplayOption(bool value);
@@ -53,6 +55,7 @@ public:
     void SetAutoMigrate(bool value);
     void SetAutoUpdateCheck(bool value);
 
+    QString GetPrimarySaveLocation();
     QString GetSaveLocation();
     bool GetSpreadsheetOption();
     bool GetDisplayOption();
@@ -66,6 +69,7 @@ public:
 private slots:
     void on_pushButton_clicked();
     void on_setSaveLocation_clicked();
+    void on_setPrimarySaveLocation_clicked();
 
 private:
     Ui::SettingsDialog *ui;

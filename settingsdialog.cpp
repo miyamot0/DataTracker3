@@ -42,6 +42,16 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 }
 
 /**
+ * @brief SettingsDialog::SetPrimarySaveLocation
+ * @param location
+ */
+void SettingsDialog::SetPrimarySaveLocation(QString location)
+{
+    primarySaveLocation = location;
+    ui->editPrimarySaveLocation->setText(location);
+}
+
+/**
  * @brief SettingsDialog::SetSaveLocation
  * @param location
  */
@@ -121,6 +131,15 @@ void SettingsDialog::SetAutoUpdateCheck(bool value)
 }
 
 /**
+ * @brief SettingsDialog::GetPrimarySaveLocation
+ * @return
+ */
+QString SettingsDialog::GetPrimarySaveLocation()
+{
+    return ui->editPrimarySaveLocation->text();
+}
+
+/**
  * @brief SettingsDialog::GetSaveLocation
  * @return
  */
@@ -193,6 +212,7 @@ SettingsDialog::~SettingsDialog()
  */
 void SettingsDialog::on_pushButton_clicked()
 {
+    primarySaveLocation = GetPrimarySaveLocation();
     alternateSaveLocation = GetSaveLocation();
     spreadsheetOutput = GetSpreadsheetOption();
     displayPlots = GetDisplayOption();
@@ -201,8 +221,13 @@ void SettingsDialog::on_pushButton_clicked()
     autoMigrate = GetAutoMigrate();
     autoUpdate = GetAutoUpdate();
 
-    QDir mDir(alternateSaveLocation);
+    QDir mDir(primarySaveLocation);
+    if (mDir.exists())
+    {
+        FileTools::CheckAndPrepDirectory("DataTracker3", mDir.absolutePath());
+    }
 
+    mDir = QDir(alternateSaveLocation);
     if (mDir.exists())
     {
         FileTools::CheckAndPrepDirectory("DataTracker3", mDir.absolutePath());
@@ -254,5 +279,51 @@ void SettingsDialog::on_setSaveLocation_clicked()
     if (mLocation.length() !=0 && mPotentialDir.exists())
     {
         ui->editSaveLocation->setText(mLocation);
+    }
+}
+
+void SettingsDialog::on_setPrimarySaveLocation_clicked()
+{
+    QString mLocation;
+
+    if (ui->editPrimarySaveLocation->text().length() == 0)
+    {
+#ifdef _WIN32
+        mLocation = QFileDialog::getExistingDirectory (this,
+                                                       tr("Pick Primary Save Location"),
+                                                       QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)[0],
+                                                       QFileDialog::ShowDirsOnly);
+#elif TARGET_OS_MAC
+        mLocation = QFileDialog::getExistingDirectory (this,
+                                                       tr("Pick Primary Save Location"),
+                                                       QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)[0],
+                                                       QFileDialog::ShowDirsOnly | QFileDialog::DontUseNativeDialog);
+#endif
+    }
+    else
+    {
+#ifdef _WIN32
+        mLocation = QFileDialog::getExistingDirectory (this,
+                                                       tr("Pick Primary Save Location"),
+                                                       ui->editPrimarySaveLocation->text(),
+                                                       QFileDialog::ShowDirsOnly);
+#elif TARGET_OS_MAC
+        mLocation = QFileDialog::getExistingDirectory (this,
+                                                       tr("Pick Primary Save Location"),
+                                                       ui->editPrimarySaveLocation->text(),
+                                                       QFileDialog::ShowDirsOnly | QFileDialog::DontUseNativeDialog);
+#endif
+    }
+
+    // Remove the trailing location, if added
+    if (mLocation.contains("DataTracker3", Qt::CaseInsensitive))
+    {
+        mLocation = mLocation.replace("DataTracker3", "");
+    }
+
+    QDir mPotentialDir(mLocation);
+    if (mLocation.length() !=0 && mPotentialDir.exists())
+    {
+        ui->editPrimarySaveLocation->setText(mLocation);
     }
 }
