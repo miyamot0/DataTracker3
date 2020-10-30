@@ -150,8 +150,6 @@ static bool PerformReliabilityCheck(QString mWorkingDirectory, QString Group, QS
             if (mPrimaryCheck && mReliCheck)
             {
                 ReliabilityScoring::CompareObservers(mPrimary, mReli, &mMeasure);
-                //qDebug() << mMeasure.fTIA;
-                //qDebug() << mMeasure.dTIA;
             }
 
             ReliResults.append(mMeasure);
@@ -183,8 +181,11 @@ static bool shouldRemove(KeySetEntry first, KeySetEntry second)
  */
 static void CompareObservers(QJsonObject mPrimary, QJsonObject mSecondary, ReliabilityMeasure * mMeasure)
 {
-    QDateTime startTime = QDateTime(QDateTime::fromString(mPrimary["StartTime"].toString()));
-    QDateTime endTime = QDateTime(QDateTime::fromString(mPrimary["EndTime"].toString()));
+    QDateTime startTimeP = QDateTime(QDateTime::fromString(mPrimary["StartTime"].toString()));
+    QDateTime startTimeR = QDateTime(QDateTime::fromString(mSecondary["StartTime"].toString()));
+
+    QDateTime endTimeP = QDateTime(QDateTime::fromString(mPrimary["EndTime"].toString()));
+    QDateTime endTimeR = QDateTime(QDateTime::fromString(mSecondary["EndTime"].toString()));
 
     int totalSecs = static_cast<int>(mPrimary["SessionDuration"].toDouble() / 1000.0);
 
@@ -329,11 +330,11 @@ static void CompareObservers(QJsonObject mPrimary, QJsonObject mSecondary, Relia
 
     // Keys sorted
 
-    QList<QList<int>> mPrimaryFrequencyBins = ReliabilityScoring::GetFrequencyBins(bins, SharedParseFrequencyKeySet, startTime, PrimaryPressedKeys);
-    QList<QList<double>> mPrimaryDurationBins = ReliabilityScoring::GetDurationBins(bins, SharedParseDurationKeySet, startTime, endTime, PrimaryPressedKeys);
+    QList<QList<int>> mPrimaryFrequencyBins = ReliabilityScoring::GetFrequencyBins(bins, SharedParseFrequencyKeySet, startTimeP, PrimaryPressedKeys);
+    QList<QList<double>> mPrimaryDurationBins = ReliabilityScoring::GetDurationBins(bins, SharedParseDurationKeySet, startTimeP, endTimeP, PrimaryPressedKeys);
 
-    QList<QList<int>> mSecondaryFrequencyBins   = ReliabilityScoring::GetFrequencyBins(bins, SharedParseFrequencyKeySet, startTime, ReliPressedKeys);
-    QList<QList<double>> mSecondaryDurationBins = ReliabilityScoring::GetDurationBins(bins, SharedParseDurationKeySet, startTime, endTime, ReliPressedKeys);
+    QList<QList<int>> mSecondaryFrequencyBins   = ReliabilityScoring::GetFrequencyBins(bins, SharedParseFrequencyKeySet, startTimeR, ReliPressedKeys);
+    QList<QList<double>> mSecondaryDurationBins = ReliabilityScoring::GetDurationBins(bins, SharedParseDurationKeySet, startTimeR, endTimeR, ReliPressedKeys);
 
     for (int i(0); i<PrimaryFrequencyKeys.count(); i++)
     {
